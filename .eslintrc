@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "extends": "standard",
+  "rules": {
+    "semi": [0]
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  }
+}

@@ -1,12 +1,16 @@
+# App config file
+server/config/.env
+
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+*.orig
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
+stats.json
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Runtime data
@@ -22,14 +26,13 @@ lib-cov
 coverage
 *.lcov
 
+/.vagrant
+
 # nyc test coverage
 .nyc_output
 
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
-
-# Bower dependency directory (https://bower.io/)
-bower_components
 
 # node-waf configuration
 .lock-wscript
@@ -53,6 +56,8 @@ typings/
 # Optional eslint cache
 .eslintcache
 
+/Vagrantfile
+
 # Microbundle cache
 .rpt2_cache/
 .rts2_cache_cjs/
@@ -61,16 +66,24 @@ typings/
 
 # Optional REPL history
 .node_repl_history
+*.DS_Store
+.idea
+.vscode
+
+# Generated directories
+app/public/
+bin
+reports
+.tmp
+
+#Generated files
+.npmrc
+
+# Temporary files
+*.swp
 
 # Output of 'npm pack'
 *.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-.env.test
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
