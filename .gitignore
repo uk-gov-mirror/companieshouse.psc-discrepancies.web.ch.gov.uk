@@ -71,7 +71,7 @@ typings/
 .vscode
 
 # Generated directories
-app/public/
+app/public/*
 bin
 reports
 .tmp
