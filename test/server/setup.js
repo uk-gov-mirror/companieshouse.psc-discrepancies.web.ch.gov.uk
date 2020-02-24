@@ -1,5 +1,4 @@
-// Used for all node.js tests
-//'use strict';
+'use strict';
 
 const sinon = require('sinon');
 const chai = require('chai');
@@ -23,5 +22,5 @@ global.expect = expect;
 global.request = chai.request;
 
 global.testRoot = __dirname;
-global.appRoot = __dirname + '/../../';
-global.serverRoot = __dirname + '/../../server/';
+global.appRoot = __dirname + '/../..';
+global.serverRoot = __dirname + '/../../server';
