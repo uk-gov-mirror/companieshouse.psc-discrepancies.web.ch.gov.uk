@@ -45,9 +45,9 @@ or, to watch for changes with auto restart in your dev environment, run:
 ```
 npm run watch
 ```
-...and navigate to http://127.0.0.1:3000/ (or whatever hostname/port number combination you've changed the config values to)
+...and navigate to http://localhost:3000/ (or whatever hostname/port number combination you've changed the config values to)
 
-For SSL connections, navigate to https://127.0.0.1:3443
+For SSL connections, navigate to https://localhost:3443
 
 
 ### Empty directories and files
@@ -66,10 +66,11 @@ Empty directories and files, wherever you find them, are only there for complete
 
  ### 1. Application architecture
 
-- We have opted for the Model-View-Controller design pattern that provides a clear separation of concerns, if executed correctly. This ensures that the task of scaling very large applications is simple and transparent.
+- We have opted for the Model-View-Controller design pattern that provides a clear separation of concerns, if executed correctly. This ensures that the task of scaling to a very large codebase with a small or large team(s) remains simple , transparent and causes no source bloat.
 - There's  a router where all controller dispatch is handled and requests are fed to the pertinent controllers.
-- This approach could be further improved by introduction a concept of "atomic" actions where all controller logic will be neatly tucked away in separate modules without crowding out the primary controller file. It also means that different developers can work on the similarly grouped tasks in the same controller  with little or no versioning conflicts!
-- A similar approach to this is controller helpers which contain routines and methods that you'd rather have obscured from the primary controller file. Controller helpers can be found in the uitls sub-folder within the main controllers folder.
+- This approach could be further improved by introduction a concept of "atomic" actions/handlers where all controller logic will be neatly tucked away in separate modules without crowding out the primary controller file. It also means that different developers can work on the similarly grouped tasks in the same controller  with little or no versioning conflicts!
+- A similar approach to this is controller helpers which contain routines and methods that you'd rather have obscured from the primary controller file. Controller helpers can be found in the utils sub-folder within the main controllers folder.
+- For this web-starter, controllers have been renamed to `routes` and controller-actions are `route handlers` or quite simply `handlers`. This is so we're in sync with the Node.js/Express.js terminology.
 
 
 ### 2. Unit testing

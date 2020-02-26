@@ -26,7 +26,6 @@
     "nodemon": "^1.14.11",
     "npm": "^6.9.0",
     "nunjucks": "3.1.7",
-    "path": "^0.12.7",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "url": "^0.11.0",

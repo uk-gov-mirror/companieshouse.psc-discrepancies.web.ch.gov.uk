@@ -8,7 +8,7 @@ const app = express();
 const morgan = require('morgan');
 const logger = require('./config/winston');
 global.appRoot = __dirname;
-const util = require('./controllers/utils');
+const util = require('./routes/utils');
 
 // log requests
 app.use(morgan('combined'));
@@ -37,7 +37,7 @@ app.use(cookieParser());
 // Channel all requests through the router
 require('./router')(app);
 
-// error handling
+// unhandled errors
 app.use((err, req, res, next) => {
   let status = err.status || 500;
   logger.error(`${status} - appError: ${err.stack}`);

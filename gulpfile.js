@@ -10,6 +10,7 @@ const srcDirJs = './app/src/js';
 const srcDirCss = './app/src/scss';
 const dstDirJs = './app/public/js';
 const dstDirCss = './app/public/css';
+const dstDirAssets = './app/public';
 
 // Purge all before building
 gulp.task('clean', () => {
@@ -21,7 +22,7 @@ gulp.task('clean', () => {
 gulp.task('sass', () => {
   return gulp
     .src([`${srcDirCss}/*.scss`])
-    .pipe(concat('app.css'))
+    .pipe(concat('app.min.css'))
     .pipe(sass({
       errLogToConsole: true,
       outputStyle: 'compressed',
@@ -39,7 +40,7 @@ gulp.task('sass', () => {
 gulp.task('js', () => {
   return gulp
     .src([`${srcDirJs}/*.js`, `${srcDirJs}/lib/*.js`])
-    .pipe(concat('app.js'))
+    .pipe(concat('app.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest(dstDirJs));
 });
@@ -48,7 +49,7 @@ gulp.task('js', () => {
 gulp.task('govuk-assets', () => {
   return gulp
     .src(['./node_modules/govuk-frontend/govuk/assets/**/*'])
-    .pipe(gulp.dest(dstDirCss));
+    .pipe(gulp.dest(dstDirAssets));
 });
 
 // Binding all tasks together...

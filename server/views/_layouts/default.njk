@@ -6,14 +6,15 @@
   </head>
 
   <body>
-    <div class="base-shell">
-      <main id="content" role="main">
-          <div class="main-content">
-            {% block main_content %}
-            {% endblock %}
-          </div>
-      </main>
-      {% include "_partials/__footer.njk" %}
-    </div>
+    <main id="root" role="main">
+      <div class="side-nav-left">
+        {% include "_partials/nav/left.njk" %}
+      </div>
+        <div class="content-primary">
+          {% block main_content %}
+          {% endblock %}
+        </div>
+    </main>
+    {% include "_partials/__footer.njk" %}
   </body>
 </html>

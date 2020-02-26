@@ -9,7 +9,7 @@ const httpServer = http.createServer(app);
 httpServer.listen(process.env.NODE_PORT, () => {
   console.log(`Server started at: ${process.env.NODE_HOSTNAME}:${process.env.NODE_PORT}`);
 }).on('error', err => {
-  logger.error(`${status} - HTTP Server error: ${err.message} - ${err.stack}`);
+  logger.error(`${err.status} - HTTP Server error: ${err.message} - ${err.stack}`);
 });
 
 // Start the secure server - possibly not required if you run your app behind a loadbalancer
@@ -24,7 +24,7 @@ if (process.env.NODE_SSL_ENABLED === 'ON') {
   httpsServer.listen(process.env.NODE_PORT_SSL, () => {
     console.log(`Secure server started at: ${process.env.NODE_HOSTNAME_SECURE}:${process.env.NODE_PORT_SSL}`);
   }).on('error', err => {
-    logger.error(`${status} - HTTPS Server error: ${err.message} - ${err.stack}`);
+    logger.error(`${err.status} - HTTPS Server error: ${err.message} - ${err.stack}`);
   });
 }
 

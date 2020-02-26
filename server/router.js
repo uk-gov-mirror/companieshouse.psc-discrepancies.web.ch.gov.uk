@@ -1,9 +1,9 @@
 
-// Do controller dispatch here
+// Do route dispatch here
 
 module.exports = function (app) {
-    app.use('/', require('./controllers/ctrlr-1'));
-    app.use('/ctrlr-1', require('./controllers/ctrlr-1'));
-    app.use('/ctrlr-2', require('./controllers/ctrlr-2'));
-    app.use('/ctrlr-3', require('./controllers/ctrlr-3'));
+    app.use('/', require('./routes/route-1'));
+    app.use('/route-1', require('./routes/route-1'));
+    app.use('/route-2', require('./routes/route-2'));
+    app.use('/route-3', require('./routes/route-3'));
 }
