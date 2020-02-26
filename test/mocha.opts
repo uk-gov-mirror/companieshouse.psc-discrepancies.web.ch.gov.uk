@@ -1,0 +1,4 @@
+--require test/setup.js
+test/server
+--recursive
+--exit
