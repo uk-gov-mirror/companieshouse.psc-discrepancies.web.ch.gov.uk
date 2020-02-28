@@ -14,7 +14,7 @@ describe('routes/Report', () => {
     done();
   });
 
-  it('should serve up the index page', () => {
+  it('should serve up the index page with no mount path', () => {
     let slug = '/';
     return request(app)
       .get(slug)
@@ -23,7 +23,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it('should serve up the index page', () => {
+  it('should serve up the index page on the "/report-a-discrepancy" mount path', () => {
     let slug = '/report-a-discrepancy';
     return request(app)
       .get(slug)
@@ -32,7 +32,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it('should fail serve up the index page', () => {
+  it('should fail to serve up a page on an unhandled mount path', () => {
     let slug = '/not-a-report-a-discrepancy-url';
     return request(app)
       .get(slug)
