@@ -1,5 +1,4 @@
-
-describe('routes/route-1', () => {
+describe('routes/Report', () => {
 
   let app = require(`${serverRoot}/app`);
 
@@ -16,16 +15,7 @@ describe('routes/route-1', () => {
   });
 
   it('should serve up the index page', () => {
-    let slug = '/route-1';
-    return request(app)
-      .get(slug)
-      .then(response => {
-        expect(response).to.have.status(200)
-      });
-  });
-
-  it('should serve up handler-1', () => {
-    let slug = '/route-1/handler-1';
+    let slug = '/';
     return request(app)
       .get(slug)
       .then(response => {
@@ -33,8 +23,17 @@ describe('routes/route-1', () => {
       });
   });
 
-  it('should fail to serve up an invalid path', () => {
-    let slug = '/route-invalid/handler-invalid';
+  it('should serve up the index page', () => {
+    let slug = '/report-a-discrepancy';
+    return request(app)
+      .get(slug)
+      .then(response => {
+        expect(response).to.have.status(200);
+      });
+  });
+
+  it('should fail serve up the index page', () => {
+    let slug = '/not-a-report-a-discrepancy-url';
     return request(app)
       .get(slug)
       .then(response => {
