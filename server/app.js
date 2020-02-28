@@ -14,7 +14,11 @@ const util = require('./routes/utils');
 app.use(morgan('combined'));
 
 // views path + engine set-up
-app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/views');	app.set('views', [
+  __dirname + '/views',
+  __dirname + '/../node_modules/govuk-frontend'
+]);
+
 const nunjucksLoaderOpts = {
   "watch": process.env.NUNJUCKS_LOADER_WATCH !== 'false',
   "noCache": process.env.NUNJUCKS_LOADER_NO_CACHE !== 'true'
