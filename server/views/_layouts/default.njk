@@ -1,20 +1,31 @@
 <!DOCTYPE html>
   <!--[if lt IE 9]><html class="lte-ie8" lang="en"><![endif]-->
-  <!--[(if gt IE 8) | (!IE)]><!--><html lang="en"><!--<![endif]-->
+  <!--[(if gt IE 8) | (!IE)]><!--><html lang="en" class="govuk-template"><!--<![endif]-->
   <head>
-    {% include "_partials/__header.njk" %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <title>{{ title }}</title>
+    <link href="/css/app.min.css" media="screen" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    {# <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /> #}
+
+    {# Set the page object to hold values exported from server to JS files #}
+    <script type="text/javascript">
+      var page = page || {};
+    </script>
+    {# <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script> #}
   </head>
 
-  <body>
-    <main id="root" role="main">
-      <div class="side-nav-left">
-        {% include "_partials/nav/left.njk" %}
-      </div>
-        <div class="content-primary">
-          {% block main_content %}
-          {% endblock %}
-        </div>
-    </main>
+  <body class="govuk-template__body">
+
+    {% include "_partials/__header.njk" %}
+
+    <div class="govuk-width-container">
+      {% block main_content %}
+      {% endblock %}
+    </div>
+
     {% include "_partials/__footer.njk" %}
+
   </body>
 </html>

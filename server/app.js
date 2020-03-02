@@ -14,7 +14,11 @@ const util = require('./routes/utils');
 app.use(morgan('combined'));
 
 // views path + engine set-up
-app.set('views', __dirname + '/views');
+app.set('views', [
+  __dirname + '/views',
+  __dirname + '/../node_modules/govuk-frontend'
+]);
+
 const nunjucksLoaderOpts = {
   "watch": process.env.NUNJUCKS_LOADER_WATCH !== 'false',
   "noCache": process.env.NUNJUCKS_LOADER_NO_CACHE !== 'true'
@@ -28,7 +32,7 @@ app.set('view engine', 'njk');
 
 // serve static files
 app.use(express.static(__dirname + '/../app/public'));
-// app.use('/assets', express.static('./../node_modules/govuk-frontend/govuk/assets'))
+// app.use('/assets', app.static('./../node_modules/govuk-frontend/govuk/assets'));
 
 // parse body into req.body
 app.use(bodyParser.json()); // for parsing application/json
