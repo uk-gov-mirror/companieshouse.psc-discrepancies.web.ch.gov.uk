@@ -1,6 +1,3 @@
-# App config file
-server/config/.env
-
 # Logs
 *.log
 npm-debug.log*
