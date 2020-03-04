@@ -12,6 +12,7 @@ clean:
 	rm -f ./build.log
 
 .PHONY: build
+build:
 	npm i
 	npm run build
 
@@ -50,4 +51,3 @@ endif
 
 .PHONY: dist
 dist: lint test-unit clean package
-
