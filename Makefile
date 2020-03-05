@@ -8,7 +8,6 @@ all: build
 clean:
 	rm -f ./$(artifact_name)-*.zip
 	rm -rf ./build-*
-	rm -rf ./dist
 	rm -f ./build.log
 
 .PHONY: build
@@ -39,7 +38,7 @@ ifndef version
 endif
 	$(info Packaging version: $(version))
 	$(eval tmpdir := $(shell mktemp -d build-XXXXXXXXXX))
-	cp -r ./ $(tmpdir)
+	cp -r `ls -A | grep -v $(tmpdir)` $(tmpdir)
 	cd $(tmpdir) && npm i --production
 	rm $(tmpdir)/package.json $(tmpdir)/package-lock.json
 	cd $(tmpdir) && zip -r ../$(artifact_name)-$(version).zip .
