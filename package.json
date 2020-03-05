@@ -8,6 +8,7 @@
     "watch": "source ./server/config/.env && nodemon -e js,json,html,njk --watch ./ --config ./config/nodemon.json server.js",
     "build": "gulp build",
     "test": "source ./server/config/.env && mocha --recursive test/server",
+    "test:watch": "source ./server/config/.env && mocha --recursive --watch --reporter nyan test/server",
     "lint": "eslint server/*.js server/**/*.js"
   },
   "author": "Moses Wejuli<mwejuli@companieshouse.gov.uk>",
