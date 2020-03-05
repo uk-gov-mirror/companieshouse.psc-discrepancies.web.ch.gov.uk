@@ -1,5 +1,4 @@
 artifact_name       := psc-discrepancies.web.ch.gov.uk
-version             := "unversioned"
 
 .PHONY: all
 all: build
