@@ -29,5 +29,5 @@ else
     source "${APP_DIR}/app_env"
 
     cd ${APP_DIR}
-    exec NODE_PORT=${PORT} npm start
+    NODE_PORT=${PORT} npm start
 fi
