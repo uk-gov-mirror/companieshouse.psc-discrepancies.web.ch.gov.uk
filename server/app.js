@@ -19,6 +19,8 @@ app.set('views', [
   __dirname + '/../node_modules/govuk-frontend'
 ]);
 
+console.log(process.env.FFF)
+console.log("========")
 const nunjucksLoaderOpts = {
   "watch": process.env.NUNJUCKS_LOADER_WATCH !== 'false',
   "noCache": process.env.NUNJUCKS_LOADER_NO_CACHE !== 'true'
