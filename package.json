@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "gulp build",
-    "start": "source ./server/config/.env && gulp build && node server.js",
+    "start": "source ./server/config/.env && node server.js",
     "watch": "source ./server/config/.env && nodemon -e js,json,html,njk --watch ./ --config ./config/nodemon.json server.js",
     "test": "source ./server/config/.env && mocha --recursive test/server",
     "test:watch": "source ./server/config/.env && mocha --recursive --watch --reporter nyan test/server",
