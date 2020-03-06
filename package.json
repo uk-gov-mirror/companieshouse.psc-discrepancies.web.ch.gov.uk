@@ -13,7 +13,9 @@
       "server/**/*.js"
     ],
     "exclude": [
-      "test/**"
+      "test/**",
+      "server/app.js",
+      "server/config/*.*"
     ],
     "check-coverage": true
   },
