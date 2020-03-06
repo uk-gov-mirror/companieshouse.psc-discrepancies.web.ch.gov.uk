@@ -7,7 +7,7 @@ router.get('(/report-a-discrepancy)?', (req, res, next) => {
 });
 
 router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
-	res.render(`${routeViews}/index.njk`);
+	res.render(`${routeViews}/oe_email.njk`);
 });
 
 router.get('/report-a-discrepancy/confirmation', (req, res) => {
