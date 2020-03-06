@@ -39,7 +39,6 @@ endif
 	$(eval tmpdir := $(shell mktemp -d build-XXXXXXXXXX))
 	cp -r `ls -A | grep -v $(tmpdir)` $(tmpdir)
 	cd $(tmpdir) && npm i --production
-	rm $(tmpdir)/package.json $(tmpdir)/package-lock.json
 	cd $(tmpdir) && zip -r ../$(artifact_name)-$(version).zip .
 	rm -rf $(tmpdir)
 
