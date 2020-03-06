@@ -29,6 +29,7 @@ else
     source "${APP_DIR}/app_env"
 
     cd ${APP_DIR}
+    source "server/config/.env"
     export NODE_PORT=${PORT}
-    npm start
+    node server.js
 fi
