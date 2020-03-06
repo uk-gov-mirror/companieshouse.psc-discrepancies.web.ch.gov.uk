@@ -2,5 +2,5 @@ app_name: 'psc.discrepancies.web'
 group: 'web'
 weight: 925
 routes:
-  1: /psc-discrepancy-reports/
-  2: /psc-discrepancy-reports/*
+  1: ^/report-a-discrepancy/
+  2: ^/report-a-discrepancy/*

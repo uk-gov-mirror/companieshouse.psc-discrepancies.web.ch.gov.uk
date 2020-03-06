@@ -1,5 +1,4 @@
-artifact_name       := psc-discrepancies-web
-version             := "unversioned"
+artifact_name       := psc-discrepancies.web.ch.gov.uk
 
 .PHONY: all
 all: build
@@ -8,10 +7,10 @@ all: build
 clean:
 	rm -f ./$(artifact_name)-*.zip
 	rm -rf ./build-*
-	rm -rf ./dist
 	rm -f ./build.log
 
 .PHONY: build
+build:
 	npm i
 	npm run build
 
@@ -38,11 +37,7 @@ ifndef version
 endif
 	$(info Packaging version: $(version))
 	$(eval tmpdir := $(shell mktemp -d build-XXXXXXXXXX))
-	cp -r ./dist/* $(tmpdir)
-	cp -r ./package.json $(tmpdir)
-	cp -r ./package-lock.json $(tmpdir)
-	cp ./start.sh $(tmpdir)
-	cp ./routes.yaml $(tmpdir)
+	cp -r `ls -A | grep -v $(tmpdir)` $(tmpdir)
 	cd $(tmpdir) && npm i --production
 	rm $(tmpdir)/package.json $(tmpdir)/package-lock.json
 	cd $(tmpdir) && zip -r ../$(artifact_name)-$(version).zip .
@@ -50,4 +45,3 @@ endif
 
 .PHONY: dist
 dist: lint test-unit clean package
-
