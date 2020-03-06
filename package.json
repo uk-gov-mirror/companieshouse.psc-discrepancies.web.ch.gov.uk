@@ -3,12 +3,30 @@
   "version": "1.0.0",
   "description": "Node Web Starter for Team Creed",
   "main": "server.js",
+  "nyc": {
+    "statements": 50,
+    "branches": 50,
+    "functions": 50,
+    "lines": 50,
+    "all": true,
+    "include": [
+      "server/**/*.js"
+    ],
+    "exclude": [
+      "test/**",
+      "server/app.js",
+      "server/config/*.*"
+    ],
+    "check-coverage": true
+  },
   "scripts": {
+    "build": "gulp build",
     "start": "source ./server/config/.env && node server.js",
     "watch": "source ./server/config/.env && nodemon -e js,json,html,njk --watch ./ --config ./config/nodemon.json server.js",
-    "build": "gulp build",
     "test": "source ./server/config/.env && mocha --recursive test/server",
     "test:watch": "source ./server/config/.env && mocha --recursive --watch --reporter nyan test/server",
+    "coverage": "nyc --check-coverage --reporter=text-summary npm run test",
+    "coverage:report": "nyc --reporter=lcov --reporter=text npm run test",
     "lint": "eslint server/*.js server/**/*.js"
   },
   "author": "Moses Wejuli<mwejuli@companieshouse.gov.uk>",
@@ -46,6 +64,7 @@
     "gulp-uglify": "^3.0.2",
     "mocha": "^4.1.0",
     "nodemon": "^2.0.2",
+    "nyc": "^15.0.0",
     "pre-commit": "^1.2.2",
     "sinon": "6.3.5",
     "sinon-chai": "^3.3.0"
