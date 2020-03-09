@@ -10,7 +10,7 @@ if [[ -z "${MESOS_SLAVE_PID}" ]]; then
     source ~/.chs_env/global_env
     source ~/.chs_env/psc-discrepancies.web.ch.gov.uk/env
 
-    exec npm start
+    exec npm run watch
 else
 
     PORT="$1"
