@@ -47,6 +47,8 @@ app.use((err, req, res, next) => {
   logger.error(`${status} - appError: ${err.stack}`);
 });
 
+njk.addGlobal('cdnUrl', process.env.CDN_URL);
+
 // unhandled exceptions - ideally, should never get to this point
 process.on('uncaughtException', err => {
   let status = err.status || 500;
