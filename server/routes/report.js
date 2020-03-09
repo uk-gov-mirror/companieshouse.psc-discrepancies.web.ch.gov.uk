@@ -14,4 +14,8 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
 	res.render(`${routeViews}/confirmation.njk`);
 });
 
+router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
+	res.render(`${routeViews}/discrepancy_details.njk`);
+});
+
 module.exports = router;
