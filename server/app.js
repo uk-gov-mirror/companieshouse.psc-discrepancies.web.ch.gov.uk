@@ -36,6 +36,7 @@ app.use(express.static(__dirname + '/../app/public'));
 
 // parse body into req.body
 app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 // Channel all requests through the router
