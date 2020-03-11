@@ -32,10 +32,12 @@ app.set('view engine', 'njk');
 
 // serve static files
 app.use(express.static(__dirname + '/../app/public'));
-// app.use('/assets', app.static('./../node_modules/govuk-frontend/govuk/assets'));
+app.use('/assets', express.static(__dirname + '/../node_modules/govuk-frontend/govuk/assets'));
 
 // parse body into req.body
 app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(cookieParser());
 
 // Channel all requests through the router
@@ -47,7 +49,9 @@ app.use((err, req, res, next) => {
   logger.error(`${status} - appError: ${err.stack}`);
 });
 
-njk.addGlobal('cdnUrl', process.env.CDN_URL);
+njk.addGlobal('cdnUrlCss', process.env.CDN_URL_CSS);
+njk.addGlobal('cdnUrlJs', process.env.CDN_URL_JS);
+njk.addGlobal('cdnHost', process.env.CDN_HOST);
 
 // unhandled exceptions - ideally, should never get to this point
 process.on('uncaughtException', err => {
