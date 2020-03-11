@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const morgan = require('morgan');
 const logger = require('./config/winston');
-global.appRoot = __dirname;
+global.serverRoot = __dirname;
 const util = require('./routes/utils');
 
 // log requests

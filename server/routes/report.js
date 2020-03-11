@@ -1,7 +1,7 @@
 // eslint-disable-next-line new-cap
 const router = require('express').Router();
 const routeViews = 'report';
-const Validator = require(`${appRoot}/lib/validation`);
+const Validator = require(`${serverRoot}/lib/validation`);
 
 const validator = new Validator();
 
@@ -14,7 +14,6 @@ router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 });
 
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
-	console.log("we're in email post");
 	validator.isValidEmail(req.body.email)
 		.then(_ => {
 			res.redirect(302, '/report-a-discrepancy/discrepancy-details');

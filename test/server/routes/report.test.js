@@ -1,5 +1,8 @@
 describe('routes/Report', () => {
 
+  const errorManifest = require(`${serverRoot}/lib/validation/error_manifest`);
+  const Validator = require(`${serverRoot}/lib/validation`);
+  const validator = new Validator();
   let app = require(`${serverRoot}/app`);
 
   beforeEach(done => {
@@ -46,6 +49,38 @@ describe('routes/Report', () => {
     return request(app)
       .get(slug)
       .then(response => {
+        expect(response).to.have.status(200);
+      });
+  });
+
+  it('should process the obliged entity e-mail page payload and redirect to discrepancy details page', () => {
+    let slug = '/report-a-discrepancy/obliged-entity/email';
+    let stub = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
+    let data = {email: "valid-format@domain.tld"};
+    return request(app)
+      .post(slug)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.email);
+        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/discrepancy\-details/g);
+      });
+  });
+
+  it('should return same page with error message if email is incorrectly formatted', () => {
+
+    let data = {email: "incorrect-email-format"};
+    let validationError = errorManifest.email;
+    let slug = '/report-a-discrepancy/obliged-entity/email';
+    let stub = sinon.stub(Validator.prototype, 'isValidEmail').rejects(validationError);
+
+    return request(app)
+      .post(slug)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.email);
+        expect(validator.isValidEmail(data.email)).to.be.rejectedWith(validationError);
         expect(response).to.have.status(200);
       });
   });

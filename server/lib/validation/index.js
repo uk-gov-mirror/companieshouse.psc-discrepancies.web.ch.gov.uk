@@ -1,4 +1,4 @@
-const errorManifest = require(`${appRoot}/lib/validation/error_manifest`)
+const errorManifest = require(`${serverRoot}/lib/validation/error_manifest`)
 
 class Validator {
 
