@@ -53,7 +53,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it('should process the obliged entity e-mail page payload and redirect to discrepancy details page', () => {
+  it.only('should process the obliged entity e-mail page payload and redirect to discrepancy details page', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
     let stub = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
     let data = {email: "valid-format@domain.tld"};
@@ -63,6 +63,7 @@ describe('routes/Report', () => {
       .then(response => {
         expect(stub).to.have.been.calledOnce;
         expect(stub).to.have.been.calledWith(data.email);
+        expect(validator.isValidEmail(data.email)).to.eventually.equal(true);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/discrepancy\-details/g);
       });
   });
