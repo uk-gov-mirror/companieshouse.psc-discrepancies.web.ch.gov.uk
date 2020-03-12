@@ -7,7 +7,7 @@
 <div class="chs-psc-outer chs-psc-start">
 
   <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
-            
+
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">What are your contact details?</h1>
@@ -17,7 +17,6 @@
             There is a problem
           </h2>
           <div class="govuk-error-summary__body">
-            
             <ul class="govuk-list govuk-error-summary__list">
             {% for errKey, errMsg in this_errors%}
               <li>
@@ -26,8 +25,8 @@
             {% endfor %}
             </ul>
           </div>
+        {% endif %}
         </div>
-      {% endif %}
         <form action="/report-a-discrepancy/obliged-entity/email" method="post" enctype="application/json">
           
           <div class="govuk-form-group">
