@@ -82,6 +82,7 @@ describe('routes/Report', () => {
         expect(stub).to.have.been.calledOnce;
         expect(stub).to.have.been.calledWith(data.email);
         expect(validator.isValidEmail(data.email)).to.be.rejectedWith(validationError);
+        expect(response.text).include(data.email);
         expect(response).to.have.status(200);
       });
   });
