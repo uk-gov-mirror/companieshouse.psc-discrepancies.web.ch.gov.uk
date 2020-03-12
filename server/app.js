@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const morgan = require('morgan');
 const logger = require('./config/winston');
-global.appRoot = __dirname;
+global.serverRoot = __dirname;
 const util = require('./routes/utils');
 
 // log requests
@@ -37,7 +37,6 @@ app.use('/assets', express.static(__dirname + '/../node_modules/govuk-frontend/g
 // parse body into req.body
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({extended: true}));
-
 app.use(cookieParser());
 
 // Channel all requests through the router
