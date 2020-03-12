@@ -18,7 +18,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 		.then(_ => {
 			res.redirect(302, '/report-a-discrepancy/discrepancy-details');
 		}).catch(err => {
-			res.render(`${routeViews}/oe_email.njk`, {this_errors: err});
+			res.render(`${routeViews}/oe_email.njk`, {this_errors: err, this_data: req.body});
 		});
 });
 
