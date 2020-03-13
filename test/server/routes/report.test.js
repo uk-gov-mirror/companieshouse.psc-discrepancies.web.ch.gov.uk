@@ -89,9 +89,34 @@ describe('routes/Report', () => {
 
   it('should serve up the discrepancy details page with discrepancy-details path', () => {
     let slug = '/report-a-discrepancy/discrepancy-details';
+    let stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
+    let data = {details: "valid"};
     return request(app)
-      .get(slug)
+      .post(slug)
+      .send(data)
       .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.details);
+        expect(validator.isTextareaNotEmpty(data.details)).to.eventually.equal(true);
+        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/confirmation/g);
+      });
+  });
+
+  it('should return the discrepancy details page with error message if details are not entered', () => {
+
+    let data = {details: ""};
+    let validationError = errorManifest.details;
+    let slug = '/report-a-discrepancy/discrepancy-details';
+    let stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').rejects(validationError);
+
+    return request(app)
+      .post(slug)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.details);
+        expect(validator.isTextareaNotEmpty(data.details)).to.be.rejectedWith(validationError);
+        expect(response.text).include(data.details);
         expect(response).to.have.status(200);
       });
   });

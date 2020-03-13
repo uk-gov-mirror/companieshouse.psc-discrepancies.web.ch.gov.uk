@@ -19,6 +19,18 @@ class Validator {
     });
   }
 
+  isTextareaNotEmpty(text) {
+    return new Promise((resolve, reject) => {
+      let notEmptyRegex = new RegExp(/[a-zA-Z]+/);
+      if(typeof text === "undefined" || text === null || !notEmptyRegex.test(text)) {
+        this.errors.details = errorManifest.details;
+        reject(this.errors);
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
 }
 
 module.exports = Validator;

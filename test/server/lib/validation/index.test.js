@@ -21,12 +21,27 @@ describe('routes/Report', () => {
     expect(validator.isValidEmail('matt-matt@matt.com')).to.eventually.equal(true);
   });
 
-  it('should validate a correctly formatted email', () => {
+  it('should validate incorrectly formatted emails', () => {
     let errors = {};
     errors.email = errorManifest.email;
     expect(validator.isValidEmail('matt.com')).to.be.rejectedWith(errors);
     expect(validator.isValidEmail('')).to.be.rejectedWith(errors);
     expect(validator.isValidEmail(undefined)).to.be.rejectedWith(errors);
     expect(validator.isValidEmail(null)).to.be.rejectedWith(errors);
+  });
+
+  it('should validate textarea has alphabetic text entered', () => {
+    expect(validator.isTextareaNotEmpty('some text')).to.eventually.equal(true);
+    expect(validator.isTextareaNotEmpty('some text and the number 1')).to.eventually.equal(true);
+    expect(validator.isTextareaNotEmpty('1 and some text')).to.eventually.equal(true);
+  });
+
+  it('should validate textarea has no text or numbers only', () => {
+    let errors = {};
+    errors.details = errorManifest.details;
+    expect(validator.isTextareaNotEmpty('')).to.be.rejectedWith(errors);
+    expect(validator.isTextareaNotEmpty('123')).to.be.rejectedWith(errors);
+    expect(validator.isTextareaNotEmpty(undefined)).to.be.rejectedWith(errors);
+    expect(validator.isTextareaNotEmpty(null)).to.be.rejectedWith(errors);
   });
 });
