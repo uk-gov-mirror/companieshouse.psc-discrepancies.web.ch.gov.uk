@@ -8,6 +8,7 @@ class Validator {
   }
 
   isValidEmail(email) {
+    this.errors = {};
     return new Promise((resolve, reject) => {
       let validEmailRegex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]+$/);
       if(validEmailRegex.test(email)) {
@@ -20,6 +21,7 @@ class Validator {
   }
 
   isTextareaNotEmpty(text) {
+    this.errors = {};
     return new Promise((resolve, reject) => {
       let notEmptyRegex = new RegExp(/[a-zA-Z]+/);
       if(typeof text === "undefined" || text === null || !notEmptyRegex.test(text)) {
