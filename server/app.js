@@ -32,7 +32,7 @@ app.set('view engine', 'njk');
 
 // serve static files
 app.use(express.static(__dirname + '/../app/public'));
-app.use('/assets', express.static(__dirname + '/../node_modules/govuk-frontend/govuk/assets'));
+//app.use('/assets', express.static(__dirname + '/../node_modules/govuk-frontend/govuk/assets'));
 
 // parse body into req.body
 app.use(bodyParser.json()); // for parsing application/json

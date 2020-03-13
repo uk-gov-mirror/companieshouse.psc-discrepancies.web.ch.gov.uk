@@ -1,4 +1,5 @@
 $govuk-global-styles: true;
+$govuk-assets-path: "/" !default;
 
 @import "node_modules/govuk-frontend/govuk/all";
 @import 'partials/banner';
