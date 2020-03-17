@@ -1,0 +1,45 @@
+{% extends "_layouts/default.njk" %}
+
+{% block main_content %}
+
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+    <div class="govuk-grid-column-two-thirds">
+        <form action="/discrepancy-details/company-number" method="post">
+
+            <div class="govuk-form-group">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--xl" for="company-number">
+                        What is the company number for the PSC with the discrepancy?
+                    </label>
+
+                </h1>
+
+                <span id="company-number-hint" class="govuk-hint">
+                    This is the 8 character reference issued by Companies House when the company was set up.
+                </span>
+
+                <input class="govuk-input govuk-input--width-5" id="company-number" name="company-number" type="text" aria-describedby="company-number-hint">
+            </div>
+
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Help with company number
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <p>Use the
+                        <a target="blank" href="https://beta.companieshouse.gov.uk/">Companies House service</a>
+                        to find it.</p>
+                </div>
+            </details>
+
+            <button class="govuk-button" data-module="govuk-button">
+                Continue
+            </button>
+
+        </form>
+    </div>
+	
+{% endblock %}

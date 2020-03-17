@@ -22,6 +22,10 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
     });
 });
 
+router.get('/report-a-discrepancy/company-number', (req, res) => {
+  res.render(`${routeViews}/company_number.njk`);
+});
+
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
   res.render(`${routeViews}/discrepancy_details.njk`);
 });

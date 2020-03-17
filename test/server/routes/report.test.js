@@ -87,6 +87,15 @@ describe('routes/Report', () => {
       });
   });
 
+  it('should serve up the company number page with company number path', () => {
+    let slug = '/report-a-discrepancy/company-number';
+    return request(app)
+      .get(slug)
+      .then(response => {
+        expect(response).to.have.status(200);
+      });
+  });
+
   it('should serve up the discrepancy details page with discrepancy-details path', () => {
     let slug = '/report-a-discrepancy/discrepancy-details';
     let stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
