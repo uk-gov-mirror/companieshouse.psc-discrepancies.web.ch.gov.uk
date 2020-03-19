@@ -5,21 +5,38 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
     <div class="govuk-grid-column-two-thirds">
-        <form action="/discrepancy-details/company-number" method="post">
+        {% if this_errors is not undefined %}
+            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                
+                    <ul class="govuk-list govuk-error-summary__list">
+                        {% for errKey, errMsg in this_errors%}
+                            <li>
+                                <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        <form action="/report-a-discrepancy/company-number" method="post">
 
-            <div class="govuk-form-group">
+            <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
                 <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--xl" for="company-number">
+                    <label class="govuk-label govuk-label--xl" for="number">
                         What is the company number for the PSC with the discrepancy?
                     </label>
 
                 </h1>
 
-                <span id="company-number-hint" class="govuk-hint">
+                <span id="number-hint" class="govuk-hint">
                     This is the 8 character reference issued by Companies House when the company was set up.
                 </span>
 
-                <input class="govuk-input govuk-input--width-5" id="company-number" name="company-number" type="text" aria-describedby="company-number-hint">
+                <input class="govuk-input govuk-input--width-5{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.number }}" id="number" name="number" type="text" aria-describedby="number-hint">
             </div>
 
             <details class="govuk-details" data-module="govuk-details">
