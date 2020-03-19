@@ -33,6 +33,21 @@ class Validator {
     });
   }
 
+  isCompanyNumberFormatted(number) {
+    this.errors = {};
+    return new Promise((resolve, reject) => {
+      if(typeof number === "undefined" || number === null || number.length === 0) {
+        this.errors.number = errorManifest.number.empty;
+        reject(this.errors);
+      } else if (number.length !== 8) {
+        this.errors.number = errorManifest.number.incorrect;
+        reject(this.errors);
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
 }
 
 module.exports = Validator;

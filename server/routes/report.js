@@ -16,10 +16,23 @@ router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   validator.isValidEmail(req.body.email)
    .then(_ => {
-      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+      res.redirect(302, '/report-a-discrepancy/company-number');
     }).catch(err => {
       res.render(`${routeViews}/oe_email.njk`, {this_errors: err, this_data: req.body});
     });
+});
+
+router.get('/report-a-discrepancy/company-number', (req, res) => {
+  res.render(`${routeViews}/company_number.njk`);
+});
+
+router.post('/report-a-discrepancy/company-number', (req, res) => {
+  validator.isCompanyNumberFormatted(req.body.number)
+  .then(_ => {
+    res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+  }).catch(err => {
+    res.render(`${routeViews}/company_number.njk`, {this_errors: err, this_data: req.body});
+  })
 });
 
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {

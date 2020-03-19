@@ -53,7 +53,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it('should process the obliged entity e-mail page payload and redirect to discrepancy details page', () => {
+  it('should process the obliged entity e-mail page payload and redirect to company number page', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
     let stub = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
     let data = {email: "valid-format@domain.tld"};
@@ -64,7 +64,7 @@ describe('routes/Report', () => {
         expect(stub).to.have.been.calledOnce;
         expect(stub).to.have.been.calledWith(data.email);
         expect(validator.isValidEmail(data.email)).to.eventually.equal(true);
-        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/discrepancy\-details/g);
+        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/company\-number/g);
       });
   });
 
@@ -83,6 +83,49 @@ describe('routes/Report', () => {
         expect(stub).to.have.been.calledWith(data.email);
         expect(validator.isValidEmail(data.email)).to.be.rejectedWith(validationError);
         expect(response.text).include(data.email);
+        expect(response).to.have.status(200);
+      });
+  });
+
+  it('should serve up the company number page with company number path', () => {
+    let slug = '/report-a-discrepancy/company-number';
+    return request(app)
+      .get(slug)
+      .then(response => {
+        expect(response).to.have.status(200);
+      });
+  });
+
+  it('should process the company number page payload and redirect to discrepancy details page', () => {
+    let slug = '/report-a-discrepancy/company-number';
+    let stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
+    let data = {number: "12345678"};
+    return request(app)
+      .post(slug)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.number);
+        expect(validator.isCompanyNumberFormatted(data.number)).to.eventually.equal(true);
+        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/discrepancy\-details/g);
+      });
+  });
+
+  it('should return company number page with error message if number is incorrectly formatted', () => {
+
+    let data = {number: "123456"};
+    let validationError = errorManifest.number.incorrect;
+    let slug = '/report-a-discrepancy/company-number';
+    let stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').rejects(validationError);
+
+    return request(app)
+      .post(slug)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.number);
+        expect(validator.isCompanyNumberFormatted(data.number)).to.be.rejectedWith(validationError);
+        expect(response.text).include(data.number);
         expect(response).to.have.status(200);
       });
   });
