@@ -32,8 +32,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm test",
-      "pre-push": "npm test && npm run lint"
+      "pre-commit": "npm test && npm run lint"
     }
   },
   "author": "Moses Wejuli<mwejuli@companieshouse.gov.uk>",
