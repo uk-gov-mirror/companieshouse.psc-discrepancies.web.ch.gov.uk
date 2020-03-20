@@ -1,6 +1,6 @@
 const winston = require('winston');
-const { transports, format, createLogger } = winston;
-const { combine, errors, timestamp } = format;
+const { format } = winston;
+const { combine } = format;
 const colorizer = winston.format.colorize();
 
 // define the custom settings for each transport (file, console)
@@ -12,13 +12,13 @@ const options = {
     json: true,
     maxsize: 5242880, // 5MB
     maxFiles: 5,
-    format: combine (
+    format: combine(
       winston.format.timestamp(),
       winston.format.simple(),
       winston.format.printf(msg => {
-        const {timestamp, level, message, ...args} = msg;
+        const { timestamp, level, message, ...args } = msg;
         return `${timestamp.substr(0, 19)} - ${level}: ${message} ${Object.keys(args).length ? '-' + JSON.stringify(args, null, 2) : ''}`;
-      }),
+      })
     )
   },
   console: {
@@ -26,7 +26,7 @@ const options = {
     handleExceptions: true,
     json: false,
     colorize: true,
-    format: combine (
+    format: combine(
       winston.format.timestamp(),
       winston.format.simple(),
       winston.format.printf(msg =>
@@ -37,17 +37,17 @@ const options = {
 };
 
 // instantiate a new Winston Logger with the settings defined above
-let logger = winston.createLogger({
+const logger = winston.createLogger({
   transports: [
     new winston.transports.File(options.file),
     new winston.transports.Console(options.console)
   ],
-  exitOnError: false, // do not exit on handled exceptions
+  exitOnError: false // do not exit on handled exceptions
 });
 
 // create a stream object with a 'write' function that will be used by `morgan`
 logger.stream = {
-  write: function(message, encoding) {
+  write: function (message, encoding) {
     // use the 'info' log level so the output will be picked up by both transports (file and console)
     logger.info(message);
   }
