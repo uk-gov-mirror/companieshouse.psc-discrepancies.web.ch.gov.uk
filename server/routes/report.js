@@ -1,4 +1,3 @@
-// eslint-disable-next-line new-cap
 const router = require('express').Router();
 const routeViews = 'report';
 const Validator = require(`${serverRoot}/lib/validation`);
@@ -15,10 +14,13 @@ router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   validator.isValidEmail(req.body.email)
-   .then(_ => {
+    .then(_ => {
       res.redirect(302, '/report-a-discrepancy/company-number');
     }).catch(err => {
-      res.render(`${routeViews}/oe_email.njk`, {this_errors: err, this_data: req.body});
+      res.render(`${routeViews}/oe_email.njk`, {
+        this_errors: err,
+        this_data: req.body
+      });
     });
 });
 
@@ -28,11 +30,14 @@ router.get('/report-a-discrepancy/company-number', (req, res) => {
 
 router.post('/report-a-discrepancy/company-number', (req, res) => {
   validator.isCompanyNumberFormatted(req.body.number)
-  .then(_ => {
-    res.redirect(302, '/report-a-discrepancy/discrepancy-details');
-  }).catch(err => {
-    res.render(`${routeViews}/company_number.njk`, {this_errors: err, this_data: req.body});
-  })
+    .then(_ => {
+      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+    }).catch(err => {
+      res.render(`${routeViews}/company_number.njk`, {
+        this_errors: err,
+        this_data: req.body
+      });
+    });
 });
 
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
@@ -41,10 +46,13 @@ router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
   validator.isTextareaNotEmpty(req.body.details)
-   .then(_ => {
+    .then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
     }).catch(err => {
-      res.render(`${routeViews}/discrepancy_details.njk`, {this_errors: err, this_data: req.body});
+      res.render(`${routeViews}/discrepancy_details.njk`, {
+        this_errors: err,
+        this_data: req.body
+      });
     });
 });
 
