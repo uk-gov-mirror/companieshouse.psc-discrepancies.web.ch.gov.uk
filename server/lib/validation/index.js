@@ -11,7 +11,7 @@ class Validator {
     this.errors = {};
     return new Promise((resolve, reject) => {
       let validEmailRegex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]+$/);
-      if(email === undefined || email === null || email.length === 0){
+      if(typeof email === 'undefined' || email === null || email.length === 0){
         this.errors.email = errorManifest.email.blank;
         reject(this.errors);
       } else if(!validEmailRegex.test(email)) {
