@@ -21,10 +21,15 @@ describe('server/lib/validation/index', () => {
     expect(validator.isValidEmail('matt-matt@matt.com')).to.eventually.equal(true);
   });
 
-  it('should validate incorrectly formatted emails', () => {
+  it('should validate and return an error if email address is not correctly formatted', () => {
     let errors = {};
-    errors.email = errorManifest.email;
+    errors.email = errorManifest.email.incorrect;
     expect(validator.isValidEmail('matt.com')).to.be.rejectedWith(errors);
+  });
+
+  it('should validate and return an error for blank email addresses', () => {
+    let errors = {};
+    errors.email = errorManifest.email.blank;
     expect(validator.isValidEmail('')).to.be.rejectedWith(errors);
     expect(validator.isValidEmail(undefined)).to.be.rejectedWith(errors);
     expect(validator.isValidEmail(null)).to.be.rejectedWith(errors);

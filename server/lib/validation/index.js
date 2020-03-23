@@ -11,11 +11,14 @@ class Validator {
     this.errors = {};
     return new Promise((resolve, reject) => {
       let validEmailRegex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]+$/);
-      if(validEmailRegex.test(email)) {
-        resolve(true);
-      } else {
-        this.errors.email = errorManifest.email;
+      if(typeof email === 'undefined' || email === null || email.length === 0){
+        this.errors.email = errorManifest.email.blank;
         reject(this.errors);
+      } else if(!validEmailRegex.test(email)) {
+        this.errors.email = errorManifest.email.incorrect;
+        reject(this.errors);
+      } else {
+        resolve(true);
       }
     });
   }
