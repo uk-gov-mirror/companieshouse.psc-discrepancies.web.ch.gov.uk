@@ -3,6 +3,12 @@ describe('routes/Report', () => {
   const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
   const Validator = require(`${serverRoot}/lib/validation`);
   const validator = new Validator();
+
+  const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
+  const pscDiscrepancyService = new PscDiscrepancyService();
+
+  const serviceData = require(`${testRoot}/server/_fakeData/services/psc_discrepancy_report`);
+
   let app = require(`${serverRoot}/app`);
 
   beforeEach(done => {
@@ -55,16 +61,20 @@ describe('routes/Report', () => {
 
   it('should process the obliged entity e-mail page payload and redirect to company number page', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
-    let stub = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
-    let data = {email: "valid-format@domain.tld"};
+    let stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
+    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.oeEmailPost));
+    let data = { email: "valid-format@domain.tld" };
     return request(app)
       .post(slug)
       .send(data)
       .then(response => {
-        expect(stub).to.have.been.calledOnce;
-        expect(stub).to.have.been.calledWith(data.email);
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubValidator).to.have.been.calledWith(data.email);
         expect(validator.isValidEmail(data.email)).to.eventually.equal(true);
-        //expect(response).to.redirectTo(/\/report\-a\-discrepancy\/company\-number/g);
+        expect(stubPscService).to.have.been.calledOnce;
+        expect(stubPscService).to.have.been.calledWith(data.email);
+        expect(pscDiscrepancyService.saveEmail(data.email)).to.eventually.eql(serviceData.oeEmailPost);
+        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/company\-number/g);
         expect(response).to.have.status(200);
       });
   });

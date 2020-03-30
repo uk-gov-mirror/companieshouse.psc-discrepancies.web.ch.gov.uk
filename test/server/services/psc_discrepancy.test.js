@@ -2,6 +2,9 @@ describe('services/pscDiscrepancy', () => {
     const request = require('request-promise-native');
     const Service = require(`${serverRoot}/services/psc_discrepancy`);
     const service = new Service();
+
+    const serviceData = require(`${testRoot}/server/_fakeData/services/psc_discrepancy_report`);
+
     beforeEach(done => {
       sinon.reset();
       sinon.restore();
@@ -21,9 +24,9 @@ describe('services/pscDiscrepancy', () => {
         },
         json: true
       };
-      let stub = sinon.stub(request, 'post').returns(Promise.resolve({key:"value"}));
+      let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.oeEmailPost));
       service.request = stub;
-      expect(service.saveEmail('matt@matt.com')).to.eventually.eql({key:"value"});
+      expect(service.saveEmail('matt@matt.com')).to.eventually.eql(serviceData.oeEmailPost);
       expect(stub).to.have.been.calledOnce;
       expect(stub).to.have.been.calledWith(postOptions);
     });

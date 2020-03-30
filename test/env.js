@@ -1,17 +1,19 @@
 const envVars = {
-    setVars: () => {
-        process.env.NODE_ENV = "test node env"
-        process.env.PSC_DISCREPANCIES_WEB_PORT = "3600";
-        process.env.WEB_DOMAIN = "web.chs-dev.internal";
-        process.env.NODE_HOSTNAME = "node_hostname";
-        process.env.NODE_HOSTNAME_SECURE = "node_hostname_secure";
-        process.env.NUNJUCKS_LOADER_WATCH = "nunjucks_loader_watch";
-        process.env.NUNJUCKS_LOADER_NO_CACHE = "nunjucks_loader_no_cache";
-        process.env.CDN_HOST = "cdn_host";
-        process.env.PSC_DISCREPANCIES_API_CH_GOV_UK_URL = "http://web.chs-dev.internal:18522";
-        // This Request key is just a random 256 bit base64 encoded string
-        process.env.CHS_API_KEY = "uqq1imjrxynuNrPPSr32fsC5KQaHV42uu08MKgizyj0=";
-    }
-  };
+  setVars: () => {
+    process.env.NODE_ENV = "DEV"
+    process.env.NODE_PORT = "3009";
+    process.env.NODE_HOSTNAME = "web.chs-dev.internal";
+    process.env.NODE_HOSTNAME_SECURE = "web.chs-dev.internal";
+    process.env.NODE_BASE_URL = "web.chs-dev.internal";
+    process.env.NODE_BASE_URL_SECURE = "web.chs-dev.internal";
+    process.env.NUNJUCKS_LOADER_WATCH = false
+    process.env.NUNJUCKS_LOADER_NO_CACHE =true
+    process.env.CDN_HOST = "lhttp://localhost:3009";
+    process.env.PSC_DISCREPANCY_REPORT_SERVICE_BASE_URL = "http://web.chs-dev.internal:18522";
+    process.env.PSC_DISCREPANCY_REPORT_SERVICE_API_KEY = "";
+    process.env.PSC_DISCREPANCY_REPORT_SERVICE_USERNAME= "";
+    process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD = "";
+  }
+};
 
-  module.exports = envVars;
+module.exports = envVars;
