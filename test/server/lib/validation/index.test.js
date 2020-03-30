@@ -1,6 +1,6 @@
 describe('server/lib/validation/index', () => {
 
-  const errorManifest = require(`${serverRoot}/lib/validation/error_manifest`);
+  const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
   const Validator = require(`${serverRoot}/lib/validation`);
   const validator = new Validator();
 

@@ -7,6 +7,7 @@ const chaiHttp = require('chai-http');
 const chaiAsPromised = require("chai-as-promised");
 const sinonChai = require('sinon-chai');
 const expect = require('chai').expect;
+const envVars = require('./env');
 
 
 chai.use(chaiAsPromised);
@@ -24,3 +25,5 @@ global.request = chai.request;
 global.testRoot = __dirname;
 global.appRoot = __dirname + './../app';
 global.serverRoot = __dirname + './../server';
+
+envVars.setVars();

@@ -6,16 +6,17 @@ const rp = require('request-promise-native');
 
    constructor() {
      this.server = {
-       apiKey: process.env.PSC_SERVICE_API_KEY,
-       baseUrl: process.env.PSC_SERVICE_BASE_URL,
+       apiKey: process.env.PSC_DISCREPANCY_REPORT_SERVICE_API_KEY,
+       baseUrl: process.env.PSC_DISCREPANCY_REPORT_SERVICE_BASE_URL,
        auth: {
-         username: process.env.PSC_SERVICE_USERNAME,
-         password: process.env.PSC_SERVICE_PASSWORD
+         username: process.env.PSC_DISCREPANCY_REPORT_SERVICE_USERNAME,
+         password: process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD
        }
      }
    }
    
    saveEmail(email) {
+    console.log('baseUrl: ' + `${this.server.baseUrl}`);
     let options = {
        method: 'POST',
        uri: `${this.server.baseUrl}`,
@@ -24,7 +25,7 @@ const rp = require('request-promise-native');
        },
        json: true
      };
-     rp(options);
+     return rp(options);
    }
  }
  module.exports = PscDiscrepancy;

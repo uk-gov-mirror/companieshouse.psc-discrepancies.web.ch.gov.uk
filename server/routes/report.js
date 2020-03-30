@@ -2,6 +2,7 @@ const router = require('express').Router();
 const routeViews = 'report';
 const Validator = require(`${serverRoot}/lib/validation`);
 const PscDiscrepancy = require(`${serverRoot}/services/psc_discrepancy`);
+const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
 
 const pscDiscrepancy = new PscDiscrepancy();
 const validator = new Validator();
@@ -21,8 +22,14 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
    }).then(r => {
      return res.redirect(302, '/report-a-discrepancy/company-number');
    }).catch(err => {
+      let e = {};
+      if(typeof err.statusCode !== 'undefined') {
+        e.genericError = errorManifest.genericError;
+      } else {
+        e = err;
+      }
       res.render(`${routeViews}/oe_email.njk`, {
-        this_errors: err,
+        this_errors: e,
         this_data: req.body
       });
     });
