@@ -53,7 +53,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it.only('should process the obliged entity e-mail page payload and redirect to company number page', () => {
+  it('should process the obliged entity e-mail page payload and redirect to company number page', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
     let stub = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
     let data = {email: "valid-format@domain.tld"};

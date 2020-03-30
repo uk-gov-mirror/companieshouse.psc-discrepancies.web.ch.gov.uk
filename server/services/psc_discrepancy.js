@@ -13,10 +13,10 @@ const rp = require('request-promise-native');
          password: process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD
        }
      }
+     this.request = rp;
    }
    
    saveEmail(email) {
-    console.log('baseUrl: ' + `${this.server.baseUrl}`);
     let options = {
        method: 'POST',
        uri: `${this.server.baseUrl}`,
@@ -25,7 +25,7 @@ const rp = require('request-promise-native');
        },
        json: true
      };
-     return rp(options);
+     return this.request(options);
    }
  }
  module.exports = PscDiscrepancy;
