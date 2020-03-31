@@ -16,20 +16,24 @@
             There is a problem
           </h2>
           <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-            {% for errKey, errMsg in this_errors%}
-              <li>
-                <a href="#{{errKey}}">{{errMsg.summary}}</a>
-              </li>
-            {% endfor %}
-            </ul>
+            {% if this_errors.genericError is not undefined %}
+              <p class="govuk-error-message">{{this_errors.genericError.summary}}</p>
+            {% else %}
+              <ul class="govuk-list govuk-error-summary__list">
+              {% for errKey, errMsg in this_errors%}
+                <li>
+                  <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                </li>
+              {% endfor %}
+              </ul>
+            {% endif %}
           </div>
         </div>
         {% endif %}
         <h1 class="govuk-heading-xl">What are your contact details?</h1>
         <form action="/report-a-discrepancy/obliged-entity/email" method="post" enctype="application/json">
 
-          <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
+          <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.email is not undefined }}">
             <label class="govuk-label" for="email">
               Email address
             </label>
@@ -40,7 +44,7 @@
                 <span class="govuk-visually-hidden">Error:</span>
                 {{this_errors.email.inline}}
             </span>
-            <input value="{{ this_data.email }}" class="govuk-input{{ ' govuk-input--error' if this_errors is not undefined }}" id="email" name="email" type="text" aria-describedby="email-hint" autocomplete="email" spellcheck="false">
+            <input value="{{ this_data.email }}" class="govuk-input{{ ' govuk-input--error' if this_errors.email is not undefined }}" id="email" name="email" type="text" aria-describedby="email-hint" autocomplete="email" spellcheck="false">
           </div>
 
           <button class="govuk-button" data-module="govuk-button">

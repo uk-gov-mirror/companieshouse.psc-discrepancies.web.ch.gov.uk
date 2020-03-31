@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const routeViews = 'report';
 const Validator = require(`${serverRoot}/lib/validation`);
+const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
+const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
 
+const pscDiscrepancyService = new PscDiscrepancyService();
 const validator = new Validator();
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
@@ -14,11 +17,19 @@ router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   validator.isValidEmail(req.body.email)
-    .then(_ => {
-      res.redirect(302, '/report-a-discrepancy/company-number');
+    .then(r => {
+      return pscDiscrepancyService.saveEmail(req.body.email);
+    }).then(r => {
+      return res.redirect(302, '/report-a-discrepancy/company-number');
     }).catch(err => {
+      let e = {};
+      if (typeof err.statusCode !== 'undefined') {
+        e.genericError = errorManifest.genericError;
+      } else {
+        e = err;
+      }
       res.render(`${routeViews}/oe_email.njk`, {
-        this_errors: err,
+        this_errors: e,
         this_data: req.body
       });
     });

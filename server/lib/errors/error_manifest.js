@@ -1,4 +1,7 @@
 let ErrorManifest = {
+  genericError: {
+    summary: "Internal server error. Please try again"
+  },
   email: {
     blank: {
       summary: "Enter your email address",
