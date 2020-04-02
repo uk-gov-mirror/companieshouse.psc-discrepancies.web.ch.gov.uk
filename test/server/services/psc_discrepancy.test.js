@@ -18,7 +18,7 @@ describe('services/pscDiscrepancy', () => {
     it('should save an obliged entity\'s email to the PSC Discrepancy Service', () => {
       let postOptions = {
         method: 'POST',
-        uri: `${process.env.PSC_DISCREPANCY_REPORT_SERVICE_BASE_URL}`,
+        uri: `${process.env.PSC_DISCREPANCY_REPORT_SERVICE_BASE_URL}/psc-discrepancy-reports`,
         body: {
           email: 'matt@matt.com'
         },
