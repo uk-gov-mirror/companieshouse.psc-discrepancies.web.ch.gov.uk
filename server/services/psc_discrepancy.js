@@ -18,9 +18,24 @@ class PscDiscrepancy {
   saveEmail (email) {
     const options = {
       method: 'POST',
-      uri: `${this.server.baseUrl}`,
+      uri: `${this.server.baseUrl}/psc-discrepancy-reports`,
       body: {
         email: email
+      },
+      json: true
+    };
+    return this.request(options);
+  }
+
+  saveDiscrepancyDetails (data) {
+    const options = {
+      method: 'POST',
+      uri: `${this.server.baseUrl}/${data.report.serverResponse.links.self}/discrepancies`,
+      body: {
+        details: data.payload.details,
+        links: {
+          'psc-discrepancy-reports': `${data.report.serverResponse.links.self}`
+        }
       },
       json: true
     };

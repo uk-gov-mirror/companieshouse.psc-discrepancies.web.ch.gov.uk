@@ -57,7 +57,10 @@ router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
   validator.isTextareaNotEmpty(req.body.details)
-    .then(_ => {
+    .then(r => {
+      const data = { payload: req.body, report: {} };
+      return pscDiscrepancyService.saveDiscrepancyDetails(data);
+    }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
     }).catch(err => {
       res.render(`${routeViews}/discrepancy_details.njk`, {
