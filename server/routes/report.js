@@ -25,7 +25,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
       return res.redirect(302, '/report-a-discrepancy/company-number');
     }).catch(err => {
       let e = {};
-      if (typeof err.statusCode !== 'undefined') {
+      if (typeof err.statusCode !== 'undefined' || typeof err.status !== 'undefined') {
         e.genericError = errorManifest.genericError;
       } else {
         e = err;
