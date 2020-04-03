@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const routeViews = 'report';
+const logger = require(`${serverRoot}/config/winston`);
+
 const Validator = require(`${serverRoot}/lib/validation`);
 const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
@@ -28,6 +30,8 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
       } else {
         e = err;
       }
+      const statusCode = err.statusCode || 500;
+      logger.error(`${statusCode} - appError: ${err.stack}`);
       res.render(`${routeViews}/oe_email.njk`, {
         this_errors: e,
         this_data: req.body

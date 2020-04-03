@@ -20,7 +20,7 @@ describe('services/pscDiscrepancy', () => {
         method: 'POST',
         uri: `${process.env.PSC_DISCREPANCY_REPORT_SERVICE_BASE_URL}`,
         body: {
-          email: 'matt@matt.com'
+          obliged_entity_email: 'matt@matt.com'
         },
         json: true
       };
