@@ -21,6 +21,9 @@ class PscDiscrepancy {
     const options = {
       method: 'POST',
       uri: `${this.server.baseUrl}`,
+      headers: {
+        authorization: this.server.apiKey
+      },
       body: {
         obliged_entity_email: email
       },
