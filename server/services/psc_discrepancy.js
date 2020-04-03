@@ -20,7 +20,7 @@ class PscDiscrepancy {
       method: 'POST',
       uri: `${this.server.baseUrl}`,
       body: {
-        email: email
+        obliged_entity_email: email
       },
       json: true
     };
