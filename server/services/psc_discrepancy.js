@@ -16,6 +16,8 @@ class PscDiscrepancy {
   }
 
   saveEmail (email) {
+    console.log('=======server-vars========');
+    console.log(this.server);
     const options = {
       method: 'POST',
       uri: `${this.server.baseUrl}`,
