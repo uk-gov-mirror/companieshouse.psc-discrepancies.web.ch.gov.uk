@@ -3,11 +3,21 @@ const routeViews = 'report';
 const logger = require(`${serverRoot}/config/winston`);
 
 const Validator = require(`${serverRoot}/lib/validation`);
+const validator = new Validator();
+
 const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
+const pscDiscrepancyService = new PscDiscrepancyService();
+
+const Session = require(`${serverRoot}/lib/Session`);
+// eslint-disable-next-line no-unused-vars
+var session;
+
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
 
-const pscDiscrepancyService = new PscDiscrepancyService();
-const validator = new Validator();
+router.use((req, res, next) => {
+  session = new Session(req, res);
+  next();
+});
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
   res.render(`${routeViews}/index.njk`);

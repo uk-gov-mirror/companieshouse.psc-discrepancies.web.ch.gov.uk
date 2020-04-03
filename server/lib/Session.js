@@ -13,13 +13,13 @@ class AppSession {
   }
 
   _setUp () {
-    const appName = 'PSC-D';
-    if (typeof this.req.cookie.PSC_SID !== 'undefined') {
-      this.sessionId = `${appName}-${this.req.cookie.PSC_SID}}`;
+    const suffix = 'PSC';
+    if (typeof this.req.cookies.PSC_SID !== 'undefined') {
+      this.sessionId = `${suffix}-${this.req.cookies.PSC_SID}}`;
     } else {
-      this.sessionId = `${appName}-${uuid()}`;
+      this.sessionId = `${suffix}-${uuid()}`;
       // Remember to switch to __SID cookie once the service is behind Login
-      this.res.cookie('PSC_SID', this.sessionId, { httpOnly: true, domain: `${process.env.WEB_DOMAIN}`, path: '/' });
+      this.res.cookie('PSC_SID', this.sessionId, { httpOnly: true, domain: `${process.env.NODE_COOKIE_DOMAIN}`, path: '/' });
     }
     this.cookie = { sessionId: this.sessionId, signature: `${process.env.COOKIE_SECRET}` };
     this.sessionStore = new SessionStore(new Redis(`redis://${process.env.CACHE_SERVER}`));
@@ -27,6 +27,7 @@ class AppSession {
 
   /**
    * Write to the session object
+   *
    * @param {object} value - the value to save against the App session key
    * @return {Promise<any, any>}
    */
@@ -39,7 +40,7 @@ class AppSession {
             session.saveExtraData(this.sessionId, value);
             this.sessionStore.store(this.cookie, session.data).run()
               .then(_ => {
-                resolve(true);
+                return resolve(true);
               }).catch(err => {
                 reject(err);
               });
@@ -51,7 +52,8 @@ class AppSession {
   }
 
   /**
-   * Read in our session data
+   * Read in session data
+   *
    * @param {string} key - session Key/ID for the app
    * @return {Promise<any, any>}
    */
