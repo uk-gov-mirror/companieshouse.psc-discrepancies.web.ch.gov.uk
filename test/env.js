@@ -8,9 +8,9 @@ const envVars = {
     process.env.NODE_BASE_URL_SECURE = "web.chs-dev.internal";
     process.env.NUNJUCKS_LOADER_WATCH = false
     process.env.NUNJUCKS_LOADER_NO_CACHE =true
-    process.env.CDN_HOST = "lhttp://localhost:3009";
+    process.env.CDN_HOST = "http://localhost:3009";
     process.env.PSC_DISCREPANCY_REPORT_SERVICE_BASE_URL = "http://web.chs-dev.internal:18522";
-    process.env.PSC_DISCREPANCY_REPORT_SERVICE_API_KEY = "";
+    process.env.PSC_DISCREPANCY_REPORT_SERVICE_API_KEY = "abc123";
     process.env.PSC_DISCREPANCY_REPORT_SERVICE_USERNAME= "";
     process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD = "";
   }
