@@ -44,7 +44,7 @@ describe('lib/Session', () => {
 
   const sessionStoreWriteRejects = {
     run: () => {
-      return Promise.resolve(true);
+      return Promise.reject(false);
     }
   }
 
@@ -61,7 +61,7 @@ describe('lib/Session', () => {
 
   describe('Write a value to the Session', () => {
 
-    it('should write a value to cache using an existing session Id', () => {
+    it('should update session data using an existing session Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
       let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').returns(sessionStoreLoadResolves);
@@ -73,7 +73,7 @@ describe('lib/Session', () => {
       //expect(stubSessionStoreSave).to.have.been.calledWith(moduleUnderTest.cookie, { sample: "value" });
     });
 
-    it('should write a value to cache using a newly created session Id', () => {
+    it('should update cached session data using a newly created session Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithoutSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
       let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').returns(sessionStoreLoadResolves);
@@ -83,7 +83,7 @@ describe('lib/Session', () => {
       expect(stubSessionStoreLoad).to.have.been.calledWith(moduleUnderTest.cookie);
     });
 
-    it('should fail to write a value to cache using an existing session Id', () => {
+    it('should fail to update cached session data using an existing session Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
       let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').rejects(false).returns(false);
@@ -92,7 +92,7 @@ describe('lib/Session', () => {
       expect(stubSessionStoreLoad).to.have.been.calledWith(moduleUnderTest.cookie);
     });
 
-    it('should fail to write a value to cache using an existing session Id having successfully called load', () => {
+    it('should fail to update cached session data using an existing session Id having successfully called load', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
       let stubSessionStoreLoadRunRejects = sinon.stub(moduleUnderTest.sessionStore, 'load').returns(sessionStoreLoadRejects);
@@ -104,7 +104,7 @@ describe('lib/Session', () => {
 
   describe('Read a value from the Session', () => {
 
-    it('should read a value from cache using an existing session Id', () => {
+    it('should read in cached session data using an existing session Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
       let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').returns(sessionStoreLoadResolves);
@@ -113,7 +113,7 @@ describe('lib/Session', () => {
       expect(stubSessionStoreLoad).to.have.been.calledWith(moduleUnderTest.cookie);
     });
 
-    it('should fail to read a value from cache using an existing Id', () => {
+    it('should fail to read in cached session data using an existing Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
       let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').rejects(false).returns(false);
