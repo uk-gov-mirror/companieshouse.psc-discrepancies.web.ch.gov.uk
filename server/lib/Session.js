@@ -3,7 +3,7 @@
  */
 const Redis = require('ioredis');
 const { Session, SessionStore } = require('ch-node-session-handler');
-const uuid = require('uuid/v4');
+const Utility = require(`${serverRoot}/lib/Utility`);
 
 class AppSession {
   constructor (req, res) {
@@ -12,17 +12,24 @@ class AppSession {
     this._setUp();
   }
 
+  /**
+   * Remember to switch to the __SID cookie once the service is behind Login
+   */
   _setUp () {
-    const suffix = 'PSC';
     if (typeof this.req.cookies.PSC_SID !== 'undefined') {
-      this.sessionId = `${suffix}-${this.req.cookies.PSC_SID}}`;
+      this.id = this.req.cookies.PSC_SID;
     } else {
-      this.sessionId = `${suffix}-${uuid()}`;
-      // Remember to switch to __SID cookie once the service is behind Login
-      this.res.cookie('PSC_SID', this.sessionId, { httpOnly: true, domain: `${process.env.NODE_COOKIE_DOMAIN}`, path: '/' });
+      this.id = `PSC_${Utility.getRandomString(24, 36)}`;
+      this.res.cookie('PSC_SID', this.id, { httpOnly: true, domain: `${process.env.NODE_COOKIE_DOMAIN}`, path: '/' });
     }
-    this.cookie = { sessionId: this.sessionId, signature: `${process.env.COOKIE_SECRET}` };
-    this.sessionStore = new SessionStore(new Redis(`redis://${process.env.CACHE_SERVER}`));
+    this.cookie = { sessionId: this.id, signature: `${process.env.COOKIE_SECRET}` };
+  }
+
+  getSessionStore () {
+    if (!this.sessionStore) {
+      this.sessionStore = new SessionStore(new Redis(`redis://${process.env.CACHE_SERVER}`));
+    }
+    return this.sessionStore;
   }
 
   /**
@@ -34,16 +41,19 @@ class AppSession {
   write (value) {
     return new Promise((resolve, reject) => {
       try {
-        this.sessionStore.load(this.cookie).run()
+        const s = this.getSessionStore();
+        s.load(this.cookie).run()
           .then(data => {
             const session = new Session(data.extract());
-            session.saveExtraData(this.sessionId, value);
-            this.sessionStore.store(this.cookie, session.data).run()
+            session.saveExtraData(this.id, value);
+            s.store(this.cookie, session.data).run()
               .then(_ => {
                 return resolve(true);
               }).catch(err => {
-                reject(err);
+                return reject(err);
               });
+          }).catch(err => {
+            return reject(err);
           });
       } catch (err) {
         reject(err);
@@ -54,18 +64,20 @@ class AppSession {
   /**
    * Read in session data
    *
-   * @param {string} key - session Key/ID for the app
    * @return {Promise<any, any>}
    */
-  read (key) {
+  read () {
     return new Promise((resolve, reject) => {
       try {
-        this.sessionStore.load(this.cookie).run()
+        const s = this.getSessionStore();
+        s.load(this.cookie).run()
           .then(data => {
             const session = new Session(data.extract());
-            return resolve(session.getExtraData(this.sessionId));
+            const r = session.getExtraData(this.id);
+            const p = typeof r.__value === 'undefined' || typeof r.__value[this.id] === 'undefined' ? {} : r;
+            return resolve(p);
           }).catch(err => {
-            reject(err);
+            return reject(err);
           });
       } catch (err) {
         reject(err);

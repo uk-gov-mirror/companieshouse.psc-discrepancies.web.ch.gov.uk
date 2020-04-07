@@ -9,8 +9,7 @@ const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
 
 const Session = require(`${serverRoot}/lib/Session`);
-// eslint-disable-next-line no-unused-vars
-var session;
+var session; // eslint-disable-line no-unused-vars
 
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
 
