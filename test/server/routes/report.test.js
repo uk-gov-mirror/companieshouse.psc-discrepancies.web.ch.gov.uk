@@ -7,7 +7,7 @@ describe('routes/Report', () => {
   const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
   const pscDiscrepancyService = new PscDiscrepancyService();
 
-  const serviceData = require(`${testRoot}/server/_fakeData/services/psc_discrepancy_report`);
+  const serviceData = require(`${testRoot}/server/_fakeData/services/psc_discrepancy.service.data`);
 
   let app = require(`${serverRoot}/app`);
 
