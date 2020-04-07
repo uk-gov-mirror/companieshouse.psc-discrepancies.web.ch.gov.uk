@@ -3,7 +3,7 @@ describe('services/pscDiscrepancy', () => {
     const Service = require(`${serverRoot}/services/psc_discrepancy`);
     const service = new Service();
 
-    const serviceData = require(`${testRoot}/server/_fakeData/services/psc_discrepancy_report`);
+    const serviceData = require(`${testRoot}/server/_fakeData/services/psc_discrepancy.service.data`);
 
     beforeEach(done => {
       sinon.reset();
