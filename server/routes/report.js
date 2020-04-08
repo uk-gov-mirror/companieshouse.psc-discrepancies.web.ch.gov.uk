@@ -8,15 +8,7 @@ const validator = new Validator();
 const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
 
-const Session = require(`${serverRoot}/lib/Session`);
-var session; // eslint-disable-line no-unused-vars
-
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
-
-router.use((req, res, next) => {
-  session = new Session(req, res);
-  next();
-});
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
   res.render(`${routeViews}/index.njk`);
