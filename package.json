@@ -40,6 +40,7 @@
   "dependencies": {
     "babel-eslint": "^8.2.6",
     "body-parser": "1.18.3",
+    "ch-node-session-handler": "git+ssh://git@github.com/companieshouse/node-session-handler.git#0.0.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
     "govuk-elements-sass": "^3.1.3",
