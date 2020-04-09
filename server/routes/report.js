@@ -1,11 +1,21 @@
 const router = require('express').Router();
 const routeViews = 'report';
-const Validator = require(`${serverRoot}/lib/validation`);
-const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
-const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
 
-const pscDiscrepancyService = new PscDiscrepancyService();
+const Validator = require(`${serverRoot}/lib/validation`);
 const validator = new Validator();
+
+const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
+const pscDiscrepancyService = new PscDiscrepancyService();
+
+const Session = require(`${serverRoot}/lib/Session`);
+var session; // eslint-disable-line no-unused-vars
+
+const routeUtils = require(`${serverRoot}/routes/utils`);
+
+router.use((req, res, next) => {
+  session = new Session(req, res);
+  next();
+});
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
   res.render(`${routeViews}/index.njk`);
@@ -20,16 +30,15 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
     .then(r => {
       return pscDiscrepancyService.saveEmail(req.body.email);
     }).then(r => {
+      const o = res.locals.session;
+      o.appData.initialServerResponse = r;
+      res.locals.session = o;
+      return session.write(o);
+    }).then(_ => {
       return res.redirect(302, '/report-a-discrepancy/company-number');
     }).catch(err => {
-      let e = {};
-      if (typeof err.statusCode !== 'undefined') {
-        e.genericError = errorManifest.genericError;
-      } else {
-        e = err;
-      }
       res.render(`${routeViews}/oe_email.njk`, {
-        this_errors: e,
+        this_errors: routeUtils.processException(err),
         this_data: req.body
       });
     });
@@ -58,13 +67,14 @@ router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
-      const data = { payload: req.body, report: {} };
+      const selfLink = res.locals.session.appData.initialServerResponse.links.self;
+      const data = { payload: req.body, selfLink: selfLink };
       return pscDiscrepancyService.saveDiscrepancyDetails(data);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
     }).catch(err => {
       res.render(`${routeViews}/discrepancy_details.njk`, {
-        this_errors: err,
+        this_errors: routeUtils.processException(err),
         this_data: req.body
       });
     });
