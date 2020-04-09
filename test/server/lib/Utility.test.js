@@ -21,6 +21,7 @@ describe('lib/Utility', () => {
       expect(ModuleUnderTest.getRandomString(5, 8)).to.have.lengthOf.within(5, 8);
     });
   });
+  
   describe('Log exception', () => {
     it('should correctly log an exception', () => {
       let stubLogger =  sinon.stub(logger, 'error').returns(true);
