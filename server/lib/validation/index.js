@@ -51,6 +51,21 @@ class Validator {
     });
   }
 
+  isValidContactName(contactName) {
+    this.errors = {};
+    return new Promise((resolve, reject) => {
+      let validNameRegex = new RegExp(/^[ a-zA-Z'-]*$/);
+      if(typeof contactName === 'undefined' || contactName === null || contactName.length === 0){
+        this.errors.fullName = errorManifest.fullName.empty;
+        reject(this.errors);
+      } else if(!validNameRegex.test(contactName)) {
+        this.errors.fullName = errorManifest.fullName.incorrect;
+        reject(this.errors);
+      } else {
+        resolve(true);
+      }
+    });
+  }
 }
 
 module.exports = Validator;

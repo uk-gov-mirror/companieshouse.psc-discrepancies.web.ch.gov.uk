@@ -22,6 +22,22 @@ router.get('(/report-a-discrepancy)?', (req, res, next) => {
   res.render(`${routeViews}/index.njk`);
 });
 
+router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next) => {
+  res.render(`${routeViews}/contact_name.njk`);
+});
+
+router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
+  validator.isValidContactName(req.body.fullName)
+    .then(_ => {
+      res.redirect(302, '/report-a-discrepancy/obliged-entity/email');
+    }).catch(err => {
+     res.render(`${routeViews}/contact_name.njk`, {
+       this_errors: err,
+       this_data: req.body
+     });
+    });
+});
+
 router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   res.render(`${routeViews}/oe_email.njk`);
 });

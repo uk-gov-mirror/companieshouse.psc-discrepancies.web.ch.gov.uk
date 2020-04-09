@@ -25,6 +25,16 @@ let ErrorManifest = {
       summary: "Company number must be 8 characters",
       inline: "Company number must be 8 characters"
     }
+  },
+  fullName: {
+    empty: {
+      summary: "Enter your full name",
+      inline: "Enter your full name"
+    },
+    incorrect: {
+      summary: "Full name must only include letters a-z, A-Z, hyphens, spaces and apostrophes",
+      inline: "Full name must only include letters a-z, A-Z, hyphens, spaces and apostrophes"
+    }
   }
 }
 
