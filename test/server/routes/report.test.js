@@ -1,19 +1,30 @@
+const Utility = require(`${serverRoot}/lib/Utility`);
+const Session = require(`${serverRoot}/lib/Session`);
+let session, stubSession;
+
+const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
+const Validator = require(`${serverRoot}/lib/validation`);
+const validator = new Validator();
+
+const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
+const pscDiscrepancyService = new PscDiscrepancyService();
+
+const serviceData = require(`${testRoot}/server/_fakes/data/services/psc_discrepancy`);
+const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
+
+const cookieStr = 'PSC_SID=abc123';
+
+let app = require(`${serverRoot}/app`);
+
 describe('routes/Report', () => {
-
-  const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`);
-  const Validator = require(`${serverRoot}/lib/validation`);
-  const validator = new Validator();
-
-  const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
-  const pscDiscrepancyService = new PscDiscrepancyService();
-
-  const serviceData = require(`${testRoot}/server/_fakeData/services/psc_discrepancy_report`);
-
-  let app = require(`${serverRoot}/app`);
 
   beforeEach(done => {
     sinon.reset();
     sinon.restore();
+    sinon.stub(Utility, 'logException').returns(undefined);
+    sinon.stub(Session.prototype, '_setUp').returns(undefined);
+    sinon.stub(Session.prototype, 'read').returns(Promise.resolve(sessionData));
+    sinon.stub(Session.prototype, 'write').returns(Promise.resolve(true));
     done();
   });
 
@@ -27,6 +38,7 @@ describe('routes/Report', () => {
     let slug = '/';
     return request(app)
       .get(slug)
+      .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
       });
@@ -36,6 +48,7 @@ describe('routes/Report', () => {
     let slug = '/report-a-discrepancy';
     return request(app)
       .get(slug)
+      .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
       });
@@ -45,6 +58,7 @@ describe('routes/Report', () => {
     let slug = '/not-a-report-a-discrepancy-url';
     return request(app)
       .get(slug)
+      .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(404);
       });
@@ -54,6 +68,7 @@ describe('routes/Report', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
     return request(app)
       .get(slug)
+      .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
       });
@@ -66,6 +81,7 @@ describe('routes/Report', () => {
     let data = { email: "valid-format@domain.tld" };
     return request(app)
       .post(slug)
+      .set('Cookie', cookieStr)
       .send(data)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
@@ -81,13 +97,14 @@ describe('routes/Report', () => {
 
   it('should return same page with error message if email is incorrectly formatted', () => {
 
-    let data = {email: "incorrect-email-format"};
+    let data = { email: "incorrect-email-format" };
     let validationError = errorManifest.email;
     let slug = '/report-a-discrepancy/obliged-entity/email';
     let stub = sinon.stub(Validator.prototype, 'isValidEmail').rejects(validationError);
 
     return request(app)
       .post(slug)
+      .set('Cookie', cookieStr)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -102,6 +119,7 @@ describe('routes/Report', () => {
     let slug = '/report-a-discrepancy/company-number';
     return request(app)
       .get(slug)
+      .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
       });
@@ -110,9 +128,10 @@ describe('routes/Report', () => {
   it('should process the company number page payload and redirect to discrepancy details page', () => {
     let slug = '/report-a-discrepancy/company-number';
     let stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
-    let data = {number: "12345678"};
+    let data = { number: "12345678" };
     return request(app)
       .post(slug)
+      .set('Cookie', cookieStr)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -124,13 +143,14 @@ describe('routes/Report', () => {
 
   it('should return company number page with error message if number is incorrectly formatted', () => {
 
-    let data = {number: "123456"};
+    let data = { number: "123456" };
     let validationError = errorManifest.number.incorrect;
     let slug = '/report-a-discrepancy/company-number';
     let stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').rejects(validationError);
 
     return request(app)
       .post(slug)
+      .set('Cookie', cookieStr)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -141,30 +161,47 @@ describe('routes/Report', () => {
       });
   });
 
-  it.skip('should serve up the discrepancy details page with discrepancy-details path', () => {
+  it('should serve up the discrepancy details page with discrepancy-details path', () => {
     let slug = '/report-a-discrepancy/discrepancy-details';
-    let stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
-    let data = {details: "valid"};
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookieStr)
+      .set('Cookie', cookieStr)
+      .then(response => {
+        expect(response).to.have.status(200);
+      });
+  });
+
+  it('should process the discrepancy details page payload and redirect to the confirmation page', () => {
+    let slug = '/report-a-discrepancy/discrepancy-details';
+    let stubValidator = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
+    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetails));
+    let data = { details: "Some details" };
     return request(app)
       .post(slug)
+      .set('Cookie', cookieStr)
       .send(data)
       .then(response => {
-        expect(stub).to.have.been.calledOnce;
-        expect(stub).to.have.been.calledWith(data.details);
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubValidator).to.have.been.calledWith(data.details);
         expect(validator.isTextareaNotEmpty(data.details)).to.eventually.equal(true);
+        expect(stubPscService).to.have.been.calledOnce;
+        expect(pscDiscrepancyService.saveDiscrepancyDetails(data.details)).to.eventually.eql(serviceData.discrepancyDetails);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/confirmation/g);
+        expect(response).to.have.status(200);
       });
   });
 
   it('should return the discrepancy details page with error message if details are not entered', () => {
 
-    let data = {details: ""};
+    let data = { details: "" };
     let validationError = errorManifest.details;
     let slug = '/report-a-discrepancy/discrepancy-details';
     let stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').rejects(validationError);
 
     return request(app)
       .post(slug)
+      .set('Cookie', cookieStr)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -179,6 +216,7 @@ describe('routes/Report', () => {
     let slug = '/report-a-discrepancy/confirmation';
     return request(app)
       .get(slug)
+      .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
       });
