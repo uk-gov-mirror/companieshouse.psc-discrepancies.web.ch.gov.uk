@@ -25,23 +25,41 @@ describe('services/pscDiscrepancy', () => {
     expect(service._setBaseOptions()).to.have.nested.property('headers.authorization');
   });
 
-  it('should save an obliged entity\'s email to the PSC Discrepancy Service', () => {
-    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.oeEmailPost));
+  it('should fetch report details from the PSC Discrepancy Service', () => {
+    let stub = sinon.stub(request, 'get').returns(Promise.resolve(serviceData.reportDetailsGet));
     service.request = stub;
-    expect(service.saveEmail('matt@matt.com')).to.eventually.eql(serviceData.oeEmailPost);
+    expect(service.getReport('/psc-discrepancy-reports/xyz123')).to.eventually.eql(serviceData.reportDetailsGet);
+    expect(stub).to.have.been.calledOnce;
+  });
+
+  it('should save an obliged entity\'s email to the PSC Discrepancy Service', () => {
+    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
+    service.request = stub;
+    expect(service.saveEmail('matt@matt.com')).to.eventually.eql(serviceData.obligedEntityEmailPost);
+    expect(stub).to.have.been.calledOnce;
+  });
+
+  it('should save a company number to the PSC Discrepancy Service', () => {
+    let servicePayload = {
+      company_number: '12345678',
+      obliged_entity_email: 'm@m.com',
+      etag: 'xyz123',
+      selfLink: 'psc-discrepancy-reports/abc123'
+    };
+    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.companyNumberPost));
+    service.request = stub;
+    expect(service.saveEmail(servicePayload)).to.eventually.eql(serviceData.companyNumberPost);
     expect(stub).to.have.been.calledOnce;
   });
 
   it('should save the PSC discrepancy details to the PSC Discrepancy Service', () => {
-    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.discrepancyDetails));
+    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
     service.request = stub;
     const data = {
       selfLink: 'psc-discrepancy-reports/abc123',
-      payload: {
-        details: 'some data'
-      }
+      details: 'some data'
     };
-    expect(service.saveDiscrepancyDetails(data)).to.eventually.eql(serviceData.discrepancyDetails);
+    expect(service.saveDiscrepancyDetails(data)).to.eventually.eql(serviceData.discrepancyDetailsPost);
     expect(stub).to.have.been.calledOnce;
   });
 });

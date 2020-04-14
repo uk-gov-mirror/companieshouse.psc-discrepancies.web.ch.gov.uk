@@ -46,9 +46,9 @@ module.exports.sessionStoreWriteRejects = {
 module.exports.sessionData = {
   id: 'abc123',
     appData: {
-      initialServerResponse: {
+      initialServiceResponse: {
         links: {
-            self: "/psc-discrepancy-reports/04f9c6ad-f7a0-4580-b911-894c6b53f19e"
+            self: "/psc-discrepancy-reports/abc123"
         },
         etag: "4a16b4ffc0269c0397f97dd8398c39da1f388536",
         kind: "psc_discrepancy_report#psc_discrepancy_report",
