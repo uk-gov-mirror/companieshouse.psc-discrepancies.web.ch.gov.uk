@@ -1,4 +1,4 @@
-const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`)
+const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
 
 class Validator {
 
@@ -7,16 +7,25 @@ class Validator {
     this.payload = {};
   }
 
+  _getErrorSignature () {
+    return {
+      status: 400,
+      code: 'VALIDATION_ERRORS',
+      message: errorManifest.default.summary,
+      stack: {}
+    }
+  }
+
   isValidEmail(email) {
-    this.errors = {};
+    let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let validEmailRegex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]+$/);
       if(typeof email === 'undefined' || email === null || email.length === 0){
-        this.errors.email = errorManifest.email.blank;
-        reject(this.errors);
+        errors.stack.email = errorManifest.email.blank;
+        reject(errors);
       } else if(!validEmailRegex.test(email)) {
-        this.errors.email = errorManifest.email.incorrect;
-        reject(this.errors);
+        errors.stack.email = errorManifest.email.incorrect;
+        reject(errors);
       } else {
         resolve(true);
       }
@@ -24,12 +33,12 @@ class Validator {
   }
 
   isTextareaNotEmpty(text) {
-    this.errors = {};
+    let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let notEmptyRegex = new RegExp(/[a-zA-Z]+/);
       if(typeof text === "undefined" || text === null || !notEmptyRegex.test(text)) {
-        this.errors.details = errorManifest.details;
-        reject(this.errors);
+        errors.stack.details = errorManifest.details;
+        reject(errors);
       } else {
         resolve(true);
       }
@@ -37,14 +46,14 @@ class Validator {
   }
 
   isCompanyNumberFormatted(number) {
-    this.errors = {};
+    let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       if(typeof number === "undefined" || number === null || number.length === 0) {
-        this.errors.number = errorManifest.number.empty;
-        reject(this.errors);
+        errors.stack.number = errorManifest.number.empty;
+        reject(errors);
       } else if (number.length !== 8) {
-        this.errors.number = errorManifest.number.incorrect;
-        reject(this.errors);
+        errors.stack.number = errorManifest.number.incorrect;
+        reject(errors);
       } else {
         resolve(true);
       }

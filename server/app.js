@@ -6,8 +6,10 @@ const path = require('path');
 
 const app = express();
 const morgan = require('morgan');
-const logger = require('./config/winston');
 global.serverRoot = __dirname;
+
+const Session = require(`${serverRoot}/lib/Session`);
+const Utility = require(`${serverRoot}/lib/Utility`);
 
 // log requests
 app.use(morgan('combined'));
@@ -18,6 +20,7 @@ app.set('views', [
   path.join(__dirname, '/../node_modules/govuk-frontend')
 ]);
 
+// set nunjucks options
 const nunjucksLoaderOpts = {
   watch: process.env.NUNJUCKS_LOADER_WATCH !== 'false',
   noCache: process.env.NUNJUCKS_LOADER_NO_CACHE !== 'true'
@@ -38,30 +41,40 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Channel all requests through the router
-require('./router')(app);
-
 // unhandled errors
 app.use((err, req, res, next) => {
-  const status = err.status || 500;
-  logger.error(`${status} - appError: ${err.stack}`);
+  Utility.logException(err);
 });
 
 njk.addGlobal('cdnUrlCss', process.env.CDN_URL_CSS);
 njk.addGlobal('cdnUrlJs', process.env.CDN_URL_JS);
 njk.addGlobal('cdnHost', process.env.CDN_HOST);
 
+// load the session data into res.locals
+app.use((req, res, next) => {
+  const session = new Session(req, res);
+  session.read()
+    .then(data => {
+      res.locals.session = data;
+      next();
+    }).catch(err => {
+      Utility.logException(err);
+      next();
+    });
+});
+
+// channel all requests through the router
+require('./router')(app);
+
 // unhandled exceptions - ideally, should never get to this point
 process.on('uncaughtException', err => {
-  const status = err.status || 500;
-  logger.error(`${status} - uncaughtException: ${err.stack}`);
+  Utility.logException(err, 'uncaughtException');
   process.exit(1);
 });
 
 // unhandled promise rejections
 process.on('unhandledRejection', err => {
-  const status = err.status || 500;
-  logger.error(`${status} - unhandledRejection: ${err.stack}`);
+  Utility.logException(err, 'uncaughtRejection');
   process.exit(1);
 });
 

@@ -1,6 +1,7 @@
 /*
  * General purpose class containing stand-alone utility methods
  */
+const logger = require(`${serverRoot}/config/winston`);
 
 class Utility {
   /**
@@ -19,6 +20,14 @@ class Utility {
       str += chars.charAt(Math.floor(Math.random() * charLength));
     }
     return str;
+  }
+
+  /**
+   * Central logger for application errors, exceptions and promise rejections
+   */
+  static logException (err, category = 'appError') {
+    const status = typeof err.statusCode !== 'undefined' ? err.statusCode : (err.status || 500);
+    logger.error(`${status} - ${category}: ${err.stack}`);
   }
 }
 

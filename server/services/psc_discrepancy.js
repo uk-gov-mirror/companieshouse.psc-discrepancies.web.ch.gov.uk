@@ -12,21 +12,38 @@ class PscDiscrepancy {
         password: process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD
       }
     };
+    this.baseOptions = this._setBaseOptions();
     this.request = rp;
   }
 
-  saveEmail (email) {
-    const options = {
-      method: 'POST',
-      uri: `${this.server.baseUrl}`,
+  _setBaseOptions () {
+    return {
       headers: {
         authorization: this.server.apiKey
       },
-      body: {
-        obliged_entity_email: email
-      },
+      uri: `${this.server.baseUrl}/psc-discrepancy-reports`,
       json: true
     };
+  }
+
+  saveEmail (email) {
+    const options = Object.assign(this.baseOptions, {
+      method: 'POST',
+      body: {
+        obliged_entity_email: email
+      }
+    });
+    return this.request(options);
+  }
+
+  saveDiscrepancyDetails (data) {
+    const options = Object.assign(this.baseOptions, {
+      method: 'POST',
+      uri: `${this.server.baseUrl}/${data.selfLink}/discrepancies`,
+      body: {
+        details: data.payload.details
+      }
+    });
     return this.request(options);
   }
 }
