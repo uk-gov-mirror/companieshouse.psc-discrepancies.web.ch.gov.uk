@@ -61,15 +61,15 @@ class Validator {
   }
 
   isValidContactName(contactName) {
-    this.errors = {};
+    let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let validNameRegex = new RegExp(/^[ a-zA-Z'-]*$/);
       if(typeof contactName === 'undefined' || contactName === null || contactName.length === 0){
-        this.errors.fullName = errorManifest.fullName.empty;
-        reject(this.errors);
+        errors.stack.fullName = errorManifest.fullName.empty;
+        reject(errors);
       } else if(!validNameRegex.test(contactName)) {
-        this.errors.fullName = errorManifest.fullName.incorrect;
-        reject(this.errors);
+        errors.stack.fullName = errorManifest.fullName.incorrect;
+        reject(errors);
       } else {
         resolve(true);
       }

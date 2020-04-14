@@ -31,7 +31,7 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/email');
     }).catch(err => {
      res.render(`${routeViews}/contact_name.njk`, {
-       this_errors: err,
+       this_errors: routeUtils.processException(err),
        this_data: req.body
      });
     });

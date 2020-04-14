@@ -64,6 +64,71 @@ describe('routes/Report', () => {
       });
   });
 
+  it('should serve up the obliged entity contact name page', () => {
+    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    return request(app)
+      .get(slug)
+      .then(response => {
+        expect(response).to.have.status(200);
+      });
+  });
+
+  it('should process the obliged entity contact name page payload and redirect to obliged entity email page', () => {
+    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    let stubValidator = sinon.stub(Validator.prototype, 'isValidContactName').returns(Promise.resolve(true));
+    let data = { fullName: "joe blog-blogg's" };
+    return request(app)
+      .post(slug)
+      .send(data)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubValidator).to.have.been.calledWith(data.fullName);
+        expect(validator.isValidContactName(data.fullName)).to.eventually.equal(true);
+        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/obliged\-entity\/email/g);
+        expect(response).to.have.status(200);
+      });
+  });
+
+  it.only('should return the contact name page with error message if contact name is not populated', () => {
+
+    let data = {fullName: ""};
+    let validationError = errorManifest.fullName.empty;
+    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    let stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationError);
+
+    return request(app)
+    .post(slug)
+    .set('Cookie', cookieStr)
+    .send(data)
+    .then(response => {
+      expect(stub).to.have.been.calledOnce;
+      expect(stub).to.have.been.calledWith(data.fullName);
+      expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
+      expect(response.text).include(data.fullName);
+      expect(response).to.have.status(200);
+      });
+  });
+
+  it.only('should return the contact name page with error message if contact name is incorrectly formatted', () => {
+
+    let data = {fullName: "incorrect/name"};
+    let validationError = errorManifest.fullName.incorrect;
+    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    let stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationError);
+
+    return request(app)
+    .post(slug)
+    .set('Cookie', cookieStr)
+    .send(data)
+    .then(response => {
+      expect(stub).to.have.been.calledOnce;
+      expect(stub).to.have.been.calledWith(data.fullName);
+      expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
+      expect(response.text).include(data.fullName);
+      expect(response).to.have.status(200);
+      });
+  });
+
   it('should serve up the obliged entity e-mail page with oe-email path', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
     return request(app)
@@ -95,7 +160,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it('should return same page with error message if email is incorrectly formatted', () => {
+  it('should return the obliged entity email page with error message if email is incorrectly formatted', () => {
 
     let data = { email: "incorrect-email-format" };
     let validationError = errorManifest.email;
