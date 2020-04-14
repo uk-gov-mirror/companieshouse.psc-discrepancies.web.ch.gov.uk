@@ -89,7 +89,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it.only('should return the contact name page with error message if contact name is not populated', () => {
+  it('should return the contact name page with error message if contact name is not populated', () => {
 
     let data = {fullName: ""};
     let validationError = errorManifest.fullName.empty;
@@ -109,7 +109,7 @@ describe('routes/Report', () => {
       });
   });
 
-  it.only('should return the contact name page with error message if contact name is incorrectly formatted', () => {
+  it('should return the contact name page with error message if contact name is incorrectly formatted', () => {
 
     let data = {fullName: "incorrect/name"};
     let validationError = errorManifest.fullName.incorrect;
