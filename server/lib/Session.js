@@ -16,13 +16,19 @@ class AppSession {
    * Remember to switch to the __SID cookie once the service is behind Login
    */
   _setUp () {
-    if (typeof this.req.cookies.PSC_SID !== 'undefined') {
-      this.id = this.req.cookies.PSC_SID;
-    } else {
-      this.id = `PSC_${Utility.getRandomString(24, 36)}`;
-      this.res.cookie('PSC_SID', this.id, { httpOnly: true, domain: `${process.env.NODE_COOKIE_DOMAIN}`, path: '/' });
+    try {
+      if (typeof this.req.cookies.PSC_SID !== 'undefined') {
+        this.id = this.req.cookies.PSC_SID;
+      } else if (typeof this.res.locals.session !== 'undefined') {
+        this.id = this.res.locals.session.id;
+      } else {
+        this.id = `PSC_${Utility.getRandomString(24, 36)}`;
+        this.res.cookie('PSC_SID', this.id, { httpOnly: true, domain: `${process.env.NODE_COOKIE_DOMAIN}`, path: '/' });
+      }
+      this.cookie = { sessionId: this.id, signature: `${process.env.COOKIE_SECRET}` };
+    } catch (err) {
+      Utility.logException(err);
     }
-    this.cookie = { sessionId: this.id, signature: `${process.env.COOKIE_SECRET}` };
   }
 
   getSessionStore () {
@@ -30,6 +36,34 @@ class AppSession {
       this.sessionStore = new SessionStore(new Redis(`redis://${process.env.CACHE_SERVER}`));
     }
     return this.sessionStore;
+  }
+
+  /**
+   * Read in session data
+   *
+   * @return {Promise<any, any>}
+   */
+  read () {
+    return new Promise((resolve, reject) => {
+      try {
+        const s = this.getSessionStore();
+        s.load(this.cookie).run()
+          .then(data => {
+            const session = new Session(data.extract());
+            const r = session.getExtraData(this.id);
+            const p = typeof r.__value === 'undefined' || typeof r.__value[this.id] === 'undefined' ? {} : r.__value[this.id];
+            // accountData to be added when the app is behind sign in
+            const d = Object.keys(p).length !== 0 ? p : { id: this.id, appData: {}, accountData: {} };
+            return resolve(d);
+          }).catch(err => {
+            Utility.logException(err);
+            return reject(err);
+          });
+      } catch (err) {
+        Utility.logException(err);
+        reject(err);
+      }
+    });
   }
 
   /**
@@ -50,36 +84,15 @@ class AppSession {
               .then(_ => {
                 return resolve(true);
               }).catch(err => {
+                Utility.logException(err);
                 return reject(err);
               });
           }).catch(err => {
+            Utility.logException(err);
             return reject(err);
           });
       } catch (err) {
-        reject(err);
-      }
-    });
-  }
-
-  /**
-   * Read in session data
-   *
-   * @return {Promise<any, any>}
-   */
-  read () {
-    return new Promise((resolve, reject) => {
-      try {
-        const s = this.getSessionStore();
-        s.load(this.cookie).run()
-          .then(data => {
-            const session = new Session(data.extract());
-            const r = session.getExtraData(this.id);
-            const p = typeof r.__value === 'undefined' || typeof r.__value[this.id] === 'undefined' ? {} : r;
-            return resolve(p);
-          }).catch(err => {
-            return reject(err);
-          });
-      } catch (err) {
+        Utility.logException(err);
         reject(err);
       }
     });
