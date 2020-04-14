@@ -77,7 +77,7 @@ describe('routes/Report', () => {
   it('should process the obliged entity e-mail page payload and redirect to company number page', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
     let stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
-    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.oeEmailPost));
+    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
     let data = { email: "valid-format@domain.tld" };
     return request(app)
       .post(slug)
@@ -89,7 +89,7 @@ describe('routes/Report', () => {
         expect(validator.isValidEmail(data.email)).to.eventually.equal(true);
         expect(stubPscService).to.have.been.calledOnce;
         expect(stubPscService).to.have.been.calledWith(data.email);
-        expect(pscDiscrepancyService.saveEmail(data.email)).to.eventually.eql(serviceData.oeEmailPost);
+        expect(pscDiscrepancyService.saveEmail(data.email)).to.eventually.eql(serviceData.obligedEntityEmailPost);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/company\-number/g);
         expect(response).to.have.status(200);
       });
@@ -127,16 +127,26 @@ describe('routes/Report', () => {
 
   it('should process the company number page payload and redirect to discrepancy details page', () => {
     let slug = '/report-a-discrepancy/company-number';
-    let stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
-    let data = { number: "12345678" };
+    let stubValidator = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
+    let stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    let stubPscServiceSaveCompanyNumber = sinon.stub(PscDiscrepancyService.prototype, 'saveCompanyNumber').returns(Promise.resolve(serviceData.companyNumberPost));
+    let clientPayload = { number: "12345678" };
+    let servicePayload = {
+      company_number: clientPayload.number,
+      obliged_entity_email: sessionData.appData.initialServiceResponse.obliged_entity_email,
+      etag: sessionData.appData.initialServiceResponse.etag,
+      selfLink: sessionData.appData.initialServiceResponse.links.self
+    }
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
-      .send(data)
+      .send(clientPayload)
       .then(response => {
-        expect(stub).to.have.been.calledOnce;
-        expect(stub).to.have.been.calledWith(data.number);
-        expect(validator.isCompanyNumberFormatted(data.number)).to.eventually.equal(true);
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubValidator).to.have.been.calledOnceWith(clientPayload.number);
+        expect(validator.isCompanyNumberFormatted(clientPayload.number)).to.eventually.equal(true);
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(stubPscServiceSaveCompanyNumber).to.have.been.calledOnce;
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/discrepancy\-details/g);
       });
   });
@@ -166,7 +176,6 @@ describe('routes/Report', () => {
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
-      .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
       });
@@ -175,18 +184,22 @@ describe('routes/Report', () => {
   it('should process the discrepancy details page payload and redirect to the confirmation page', () => {
     let slug = '/report-a-discrepancy/discrepancy-details';
     let stubValidator = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
-    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetails));
-    let data = { details: "Some details" };
+    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
+    let clientPayload = { details: "Some details" };
+    let servicePayload = {
+      details: clientPayload.details,
+      selfLink: sessionData.appData.initialServiceResponse.links.self
+    }
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
-      .send(data)
+      .send(clientPayload)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
-        expect(stubValidator).to.have.been.calledWith(data.details);
-        expect(validator.isTextareaNotEmpty(data.details)).to.eventually.equal(true);
+        expect(stubValidator).to.have.been.calledWith(clientPayload.details);
+        expect(validator.isTextareaNotEmpty(clientPayload.details)).to.eventually.equal(true);
         expect(stubPscService).to.have.been.calledOnce;
-        expect(pscDiscrepancyService.saveDiscrepancyDetails(data.details)).to.eventually.eql(serviceData.discrepancyDetails);
+        expect(pscDiscrepancyService.saveDiscrepancyDetails(servicePayload)).to.eventually.eql(serviceData.discrepancyDetailsPost);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/confirmation/g);
         expect(response).to.have.status(200);
       });

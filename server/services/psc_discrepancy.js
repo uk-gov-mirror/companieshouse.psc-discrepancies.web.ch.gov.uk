@@ -26,6 +26,14 @@ class PscDiscrepancy {
     };
   }
 
+  getReport (selfLink) {
+    const options = Object.assign(this.baseOptions, {
+      method: 'GET',
+      uri: `${this.server.baseUrl}${selfLink}`
+    });
+    return this.request(options);
+  }
+
   saveEmail (email) {
     const options = Object.assign(this.baseOptions, {
       method: 'POST',
@@ -36,12 +44,26 @@ class PscDiscrepancy {
     return this.request(options);
   }
 
+  saveCompanyNumber (data) {
+    const options = Object.assign(this.baseOptions, {
+      method: 'PUT',
+      uri: `${this.server.baseUrl}${data.selfLink}`,
+      body: {
+        company_number: data.company_number,
+        obliged_entity_email: data.obliged_entity_email,
+        etag: data.etag,
+        status: 'INVALID'
+      }
+    });
+    return this.request(options);
+  }
+
   saveDiscrepancyDetails (data) {
     const options = Object.assign(this.baseOptions, {
       method: 'POST',
-      uri: `${this.server.baseUrl}/${data.selfLink}/discrepancies`,
+      uri: `${this.server.baseUrl}${data.selfLink}/discrepancies`,
       body: {
-        details: data.payload.details
+        details: data.details
       }
     });
     return this.request(options);
