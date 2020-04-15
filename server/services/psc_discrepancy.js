@@ -49,10 +49,24 @@ class PscDiscrepancy {
       method: 'PUT',
       uri: `${this.server.baseUrl}${data.selfLink}`,
       body: {
-        company_number: data.company_number,
         obliged_entity_email: data.obliged_entity_email,
-        etag: data.etag,
-        status: 'INVALID'
+        company_number: data.company_number,
+        status: 'INCOMPLETE',
+        etag: data.etag
+      }
+    });
+    return this.request(options);
+  }
+
+  saveStatus (data) {
+    const options = Object.assign(this.baseOptions, {
+      method: 'PUT',
+      uri: `${this.server.baseUrl}${data.selfLink}`,
+      body: {
+        obliged_entity_email: data.obliged_entity_email,
+        company_number: data.company_number,
+        status: 'COMPLETE',
+        etag: data.etag
       }
     });
     return this.request(options);

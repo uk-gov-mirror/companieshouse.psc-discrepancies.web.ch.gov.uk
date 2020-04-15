@@ -92,13 +92,22 @@ router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
+  const selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+  let data = {}; // eslint-disable-line prefer-const
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
-      const data = {
-        details: req.body.details,
-        selfLink: res.locals.session.appData.initialServiceResponse.links.self
-      };
+      data.details = req.body.details;
+      data.selfLink = selfLink;
       return pscDiscrepancyService.saveDiscrepancyDetails(data);
+    }).then(_ => {
+      return pscDiscrepancyService.getReport(selfLink);
+    }).then(report => {
+      data.obliged_entity_email = report.obliged_entity_email;
+      data.company_number = report.company_number;
+      data.etag = report.etag;
+      return pscDiscrepancyService.saveStatus(data);
+    }).then(_ => {
+      return session.write({});
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
     }).catch(err => {
