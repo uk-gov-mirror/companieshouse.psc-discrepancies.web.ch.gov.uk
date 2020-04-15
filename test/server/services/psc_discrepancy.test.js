@@ -52,6 +52,20 @@ describe('services/pscDiscrepancy', () => {
     expect(stub).to.have.been.calledOnce;
   });
 
+  it('should save a report status to the PSC Discrepancy Service', () => {
+    let servicePayload = {
+      company_number: '12345678',
+      obliged_entity_email: 'm@m.com',
+      etag: 'xyz123',
+      status: 'COMPLETE',
+      selfLink: 'psc-discrepancy-reports/abc123'
+    };
+    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.companyNumberPost));
+    service.request = stub;
+    expect(service.saveEmail(servicePayload)).to.eventually.eql(serviceData.companyNumberPost);
+    expect(stub).to.have.been.calledOnce;
+  });
+
   it('should save the PSC discrepancy details to the PSC Discrepancy Service', () => {
     let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
     service.request = stub;

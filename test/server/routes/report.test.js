@@ -184,12 +184,17 @@ describe('routes/Report', () => {
   it('should process the discrepancy details page payload and redirect to the confirmation page', () => {
     let slug = '/report-a-discrepancy/discrepancy-details';
     let stubValidator = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
-    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
+    let stubPscServiceSaveDetails = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
+    let stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    let stubPscServiceSaveStatus= sinon.stub(PscDiscrepancyService.prototype, 'saveStatus').returns(Promise.resolve(serviceData.reportStatusPost));
     let clientPayload = { details: "Some details" };
     let servicePayload = {
       details: clientPayload.details,
-      selfLink: sessionData.appData.initialServiceResponse.links.self
-    }
+      selfLink: sessionData.appData.initialServiceResponse.links.self,
+      obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
+      company_number: serviceData.reportDetailsGet.company_number,
+      etag: serviceData.reportDetailsGet.etag,
+    };
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -198,8 +203,12 @@ describe('routes/Report', () => {
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubValidator).to.have.been.calledWith(clientPayload.details);
         expect(validator.isTextareaNotEmpty(clientPayload.details)).to.eventually.equal(true);
-        expect(stubPscService).to.have.been.calledOnce;
+        expect(stubPscServiceSaveDetails).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(stubPscServiceSaveStatus).to.have.been.calledOnce;
         expect(pscDiscrepancyService.saveDiscrepancyDetails(servicePayload)).to.eventually.eql(serviceData.discrepancyDetailsPost);
+        expect(pscDiscrepancyService.getReport(servicePayload.selfLink)).to.eventually.eql(serviceData.reportDetailsGet);
+        expect(pscDiscrepancyService.saveStatus(servicePayload)).to.eventually.eql(serviceData.reportStatusPost);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/confirmation/g);
         expect(response).to.have.status(200);
       });
