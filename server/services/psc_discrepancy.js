@@ -12,11 +12,10 @@ class PscDiscrepancy {
         password: process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD
       }
     };
-    this.baseOptions = this._setBaseOptions();
     this.request = rp;
   }
 
-  _setBaseOptions () {
+  _getBaseOptions () {
     return {
       headers: {
         authorization: this.server.apiKey
@@ -27,7 +26,7 @@ class PscDiscrepancy {
   }
 
   getReport (selfLink) {
-    const options = Object.assign(this.baseOptions, {
+    const options = Object.assign(this._getBaseOptions(), {
       method: 'GET',
       uri: `${this.server.baseUrl}${selfLink}`
     });
@@ -35,7 +34,7 @@ class PscDiscrepancy {
   }
 
   saveEmail (email) {
-    const options = Object.assign(this.baseOptions, {
+    const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
       body: {
         obliged_entity_email: email
@@ -45,7 +44,7 @@ class PscDiscrepancy {
   }
 
   saveCompanyNumber (data) {
-    const options = Object.assign(this.baseOptions, {
+    const options = Object.assign(this._getBaseOptions(), {
       method: 'PUT',
       uri: `${this.server.baseUrl}${data.selfLink}`,
       body: {
@@ -59,7 +58,7 @@ class PscDiscrepancy {
   }
 
   saveStatus (data) {
-    const options = Object.assign(this.baseOptions, {
+    const options = Object.assign(this._getBaseOptions(), {
       method: 'PUT',
       uri: `${this.server.baseUrl}${data.selfLink}`,
       body: {
@@ -73,7 +72,7 @@ class PscDiscrepancy {
   }
 
   saveDiscrepancyDetails (data) {
-    const options = Object.assign(this.baseOptions, {
+    const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
       uri: `${this.server.baseUrl}${data.selfLink}/discrepancies`,
       body: {
