@@ -18,25 +18,37 @@ describe('services/pscDiscrepancy', () => {
     done();
   });
 
-  it('should correctly set the base options for the PSC Discrepancy Service', () => {
-    expect(service._setBaseOptions()).to.have.own.property('headers');
-    expect(service._setBaseOptions()).to.have.own.property('uri');
-    expect(service._setBaseOptions()).to.have.own.property('json').that.is.a('boolean');
-    expect(service._setBaseOptions()).to.have.nested.property('headers.authorization');
+  const baseOptions = {
+    headers: {
+      authorization: process.env.PSC_DISCREPANCY_REPORT_SERVICE_API_KEY
+    },
+    uri: `${process.env.PSC_DISCREPANCY_REPORT_SERVICE_BASE_URL}/psc-discrepancy-reports`,
+    json: true
+  };
+
+  it('should correctly get the base options for the PSC Discrepancy Service', () => {
+    expect(service._getBaseOptions()).to.have.own.property('headers');
+    expect(service._getBaseOptions()).to.have.own.property('uri');
+    expect(service._getBaseOptions()).to.have.own.property('json').that.is.a('boolean');
+    expect(service._getBaseOptions()).to.have.nested.property('headers.authorization');
   });
 
   it('should fetch report details from the PSC Discrepancy Service', () => {
-    let stub = sinon.stub(request, 'get').returns(Promise.resolve(serviceData.reportDetailsGet));
-    service.request = stub;
+    let stubRequest = sinon.stub(request, 'get').returns(Promise.resolve(serviceData.reportDetailsGet));
+    let stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
+    service.request = stubRequest;
     expect(service.getReport('/psc-discrepancy-reports/xyz123')).to.eventually.eql(serviceData.reportDetailsGet);
-    expect(stub).to.have.been.calledOnce;
+    expect(stubRequest).to.have.been.calledOnce;
+    expect(stubOpts).to.have.been.calledOnce;
   });
 
   it('should save an obliged entity\'s email to the PSC Discrepancy Service', () => {
-    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
-    service.request = stub;
+    let stubRequest = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
+    let stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
+    service.request = stubRequest;
     expect(service.saveEmail('matt@matt.com')).to.eventually.eql(serviceData.obligedEntityEmailPost);
-    expect(stub).to.have.been.calledOnce;
+    expect(stubRequest).to.have.been.calledOnce;
+    expect(stubOpts).to.have.been.calledOnce;
   });
 
   it('should save a company number to the PSC Discrepancy Service', () => {
@@ -46,10 +58,12 @@ describe('services/pscDiscrepancy', () => {
       etag: 'xyz123',
       selfLink: 'psc-discrepancy-reports/abc123'
     };
-    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.companyNumberPost));
-    service.request = stub;
+    let stubRequest = sinon.stub(request, 'put').returns(Promise.resolve(serviceData.companyNumberPost));
+    let stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
+    service.request = stubRequest;
     expect(service.saveEmail(servicePayload)).to.eventually.eql(serviceData.companyNumberPost);
-    expect(stub).to.have.been.calledOnce;
+    expect(stubRequest).to.have.been.calledOnce;
+    expect(stubOpts).to.have.been.calledOnce;
   });
 
   it('should save a report status to the PSC Discrepancy Service', () => {
@@ -60,20 +74,24 @@ describe('services/pscDiscrepancy', () => {
       status: 'COMPLETE',
       selfLink: 'psc-discrepancy-reports/abc123'
     };
-    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.companyNumberPost));
-    service.request = stub;
+    let stubRequest = sinon.stub(request, 'put').returns(Promise.resolve(serviceData.companyNumberPost));
+    let stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
+    service.request = stubRequest;
     expect(service.saveEmail(servicePayload)).to.eventually.eql(serviceData.companyNumberPost);
-    expect(stub).to.have.been.calledOnce;
+    expect(stubRequest).to.have.been.calledOnce;
+    expect(stubOpts).to.have.been.calledOnce;
   });
 
   it('should save the PSC discrepancy details to the PSC Discrepancy Service', () => {
-    let stub = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
-    service.request = stub;
+    let stubRequest = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
+    let stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
+    service.request = stubRequest;
     const data = {
       selfLink: 'psc-discrepancy-reports/abc123',
       details: 'some data'
     };
     expect(service.saveDiscrepancyDetails(data)).to.eventually.eql(serviceData.discrepancyDetailsPost);
-    expect(stub).to.have.been.calledOnce;
+    expect(stubRequest).to.have.been.calledOnce;
+    expect(stubOpts).to.have.been.calledOnce;
   });
 });
