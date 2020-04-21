@@ -31,7 +31,7 @@ router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next)
 });
 
 router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
-  logger.info('Request to save obliged entity contact name, with payload: ', req.body);
+  logger.info('POST request to save obliged entity contact name, with payload: ', req.body);
   validator.isValidContactName(req.body.fullName)
     .then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/email');
