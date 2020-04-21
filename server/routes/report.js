@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const routeViews = 'report';
+const logger = require(`${serverRoot}/config/winston`);
 
 const Validator = require(`${serverRoot}/lib/validation`);
 const validator = new Validator();
@@ -8,9 +8,12 @@ const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
 
 const Session = require(`${serverRoot}/lib/Session`);
-var session; // eslint-disable-line no-unused-vars
+let session; // eslint-disable-line no-unused-vars
 
 const routeUtils = require(`${serverRoot}/routes/utils`);
+const routeViews = 'report';
+
+let selfLink; // eslint-disable-line no-unused-vars
 
 router.use((req, res, next) => {
   session = new Session(req, res);
@@ -18,30 +21,35 @@ router.use((req, res, next) => {
 });
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
+  logger.info(`GET request to serve index page: ${req.path}`);
   res.render(`${routeViews}/index.njk`);
 });
 
 router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next) => {
+  logger.info(`GET request to render obliged entity contact name page: ${req.path}`);
   res.render(`${routeViews}/contact_name.njk`);
 });
 
 router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
+  logger.info('Request to save obliged entity contact name, with payload: ', req.body);
   validator.isValidContactName(req.body.fullName)
     .then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/email');
     }).catch(err => {
-     res.render(`${routeViews}/contact_name.njk`, {
-       this_errors: routeUtils.processException(err),
-       this_data: req.body
-     });
+      res.render(`${routeViews}/contact_name.njk`, {
+        this_errors: routeUtils.processException(err),
+        this_data: req.body
+      });
     });
 });
 
 router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
+  logger.info(`GET request to serve obliged entity email page: ${req.path}`);
   res.render(`${routeViews}/oe_email.njk`);
 });
 
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
+  logger.info('POST request to save obliged entity email, with payload: ', req.body);
   validator.isValidEmail(req.body.email)
     .then(r => {
       return pscDiscrepancyService.saveEmail(req.body.email);
@@ -61,13 +69,15 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 });
 
 router.get('/report-a-discrepancy/company-number', (req, res) => {
+  logger.info(`GET request to serve company number page: ${req.path}`);
   res.render(`${routeViews}/company_number.njk`);
 });
 
 router.post('/report-a-discrepancy/company-number', (req, res) => {
-  const selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+  logger.info('POST request to save company number, with payload: ', req.body);
   validator.isCompanyNumberFormatted(req.body.number)
     .then(_ => {
+      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
@@ -88,14 +98,16 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
 });
 
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
+  logger.info(`GET request to serve discrepancy details page: ${req.path}`);
   res.render(`${routeViews}/discrepancy_details.njk`);
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
-  const selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+  logger.info('POST request to save discrepancy details, with payload: ', req.body);
   let data = {}; // eslint-disable-line prefer-const
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
+      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
       data.details = req.body.details;
       data.selfLink = selfLink;
       return pscDiscrepancyService.saveDiscrepancyDetails(data);
@@ -119,6 +131,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
 });
 
 router.get('/report-a-discrepancy/confirmation', (req, res) => {
+  logger.info(`GET request to serve confirmation page: ${req.path}`);
   res.render(`${routeViews}/confirmation.njk`);
 });
 

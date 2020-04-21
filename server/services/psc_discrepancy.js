@@ -1,4 +1,6 @@
 const rp = require('request-promise-native');
+const logger = require(`${serverRoot}/config/winston`);
+
 /**
  * Get product related data
  */
@@ -30,6 +32,7 @@ class PscDiscrepancy {
       method: 'GET',
       uri: `${this.server.baseUrl}${selfLink}`
     });
+    logger.info('Service request to fetch report, with payload: ', options);
     return this.request(options);
   }
 
@@ -40,6 +43,7 @@ class PscDiscrepancy {
         obliged_entity_email: email
       }
     });
+    logger.info('Service request to save email, with payload: ', options);
     return this.request(options);
   }
 
@@ -54,6 +58,7 @@ class PscDiscrepancy {
         etag: data.etag
       }
     });
+    logger.info('Service request to save company number, with payload: ', options);
     return this.request(options);
   }
 
@@ -68,6 +73,7 @@ class PscDiscrepancy {
         etag: data.etag
       }
     });
+    logger.info('Service request to save email, with payload: ', options);
     return this.request(options);
   }
 
@@ -79,6 +85,7 @@ class PscDiscrepancy {
         details: data.details
       }
     });
+    logger.info('Service request to save discrepancy details, with payload: ', options);
     return this.request(options);
   }
 }

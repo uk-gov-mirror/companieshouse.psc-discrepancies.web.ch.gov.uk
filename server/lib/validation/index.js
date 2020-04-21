@@ -1,4 +1,5 @@
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
+const logger = require(`${serverRoot}/config/winston`);
 
 class Validator {
 
@@ -17,6 +18,7 @@ class Validator {
   }
 
   isValidEmail(email) {
+    logger.info(`Request to validate email: ${email}`);
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let validEmailRegex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]+$/);
@@ -33,6 +35,7 @@ class Validator {
   }
 
   isTextareaNotEmpty(text) {
+    logger.info(`Request to validate discrepancy details: ${text}`);
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let notEmptyRegex = new RegExp(/[a-zA-Z]+/);
@@ -46,6 +49,7 @@ class Validator {
   }
 
   isCompanyNumberFormatted(number) {
+    logger.info(`Request to validate company number: ${number}`);
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       if(typeof number === "undefined" || number === null || number.length === 0) {
@@ -61,6 +65,7 @@ class Validator {
   }
 
   isValidContactName(contactName) {
+    logger.info(`Request to validate contact name: ${contactName}`);
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let validNameRegex = new RegExp(/^[AÀÁÂÃÄÅĀĂĄǺaàáâãäåāăąǻÆǼæǽBbCcçćĉċčDÞĎĐdþďđEÈÉÊËĒĔĖĘĚeèéêëēĕėęěFfGĜĞĠĢgĝğġģHĤĦhĥħIÌÍÎÏĨĪĬĮİiìíîïĩīĭįJĴjĵKĶkķLĹĻĽĿŁlĺļľŀłMmNÑŃŅŇŊnñńņňŋOÒÓÔÕÖØŌŎŐǾoòóôõöøōŏőǿŒœPpQqRŔŖŘrŕŗřSŚŜŞŠsśŝşšTŢŤŦtţťŧUÙÚÛÜŨŪŬŮŰŲuùúûüũūŭůűųVvWŴẀẂẄwŵẁẃẅXxYỲÝŶŸyỳýŷÿZŹŻŽzźżž&@£$€¥*=#%+‘ʼ'()\/\[\]{}<>!«»?“ˮ\"0123456789.,:;\–\-  \\r\\n]*$/);
