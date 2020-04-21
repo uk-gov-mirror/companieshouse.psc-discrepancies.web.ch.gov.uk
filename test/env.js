@@ -1,6 +1,6 @@
 const envVars = {
   setVars: () => {
-    process.env.NODE_ENV = "DEV"
+    process.env.NODE_ENV = "test-unit"
     process.env.NODE_PORT = "3009";
     process.env.NODE_HOSTNAME = "localhost";
     process.env.NODE_HOSTNAME_SECURE = "localhost";

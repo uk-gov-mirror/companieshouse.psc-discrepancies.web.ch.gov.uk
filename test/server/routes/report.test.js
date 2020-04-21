@@ -1,6 +1,7 @@
+const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
-let session, stubSession;
+let session, stubSession, stubLogger;
 
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
 const Validator = require(`${serverRoot}/lib/validation`);
@@ -25,6 +26,7 @@ describe('routes/Report', () => {
     sinon.stub(Session.prototype, '_setUp').returns(undefined);
     sinon.stub(Session.prototype, 'read').returns(Promise.resolve(sessionData));
     sinon.stub(Session.prototype, 'write').returns(Promise.resolve(true));
+    stubLogger = sinon.stub(logger, 'info').returns(true);
     done();
   });
 
@@ -41,6 +43,7 @@ describe('routes/Report', () => {
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -51,6 +54,7 @@ describe('routes/Report', () => {
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -61,6 +65,7 @@ describe('routes/Report', () => {
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(404);
+        expect(stubLogger).to.not.have.been.called;
       });
   });
 
@@ -70,6 +75,7 @@ describe('routes/Report', () => {
       .get(slug)
       .then(response => {
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -86,6 +92,7 @@ describe('routes/Report', () => {
         expect(validator.isValidContactName(data.fullName)).to.eventually.equal(true);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/obliged\-entity\/email/g);
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
@@ -106,6 +113,7 @@ describe('routes/Report', () => {
       expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
       expect(response.text).include(data.fullName);
       expect(response).to.have.status(200);
+      expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -126,6 +134,7 @@ describe('routes/Report', () => {
       expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
       expect(response.text).include(data.fullName);
       expect(response).to.have.status(200);
+      expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -136,6 +145,7 @@ describe('routes/Report', () => {
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -157,6 +167,7 @@ describe('routes/Report', () => {
         expect(pscDiscrepancyService.saveEmail(data.email)).to.eventually.eql(serviceData.obligedEntityEmailPost);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/company\-number/g);
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
@@ -177,6 +188,7 @@ describe('routes/Report', () => {
         expect(validator.isValidEmail(data.email)).to.be.rejectedWith(validationError);
         expect(response.text).include(data.email);
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -187,6 +199,7 @@ describe('routes/Report', () => {
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -213,6 +226,7 @@ describe('routes/Report', () => {
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
         expect(stubPscServiceSaveCompanyNumber).to.have.been.calledOnce;
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/discrepancy\-details/g);
+        expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
@@ -233,6 +247,7 @@ describe('routes/Report', () => {
         expect(validator.isCompanyNumberFormatted(data.number)).to.be.rejectedWith(validationError);
         expect(response.text).include(data.number);
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -243,6 +258,7 @@ describe('routes/Report', () => {
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -276,6 +292,7 @@ describe('routes/Report', () => {
         expect(pscDiscrepancyService.saveStatus(servicePayload)).to.eventually.eql(serviceData.reportStatusPost);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/confirmation/g);
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
@@ -296,6 +313,7 @@ describe('routes/Report', () => {
         expect(validator.isTextareaNotEmpty(data.details)).to.be.rejectedWith(validationError);
         expect(response.text).include(data.details);
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -306,6 +324,7 @@ describe('routes/Report', () => {
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 

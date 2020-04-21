@@ -3,6 +3,7 @@
  */
 const Redis = require('ioredis');
 const { Session, SessionStore } = require('ch-node-session-handler');
+const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 
 class AppSession {
@@ -44,6 +45,7 @@ class AppSession {
    * @return {Promise<any, any>}
    */
   read () {
+    logger.info('Request to read from session');
     return new Promise((resolve, reject) => {
       try {
         const s = this.getSessionStore();
@@ -73,6 +75,7 @@ class AppSession {
    * @return {Promise<any, any>}
    */
   write (value) {
+    logger.info('Request to write to session, with data: ', value);
     return new Promise((resolve, reject) => {
       try {
         const s = this.getSessionStore();
