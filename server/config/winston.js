@@ -3,6 +3,21 @@ const { format } = winston;
 const { combine } = format;
 const colorizer = winston.format.colorize();
 
+// Print options for the console depending on environment
+const printOpts = transport => {
+  let optimiser;
+  if (transport === 'console' && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev')) {
+    optimiser = msg =>
+      colorizer.colorize(msg.level, `${msg.timestamp} - ${msg.level}: ${msg.message}`);
+  } else {
+    optimiser = msg => {
+      const { timestamp, level, message, ...args } = msg;
+      return `${timestamp.substr(0, 19)} - ${level}: ${message} ${Object.keys(args).length ? '-' + JSON.stringify(args, null, 2) : ''}`;
+    };
+  }
+  return optimiser;
+};
+
 // define the custom settings for each transport (file, console)
 const options = {
   file: {
@@ -15,23 +30,18 @@ const options = {
     format: combine(
       winston.format.timestamp(),
       winston.format.simple(),
-      winston.format.printf(msg => {
-        const { timestamp, level, message, ...args } = msg;
-        return `${timestamp.substr(0, 19)} - ${level}: ${message} ${Object.keys(args).length ? '-' + JSON.stringify(args, null, 2) : ''}`;
-      })
+      winston.format.printf(printOpts('file'))
     )
   },
   console: {
     level: 'debug',
     handleExceptions: true,
-    json: false,
+    json: true,
     colorize: true,
     format: combine(
       winston.format.timestamp(),
       winston.format.simple(),
-      winston.format.printf(msg =>
-        colorizer.colorize(msg.level, `${msg.timestamp} - ${msg.level}: ${msg.message}`)
-      )
+      winston.format.printf(printOpts('console'))
     )
   }
 };

@@ -17,7 +17,7 @@ const cookieStr = 'PSC_SID=abc123';
 
 let app = require(`${serverRoot}/app`);
 
-describe('routes/Report', () => {
+describe('routes/report', () => {
 
   beforeEach(done => {
     sinon.reset();
@@ -82,14 +82,19 @@ describe('routes/Report', () => {
   it('should process the obliged entity contact name page payload and redirect to obliged entity email page', () => {
     let slug = '/report-a-discrepancy/obliged-entity/contact-name';
     let stubValidator = sinon.stub(Validator.prototype, 'isValidContactName').returns(Promise.resolve(true));
-    let data = { fullName: "joe blog-blogg's" };
+    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+    let data = { fullName: "matt le-matt" };
     return request(app)
       .post(slug)
+      .set('Cookie', cookieStr)
       .send(data)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubValidator).to.have.been.calledWith(data.fullName);
         expect(validator.isValidContactName(data.fullName)).to.eventually.equal(true);
+        expect(stubPscService).to.have.been.calledOnce;
+        expect(stubPscService).to.have.been.calledWith(data.fullName);
+        expect(pscDiscrepancyService.saveContactName(data.fullName)).to.eventually.eql(serviceData.obligedEntityContactNamePost);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/obliged\-entity\/email/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
@@ -119,10 +124,11 @@ describe('routes/Report', () => {
 
   it('should return the contact name page with error message if contact name is incorrectly formatted', () => {
 
-    let data = {fullName: "incorrect/name"};
+    let data = { fullName: "incorrect/name" };
     let validationError = errorManifest.fullName.incorrect;
     let slug = '/report-a-discrepancy/obliged-entity/contact-name';
     let stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationError);
+    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
 
     return request(app)
     .post(slug)
@@ -152,19 +158,26 @@ describe('routes/Report', () => {
   it('should process the obliged entity e-mail page payload and redirect to company number page', () => {
     let slug = '/report-a-discrepancy/obliged-entity/email';
     let stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
-    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
-    let data = { email: "valid-format@domain.tld" };
+    let stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    let stubPscServiceSaveEmail = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
+    let clientPayload = { email: 'valid@valid.com' };
+    let servicePayload = {
+      obliged_entity_email: clientPayload.email,
+      obliged_entity_contact_name: sessionData.appData.initialServiceResponse.obliged_entity_contact_name,
+      etag: sessionData.appData.initialServiceResponse.etag,
+      selfLink: sessionData.appData.initialServiceResponse.links.self
+    }
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
-      .send(data)
+      .send(clientPayload)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
-        expect(stubValidator).to.have.been.calledWith(data.email);
-        expect(validator.isValidEmail(data.email)).to.eventually.equal(true);
-        expect(stubPscService).to.have.been.calledOnce;
-        expect(stubPscService).to.have.been.calledWith(data.email);
-        expect(pscDiscrepancyService.saveEmail(data.email)).to.eventually.eql(serviceData.obligedEntityEmailPost);
+        expect(stubValidator).to.have.been.calledWith(clientPayload.email);
+        expect(validator.isValidEmail(clientPayload.email)).to.eventually.equal(true);
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(stubPscServiceSaveEmail).to.have.been.calledOnce;
+        expect(pscDiscrepancyService.saveEmail(servicePayload)).to.eventually.eql(serviceData.obligedEntityEmailPost);
         expect(response).to.redirectTo(/\/report\-a\-discrepancy\/company\-number/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;

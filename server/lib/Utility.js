@@ -27,7 +27,8 @@ class Utility {
    */
   static logException (err, category = 'appError') {
     const status = typeof err.statusCode !== 'undefined' ? err.statusCode : (err.status || 500);
-    logger.error(`${status} - ${category}: ${err.stack}`);
+    const errStack = typeof err.stack === 'object' && err.stack !== null ? JSON.stringify(err.stack) : err.stack;
+    logger.error(`${status} - ${category}: ${err.message}\r\n${errStack}`);
   }
 }
 

@@ -1,4 +1,4 @@
-describe('routes/utils/DefaultRouteUtil', () => {
+describe('routes/utils/defaultRouteUtil', () => {
 
   const Utility = require(`${serverRoot}/lib/Utility`);
   const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).generic;
@@ -18,7 +18,7 @@ describe('routes/utils/DefaultRouteUtil', () => {
     done();
   });
 
-  describe('Correctly process exceptions as thrown by a route', () => {
+  describe('correctly process exceptions as thrown by a route', () => {
     let stubExceptionLogger;
     const processedException = {
       genericError: errorManifest.serverError

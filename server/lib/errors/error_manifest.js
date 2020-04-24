@@ -6,8 +6,18 @@ let ErrorManifest = {
   },
   validation: {
     default: {
-      summary: "Your request contains errors",
-      inline: "Your request contains errors"
+      summary: "Your request contains validation errors",
+      inline: "Your request contains validation errors"
+    },
+    fullName: {
+      empty: {
+        summary: "Enter your full name",
+        inline: "Enter your full name"
+      },
+      incorrect: {
+        summary: "Full name must only include letters a-z, A-Z, hyphens, spaces and apostrophes",
+        inline: "Full name must only include letters a-z, A-Z, hyphens, spaces and apostrophes"
+      }
     },
     email: {
       blank: {
@@ -31,16 +41,6 @@ let ErrorManifest = {
       incorrect: {
         summary: "Company number must be 8 characters",
         inline: "Company number must be 8 characters"
-      }
-    },
-    fullName: {
-      empty: {
-        summary: "Enter your full name",
-        inline: "Enter your full name"
-      },
-      incorrect: {
-        summary: "Full name must only include letters a-z, A-Z, hyphens, spaces and apostrophes",
-        inline: "Full name must only include letters a-z, A-Z, hyphens, spaces and apostrophes"
       }
     }
   }
