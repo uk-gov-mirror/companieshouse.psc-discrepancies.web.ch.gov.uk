@@ -20,6 +20,29 @@ describe('server/lib/validation/index', () => {
     done();
   });
 
+  it('should validate a correctly formatted contact name', () => {
+    expect(validator.isValidContactName('valid name')).to.eventually.equal(true);
+    expect(validator.isValidContactName('valid hyphenated-name')).to.eventually.equal(true);
+    expect(validator.isValidContactName(`valid quoted'name`)).to.eventually.equal(true);
+    expect(stubLogger).to.have.been.calledThrice;
+  });
+
+  it('should validate and return an error if contact name is not correctly formatted', () => {
+    let errors = {};
+    errors.fullName = errorManifest.fullName.incorrect;
+    expect(validator.isValidContactName(`-日女子أَبْجَدِيّ`)).to.be.rejectedWith(errors);
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
+  it('should validate and return an error for blank contact name', () => {
+    let errors = {};
+    errors.fullName = errorManifest.fullName.blank;
+    expect(validator.isValidContactName('')).to.be.rejectedWith(errors);
+    expect(validator.isValidContactName(undefined)).to.be.rejectedWith(errors);
+    expect(validator.isValidContactName(null)).to.be.rejectedWith(errors);
+    expect(stubLogger).to.have.been.calledThrice;
+  });
+
   it('should validate a correctly formatted email', () => {
     expect(validator.isValidEmail('matt@matt.com')).to.eventually.equal(true);
     expect(validator.isValidEmail('matt-matt@matt.com')).to.eventually.equal(true);

@@ -1,15 +1,17 @@
 describe('lib/Session', () => {
 
+  const logger = require(`${serverRoot}/config/winston`);
   const { Session, SessionStore } = require('ch-node-session-handler');
   const Utility = require(`${serverRoot}/lib/Utility`);
   const ModuleUnderTest = require(`${serverRoot}/lib/Session`);
   const { responseMock, requestMockWithSessionCookie, requestMockWithoutSessionCookie,
-          sessionStoreLoadResolves, sessionStoreLoadRejects, sessionStoreWriteResolves,
-          sessionStoreWriteRejects } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
+          sessionStoreLoadResolves, sessionStoreLoadResolvesRead, sessionStoreLoadRejects,
+          sessionStoreWriteResolves, sessionStoreWriteRejects } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
 
   beforeEach(done => {
     sinon.reset();
     sinon.restore();
+    stubLogger = sinon.stub(logger, 'info').returns(true);
     sinon.stub(Utility, 'logException').returns(undefined);
     done();
   });
@@ -20,7 +22,15 @@ describe('lib/Session', () => {
     done();
   });
 
-  describe('Write a value to the Session', () => {
+  describe('write a value to the Session', () => {
+
+    it.skip('should get the session store', () => {
+      let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
+      const spySessionStore = sinon.spy(SessionStore.prototype, 'constructor');
+      moduleUnderTest.sessionStore = null;
+      let v = moduleUnderTest.getSessionStore();
+      expect(spySessionStore).to.have.been.calledOnce;
+    });
 
     it('should update session data using an existing session Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
@@ -42,13 +52,12 @@ describe('lib/Session', () => {
       expect(stubSessionStoreLoad).to.have.been.calledWith(moduleUnderTest.cookie);
     });
 
-    it.skip('should fail to update cached session data using an existing session Id', () => {
+    it('should fail to update cached session data using an existing session Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
-      let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').returns(Promise.reject(false));
+      let stubSessionStoreLoad = sinon.stub(moduleUnderTest, 'getSessionStore').returns(sessionStoreWriteRejects);
       expect(moduleUnderTest.write({ sample: "value" })).to.be.rejectedWith(false);
       expect(stubSessionStoreLoad).to.have.been.calledOnce;
-      expect(stubSessionStoreLoad).to.have.been.calledWith(moduleUnderTest.cookie);
     });
 
     it('should fail to update cached session data using an existing session Id having successfully called load', () => {
@@ -61,18 +70,17 @@ describe('lib/Session', () => {
     });
   });
 
-  describe('Read a value from the Session', () => {
+  describe('read a value from the Session', () => {
 
-    it.skip('should read in cached session data using an existing session Id', () => {
+    it('should read in cached session data using an existing session Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
-      let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').returns(sessionStoreLoadResolves);
-      expect(moduleUnderTest.read()).to.eventually.eql({});
+      let stubSessionStoreLoad = sinon.stub(moduleUnderTest, 'getSessionStore').returns(sessionStoreLoadResolvesRead);
+      expect(moduleUnderTest.read()).to.eventually.eql({ id: 'abc123', appData: {}, accountData: {} });
       expect(stubSessionStoreLoad).to.have.been.calledOnce;
-      expect(stubSessionStoreLoad).to.have.been.calledWith(moduleUnderTest.cookie);
     });
 
-    it.skip('should fail to read in cached session data using an existing Id', () => {
+    it('should fail to read in cached session data using an existing Id', () => {
       let moduleUnderTest = new ModuleUnderTest(requestMockWithSessionCookie, responseMock);
       moduleUnderTest.sessionStore = new SessionStore();
       let stubSessionStoreLoad = sinon.stub(moduleUnderTest.sessionStore, 'load').rejects(false).returns(false);

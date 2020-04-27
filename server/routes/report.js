@@ -33,7 +33,14 @@ router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next)
 router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
   logger.info('POST request to save obliged entity contact name, with payload: ', req.body);
   validator.isValidContactName(req.body.fullName)
-    .then(_ => {
+    .then(r => {
+      return pscDiscrepancyService.saveContactName(req.body.fullName);
+    }).then(r => {
+      const o = res.locals.session;
+      o.appData.initialServiceResponse = r;
+      res.locals.session = o;
+      return session.write(o);
+    }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/email');
     }).catch(err => {
       res.render(`${routeViews}/contact_name.njk`, {
@@ -51,13 +58,17 @@ router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   logger.info('POST request to save obliged entity email, with payload: ', req.body);
   validator.isValidEmail(req.body.email)
-    .then(r => {
-      return pscDiscrepancyService.saveEmail(req.body.email);
-    }).then(r => {
-      const o = res.locals.session;
-      o.appData.initialServiceResponse = r;
-      res.locals.session = o;
-      return session.write(o);
+    .then(_ => {
+      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+      return pscDiscrepancyService.getReport(selfLink);
+    }).then(report => {
+      const data = {
+        obliged_entity_contact_name: report.obliged_entity_contact_name,
+        obliged_entity_email: req.body.email,
+        etag: report.etag,
+        selfLink: selfLink
+      };
+      return pscDiscrepancyService.saveEmail(data);
     }).then(_ => {
       return res.redirect(302, '/report-a-discrepancy/company-number');
     }).catch(err => {
@@ -81,6 +92,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
+        obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: report.obliged_entity_email,
         company_number: req.body.number,
         etag: report.etag,
@@ -114,6 +126,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
+      data.obliged_entity_contact_name = report.obliged_entity_contact_name;
       data.obliged_entity_email = report.obliged_entity_email;
       data.company_number = report.company_number;
       data.etag = report.etag;

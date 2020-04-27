@@ -69,7 +69,7 @@ class Validator {
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let validNameRegex = new RegExp(/^[AÀÁÂÃÄÅĀĂĄǺaàáâãäåāăąǻÆǼæǽBbCcçćĉċčDÞĎĐdþďđEÈÉÊËĒĔĖĘĚeèéêëēĕėęěFfGĜĞĠĢgĝğġģHĤĦhĥħIÌÍÎÏĨĪĬĮİiìíîïĩīĭįJĴjĵKĶkķLĹĻĽĿŁlĺļľŀłMmNÑŃŅŇŊnñńņňŋOÒÓÔÕÖØŌŎŐǾoòóôõöøōŏőǿŒœPpQqRŔŖŘrŕŗřSŚŜŞŠsśŝşšTŢŤŦtţťŧUÙÚÛÜŨŪŬŮŰŲuùúûüũūŭůűųVvWŴẀẂẄwŵẁẃẅXxYỲÝŶŸyỳýŷÿZŹŻŽzźżž&@£$€¥*=#%+‘ʼ'()\/\[\]{}<>!«»?“ˮ\"0123456789.,:;\–\-  \\r\\n]*$/);
-      if(typeof contactName === 'undefined' || contactName === null || contactName.length === 0){
+      if(typeof contactName === 'undefined' || contactName === null || contactName.length === 0) {
         errors.stack.fullName = errorManifest.fullName.empty;
         reject(errors);
       } else if(!validNameRegex.test(contactName)) {
