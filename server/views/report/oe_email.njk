@@ -40,11 +40,26 @@
             <span id="email-hint" class="govuk-hint">
               We’ll only use this to contact you for more information
             </span>
-            <span id="name-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span>
-                {{this_errors.email.inline}}
-            </span>
-            <input value="{{ this_data.email }}" class="govuk-input{{ ' govuk-input--error' if this_errors.email is not undefined }}" id="email" name="email" type="text" aria-describedby="email-hint" autocomplete="email" spellcheck="false">
+            {% if this_errors.email is not undefined %}
+              <span id="name-error" class="govuk-error-message">
+                  <span class="govuk-visually-hidden">Error:</span>
+                  {{ this_errors.email.inline }}
+              </span>
+            {% endif %}
+            <input value="{{ this_data.email }}" class="govuk-input{{ ' govuk-input--error' if this_errors.email is not undefined }}" id="email" name="email" type="text" aria-describedby="email-hint" autocomplete="email" spellcheck="false" />
+          </div>
+
+          <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.phoneNumber is not undefined }}">
+            <label class="govuk-label" for="phoneNumber">
+              Phone number (optional)
+            </label>
+            {% if this_errors.phoneNumber is not undefined %}
+              <span id="name-error" class="govuk-error-message">
+                  <span class="govuk-visually-hidden">Error:</span>
+                  {{ this_errors.phoneNumber.inline }}
+              </span>
+            {% endif %}
+            <input value="{{ this_data.email }}" class="govuk-input{{ ' govuk-input--error' if this_errors.phoneNumber is not undefined }} govuk-input--width-20" id="phoneNumber" name="phoneNumber" type="tel" autocomplete="tel" />
           </div>
 
           <button class="govuk-button" data-module="govuk-button">

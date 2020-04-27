@@ -160,9 +160,10 @@ describe('routes/report', () => {
     let stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
     let stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     let stubPscServiceSaveEmail = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
-    let clientPayload = { email: 'valid@valid.com' };
+    let clientPayload = { email: 'valid@valid.com', phoneNumber: '07777777777' };
     let servicePayload = {
       obliged_entity_email: clientPayload.email,
+      obliged_entity_telephone_number: clientPayload.phoneNumber,
       obliged_entity_contact_name: sessionData.appData.initialServiceResponse.obliged_entity_contact_name,
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
@@ -186,7 +187,7 @@ describe('routes/report', () => {
 
   it('should return the obliged entity email page with error message if email is incorrectly formatted', () => {
 
-    let data = { email: "incorrect-email-format" };
+    let data = { email: "incorrect-email-format", phoneNumber: '07777777777' };
     let validationError = errorManifest.email;
     let slug = '/report-a-discrepancy/obliged-entity/email';
     let stub = sinon.stub(Validator.prototype, 'isValidEmail').rejects(validationError);
@@ -224,7 +225,8 @@ describe('routes/report', () => {
     let clientPayload = { number: "12345678" };
     let servicePayload = {
       company_number: clientPayload.number,
-      obliged_entity_email: sessionData.appData.initialServiceResponse.obliged_entity_email,
+      obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
+      obliged_entity_telephone_number: serviceData.reportDetailsGet.obliged_entity_telephone_number,
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
     }
@@ -286,6 +288,7 @@ describe('routes/report', () => {
       details: clientPayload.details,
       selfLink: sessionData.appData.initialServiceResponse.links.self,
       obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
+      obliged_entity_telephone_number: serviceData.reportDetailsGet.obliged_entity_telephone_number,
       company_number: serviceData.reportDetailsGet.company_number,
       etag: serviceData.reportDetailsGet.etag,
     };
