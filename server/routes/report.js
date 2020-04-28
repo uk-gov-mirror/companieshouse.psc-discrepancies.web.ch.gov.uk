@@ -65,6 +65,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
       const data = {
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: req.body.email,
+        obliged_entity_telephone_number: req.body.phoneNumber,
         etag: report.etag,
         selfLink: selfLink
       };
@@ -94,6 +95,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       const data = {
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: report.obliged_entity_email,
+        obliged_entity_telephone_number: report.obliged_entity_telephone_number,
         company_number: req.body.number,
         etag: report.etag,
         selfLink: selfLink
@@ -128,6 +130,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(report => {
       data.obliged_entity_contact_name = report.obliged_entity_contact_name;
       data.obliged_entity_email = report.obliged_entity_email;
+      data.obliged_entity_telephone_number = report.obliged_entity_telephone_number;
       data.company_number = report.company_number;
       data.etag = report.etag;
       return pscDiscrepancyService.saveStatus(data);

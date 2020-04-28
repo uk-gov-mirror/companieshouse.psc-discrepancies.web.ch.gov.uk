@@ -7,6 +7,7 @@ const serviceData = {
     kind: "psc_discrepancy_report#psc_discrepancy_report",
     obliged_entity_contact_name: "matt le-matt",
     obliged_entity_email: "m@m.com",
+    obliged_entity_telephone_number: "0777777777",
     company_number: "12345678",
     status: "COMPLETE"
   },
@@ -29,7 +30,8 @@ const serviceData = {
     etag: "29c241cf9cc104ff8d9c2d1c734d4d66969f65d2",
     kind: "psc_discrepancy_report#psc_discrepancy_report",
     obliged_entity_contact_name: "matt le-matt",
-    obliged_entity_email: "m@m.com"
+    obliged_entity_email: "m@m.com",
+    obliged_entity_telephone_number: "0777777777",
   },
   companyNumberPost: {
     links: {
@@ -41,6 +43,7 @@ const serviceData = {
     kind: "psc_discrepancy_report#psc_discrepancy_report",
     obliged_entity_contact_name: "matt le-matt",
     obliged_entity_email: "m@m.com",
+    obliged_entity_telephone_number: "0777777777",
     company_number: "12345678"
   },
   reportStatusPost: {
@@ -53,6 +56,7 @@ const serviceData = {
     kind: "psc_discrepancy_report#psc_discrepancy_report",
     obliged_entity_contact_name: "matt le-matt",
     obliged_entity_email: "m@m.com",
+    obliged_entity_telephone_number: "0777777777",
     company_number: "12345678",
     status: "COMPLETE"
   },

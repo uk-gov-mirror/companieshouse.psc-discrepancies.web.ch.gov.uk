@@ -40,7 +40,8 @@ class PscDiscrepancy {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
       body: {
-        obliged_entity_contact_name: contactName
+        obliged_entity_contact_name: contactName,
+        status: 'INCOMPLETE'
       }
     });
     logger.info('Service request to save contact name, with payload: ', options);
@@ -54,6 +55,7 @@ class PscDiscrepancy {
       body: {
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
+        obliged_entity_telephone_number: data.obliged_entity_telephone_number,
         status: 'INCOMPLETE',
         etag: data.etag
       }
@@ -69,6 +71,7 @@ class PscDiscrepancy {
       body: {
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
+        obliged_entity_telephone_number: data.obliged_entity_telephone_number,
         company_number: data.company_number,
         status: 'INCOMPLETE',
         etag: data.etag
@@ -85,6 +88,7 @@ class PscDiscrepancy {
       body: {
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
+        obliged_entity_telephone_number: data.obliged_entity_telephone_number,
         company_number: data.company_number,
         status: 'COMPLETE',
         etag: data.etag
