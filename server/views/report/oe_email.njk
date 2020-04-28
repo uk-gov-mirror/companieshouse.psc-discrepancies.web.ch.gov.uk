@@ -59,7 +59,7 @@
                   {{ this_errors.phoneNumber.inline }}
               </span>
             {% endif %}
-            <input value="{{ this_data.email }}" class="govuk-input{{ ' govuk-input--error' if this_errors.phoneNumber is not undefined }} govuk-input--width-20" id="phoneNumber" name="phoneNumber" type="tel" autocomplete="tel" />
+            <input value="{{ this_data.phoneNumber }}" class="govuk-input{{ ' govuk-input--error' if this_errors.phoneNumber is not undefined }} govuk-input--width-20" id="phoneNumber" name="phoneNumber" type="tel" autocomplete="tel" />
           </div>
 
           <button class="govuk-button" data-module="govuk-button">
