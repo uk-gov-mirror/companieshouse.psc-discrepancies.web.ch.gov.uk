@@ -135,7 +135,10 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
       data.etag = report.etag;
       return pscDiscrepancyService.saveStatus(data);
     }).then(_ => {
-      return session.write({});
+      const o = res.locals.session;
+      o.appData.initialServiceResponse = {};
+      res.locals.session = o;
+      return session.write(o);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
     }).catch(err => {
