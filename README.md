@@ -1,6 +1,6 @@
 # Report PSC Register Discrepancies service
 
-This is a Web Service (User Interface) for handling PSC Register Discrepancies report submissions as part of a compliance effort for The Fifth anti-Money Laundering Directive, commonly known as "5MLD".
+This is a Web Service (User Interface) that provides a means for reporting PSC Register discrepancies as part of a compliance effort for The Fifth anti-Money Laundering Directive, commonly known as "5MLD".
 
 ## Downloading and installing
 
@@ -32,7 +32,7 @@ After a short wait, the Web Service should be accessible in your browser at: htt
 
 ### Local installation
 
-To run this Web Service outside of Vagrant, you'll still need to carry out the above Vagrant installation to get the API service(s) working in order for this app to work.
+To run this Web Service outside of Vagrant, you'll still need to carry out the above Vagrant installation first to get the API service working in order for this app to work.
 
 Having successfully installed Vagrant above, clone the Web Service [project](https://github.com/companieshouse/psc-discrepancies.web.ch.gov.uk) into your project root, and run the following commands:
 ```
@@ -84,7 +84,7 @@ To view a summary of unit test coverage, run:
 ```
 npm run coverage
 ```
-To view a full report of unit test coverage, run:
+To view the full coverage report, run:
 ```
 npm run coverage:report
 ```
@@ -132,9 +132,9 @@ We are also in the process of plugging in Structured Logging which is the depart
 
 ### 3. Session handling
 
-We use the department-wide Session Handler for managing session data. In order to make it's integration into the app more transparent and linear, there's a wrapper around it and can be found at `server/lib/Session.js`
+We use the department-wide [Session Handler](https://github.com/companieshouse/node-session-handler) for managing session data. In order to make it's integration into the app more transparent and linear, there's a wrapper around it and can be found at `server/lib/Session.js`
 
-Presently, this service is not yet behind sign in but will eventually be required to be . When this happens, the session wrapper implementation might need an update to account for this change.
+Presently, this service is not yet behind sign in but eventually will be . When this happens, the session wrapper implementation might need a few tweaks to account for this change.
 
 ### To-do
 
