@@ -1,6 +1,6 @@
 # Report PSC Register Discrepancies service
 
-This app is an implementation of Companies House's Web Service (User Interface) for handling PSC Register Discrepancies report submissions as part of a compliance effort for The Fifth anti-Money Laundering Directive, commonly known as "5MLD".
+This is a Web Service (User Interface) for handling PSC Register Discrepancies report submissions as part of a compliance effort for The Fifth anti-Money Laundering Directive, commonly known as "5MLD".
 
 ## Downloading and installing
 
