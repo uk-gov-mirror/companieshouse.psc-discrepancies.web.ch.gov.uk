@@ -1,7 +1,7 @@
 {
-  "name": "node-web-starter-creed",
+  "name": "psc-discrepancies.web.ch.gov.uk",
   "version": "1.0.0",
-  "description": "Node Web Starter for Team Creed",
+  "description": "The Web Service (User Interface) for reporting PSC Register discrepancies",
   "main": "server.js",
   "nyc": {
     "statements": 50,
