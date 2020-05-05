@@ -4,7 +4,6 @@ const Validator = require(`${serverRoot}/lib/validation`);
 const validator = new Validator();
 
 describe('server/lib/validation/index', () => {
-
   let stubLogger;
 
   beforeEach(done => {
@@ -23,19 +22,19 @@ describe('server/lib/validation/index', () => {
   it('should validate a correctly formatted contact name', () => {
     expect(validator.isValidContactName('valid name')).to.eventually.equal(true);
     expect(validator.isValidContactName('valid hyphenated-name')).to.eventually.equal(true);
-    expect(validator.isValidContactName(`valid quoted'name`)).to.eventually.equal(true);
+    expect(validator.isValidContactName('valid quoted\'name')).to.eventually.equal(true);
     expect(stubLogger).to.have.been.calledThrice;
   });
 
   it('should validate and return an error if contact name is not correctly formatted', () => {
-    let errors = {};
+    const errors = {};
     errors.fullName = errorManifest.fullName.incorrect;
-    expect(validator.isValidContactName(`-日女子أَبْجَدِيّ`)).to.be.rejectedWith(errors);
+    expect(validator.isValidContactName('-日女子أَبْجَدِيّ')).to.be.rejectedWith(errors);
     expect(stubLogger).to.have.been.calledOnce;
   });
 
   it('should validate and return an error for blank contact name', () => {
-    let errors = {};
+    const errors = {};
     errors.fullName = errorManifest.fullName.blank;
     expect(validator.isValidContactName('')).to.be.rejectedWith(errors);
     expect(validator.isValidContactName(undefined)).to.be.rejectedWith(errors);
@@ -50,14 +49,14 @@ describe('server/lib/validation/index', () => {
   });
 
   it('should validate and return an error if email address is not correctly formatted', () => {
-    let errors = {};
+    const errors = {};
     errors.email = errorManifest.email.incorrect;
     expect(validator.isValidEmail('matt.com')).to.be.rejectedWith(errors);
     expect(stubLogger).to.have.been.calledOnce;
   });
 
   it('should validate and return an error for blank email addresses', () => {
-    let errors = {};
+    const errors = {};
     errors.email = errorManifest.email.blank;
     expect(validator.isValidEmail('')).to.be.rejectedWith(errors);
     expect(validator.isValidEmail(undefined)).to.be.rejectedWith(errors);
@@ -73,7 +72,7 @@ describe('server/lib/validation/index', () => {
   });
 
   it('should validate textarea has no text or numbers only', () => {
-    let errors = {};
+    const errors = {};
     errors.details = errorManifest.details;
     expect(validator.isTextareaNotEmpty('')).to.be.rejectedWith(errors);
     expect(validator.isTextareaNotEmpty('123')).to.be.rejectedWith(errors);
@@ -89,7 +88,7 @@ describe('server/lib/validation/index', () => {
   });
 
   it('should validate company number has no text or is undefined or null', () => {
-    let errors = {};
+    const errors = {};
     errors.number = errorManifest.number.empty;
     expect(validator.isCompanyNumberFormatted('')).to.be.rejectedWith(errors);
     expect(validator.isCompanyNumberFormatted(undefined)).to.be.rejectedWith(errors);
@@ -98,7 +97,7 @@ describe('server/lib/validation/index', () => {
   });
 
   it('should validate company number is 8 characters long', () => {
-    let errors = {};
+    const errors = {};
     errors.number = errorManifest.number.incorrect;
     expect(validator.isCompanyNumberFormatted('1234567')).to.be.rejectedWith(errors);
     expect(validator.isCompanyNumberFormatted('123456789')).to.be.rejectedWith(errors);

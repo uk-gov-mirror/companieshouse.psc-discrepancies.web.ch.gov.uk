@@ -1,7 +1,7 @@
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
-let session, stubSession, stubLogger;
+let stubLogger;
 
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
 const Validator = require(`${serverRoot}/lib/validation`);
@@ -15,10 +15,9 @@ const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
 
 const cookieStr = 'PSC_SID=abc123';
 
-let app = require(`${serverRoot}/app`);
+const app = require(`${serverRoot}/app`);
 
 describe('routes/report', () => {
-
   beforeEach(done => {
     sinon.reset();
     sinon.restore();
@@ -37,7 +36,7 @@ describe('routes/report', () => {
   });
 
   it('should serve up the index page with no mount path', () => {
-    let slug = '/';
+    const slug = '/';
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
@@ -48,7 +47,7 @@ describe('routes/report', () => {
   });
 
   it('should serve up the index page on the "/report-a-discrepancy" mount path', () => {
-    let slug = '/report-a-discrepancy';
+    const slug = '/report-a-discrepancy';
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
@@ -59,7 +58,7 @@ describe('routes/report', () => {
   });
 
   it('should fail to serve up a page on an unhandled mount path', () => {
-    let slug = '/not-a-report-a-discrepancy-url';
+    const slug = '/not-a-report-a-discrepancy-url';
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
@@ -70,7 +69,7 @@ describe('routes/report', () => {
   });
 
   it('should serve up the obliged entity contact name page', () => {
-    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     return request(app)
       .get(slug)
       .then(response => {
@@ -80,10 +79,10 @@ describe('routes/report', () => {
   });
 
   it('should process the obliged entity contact name page payload and redirect to obliged entity email page', () => {
-    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
-    let stubValidator = sinon.stub(Validator.prototype, 'isValidContactName').returns(Promise.resolve(true));
-    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
-    let data = { fullName: "matt le-matt" };
+    const slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidContactName').returns(Promise.resolve(true));
+    const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+    const data = { fullName: 'matt le-matt' };
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -95,57 +94,55 @@ describe('routes/report', () => {
         expect(stubPscService).to.have.been.calledOnce;
         expect(stubPscService).to.have.been.calledWith(data.fullName);
         expect(pscDiscrepancyService.saveContactName(data.fullName)).to.eventually.eql(serviceData.obligedEntityContactNamePost);
-        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/obliged\-entity\/email/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/email/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
   it('should return the contact name page with error message if contact name is not populated', () => {
-
-    let data = {fullName: ""};
-    let validationError = errorManifest.fullName.empty;
-    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
-    let stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationError);
+    const data = { fullName: '' };
+    const validationError = errorManifest.fullName.empty;
+    const slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    const stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationError);
 
     return request(app)
-    .post(slug)
-    .set('Cookie', cookieStr)
-    .send(data)
-    .then(response => {
-      expect(stub).to.have.been.calledOnce;
-      expect(stub).to.have.been.calledWith(data.fullName);
-      expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
-      expect(response.text).include(data.fullName);
-      expect(response).to.have.status(200);
-      expect(stubLogger).to.have.been.calledOnce;
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.fullName);
+        expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
+        expect(response.text).include(data.fullName);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
   it('should return the contact name page with error message if contact name is incorrectly formatted', () => {
-
-    let data = { fullName: "incorrect/name" };
-    let validationError = errorManifest.fullName.incorrect;
-    let slug = '/report-a-discrepancy/obliged-entity/contact-name';
-    let stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationError);
-    let stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+    const data = { fullName: 'incorrect/name' };
+    const validationError = errorManifest.fullName.incorrect;
+    const slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    const stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationError);
+    // const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
 
     return request(app)
-    .post(slug)
-    .set('Cookie', cookieStr)
-    .send(data)
-    .then(response => {
-      expect(stub).to.have.been.calledOnce;
-      expect(stub).to.have.been.calledWith(data.fullName);
-      expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
-      expect(response.text).include(data.fullName);
-      expect(response).to.have.status(200);
-      expect(stubLogger).to.have.been.calledOnce;
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.fullName);
+        expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationError);
+        expect(response.text).include(data.fullName);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
   it('should serve up the obliged entity e-mail page with oe-email path', () => {
-    let slug = '/report-a-discrepancy/obliged-entity/email';
+    const slug = '/report-a-discrepancy/obliged-entity/email';
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
@@ -156,18 +153,18 @@ describe('routes/report', () => {
   });
 
   it('should process the obliged entity e-mail page payload and redirect to company number page', () => {
-    let slug = '/report-a-discrepancy/obliged-entity/email';
-    let stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
-    let stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
-    let stubPscServiceSaveEmail = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
-    let clientPayload = { email: 'valid@valid.com', phoneNumber: '07777777777' };
-    let servicePayload = {
+    const slug = '/report-a-discrepancy/obliged-entity/email';
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubPscServiceSaveEmail = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
+    const clientPayload = { email: 'valid@valid.com', phoneNumber: '07777777777' };
+    const servicePayload = {
       obliged_entity_email: clientPayload.email,
       obliged_entity_telephone_number: clientPayload.phoneNumber,
       obliged_entity_contact_name: sessionData.appData.initialServiceResponse.obliged_entity_contact_name,
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
-    }
+    };
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -179,18 +176,17 @@ describe('routes/report', () => {
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
         expect(stubPscServiceSaveEmail).to.have.been.calledOnce;
         expect(pscDiscrepancyService.saveEmail(servicePayload)).to.eventually.eql(serviceData.obligedEntityEmailPost);
-        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/company\-number/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/company-number/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
   it('should return the obliged entity email page with error message if email is incorrectly formatted', () => {
-
-    let data = { email: "incorrect-email-format", phoneNumber: '07777777777' };
-    let validationError = errorManifest.email;
-    let slug = '/report-a-discrepancy/obliged-entity/email';
-    let stub = sinon.stub(Validator.prototype, 'isValidEmail').rejects(validationError);
+    const data = { email: 'incorrect-email-format', phoneNumber: '07777777777' };
+    const validationError = errorManifest.email;
+    const slug = '/report-a-discrepancy/obliged-entity/email';
+    const stub = sinon.stub(Validator.prototype, 'isValidEmail').rejects(validationError);
 
     return request(app)
       .post(slug)
@@ -207,7 +203,7 @@ describe('routes/report', () => {
   });
 
   it('should serve up the company number page with company number path', () => {
-    let slug = '/report-a-discrepancy/company-number';
+    const slug = '/report-a-discrepancy/company-number';
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
@@ -218,18 +214,18 @@ describe('routes/report', () => {
   });
 
   it('should process the company number page payload and redirect to discrepancy details page', () => {
-    let slug = '/report-a-discrepancy/company-number';
-    let stubValidator = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
-    let stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
-    let stubPscServiceSaveCompanyNumber = sinon.stub(PscDiscrepancyService.prototype, 'saveCompanyNumber').returns(Promise.resolve(serviceData.companyNumberPost));
-    let clientPayload = { number: "12345678" };
-    let servicePayload = {
+    const slug = '/report-a-discrepancy/company-number';
+    const stubValidator = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubPscServiceSaveCompanyNumber = sinon.stub(PscDiscrepancyService.prototype, 'saveCompanyNumber').returns(Promise.resolve(serviceData.companyNumberPost));
+    const clientPayload = { number: '12345678' };
+    /* const servicePayload = {
       company_number: clientPayload.number,
       obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
       obliged_entity_telephone_number: serviceData.reportDetailsGet.obliged_entity_telephone_number,
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
-    }
+    }; */
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -240,17 +236,16 @@ describe('routes/report', () => {
         expect(validator.isCompanyNumberFormatted(clientPayload.number)).to.eventually.equal(true);
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
         expect(stubPscServiceSaveCompanyNumber).to.have.been.calledOnce;
-        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/discrepancy\-details/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
         expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
   it('should return company number page with error message if number is incorrectly formatted', () => {
-
-    let data = { number: "123456" };
-    let validationError = errorManifest.number.incorrect;
-    let slug = '/report-a-discrepancy/company-number';
-    let stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').rejects(validationError);
+    const data = { number: '123456' };
+    const validationError = errorManifest.number.incorrect;
+    const slug = '/report-a-discrepancy/company-number';
+    const stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').rejects(validationError);
 
     return request(app)
       .post(slug)
@@ -267,7 +262,7 @@ describe('routes/report', () => {
   });
 
   it('should serve up the discrepancy details page with discrepancy-details path', () => {
-    let slug = '/report-a-discrepancy/discrepancy-details';
+    const slug = '/report-a-discrepancy/discrepancy-details';
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
@@ -278,19 +273,19 @@ describe('routes/report', () => {
   });
 
   it('should process the discrepancy details page payload and redirect to the confirmation page', () => {
-    let slug = '/report-a-discrepancy/discrepancy-details';
-    let stubValidator = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
-    let stubPscServiceSaveDetails = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
-    let stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
-    let stubPscServiceSaveStatus= sinon.stub(PscDiscrepancyService.prototype, 'saveStatus').returns(Promise.resolve(serviceData.reportStatusPost));
-    let clientPayload = { details: "Some details" };
-    let servicePayload = {
+    const slug = '/report-a-discrepancy/discrepancy-details';
+    const stubValidator = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
+    const stubPscServiceSaveDetails = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubPscServiceSaveStatus = sinon.stub(PscDiscrepancyService.prototype, 'saveStatus').returns(Promise.resolve(serviceData.reportStatusPost));
+    const clientPayload = { details: 'Some details' };
+    const servicePayload = {
       details: clientPayload.details,
       selfLink: sessionData.appData.initialServiceResponse.links.self,
       obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
       obliged_entity_telephone_number: serviceData.reportDetailsGet.obliged_entity_telephone_number,
       company_number: serviceData.reportDetailsGet.company_number,
-      etag: serviceData.reportDetailsGet.etag,
+      etag: serviceData.reportDetailsGet.etag
     };
     return request(app)
       .post(slug)
@@ -306,18 +301,17 @@ describe('routes/report', () => {
         expect(pscDiscrepancyService.saveDiscrepancyDetails(servicePayload)).to.eventually.eql(serviceData.discrepancyDetailsPost);
         expect(pscDiscrepancyService.getReport(servicePayload.selfLink)).to.eventually.eql(serviceData.reportDetailsGet);
         expect(pscDiscrepancyService.saveStatus(servicePayload)).to.eventually.eql(serviceData.reportStatusPost);
-        expect(response).to.redirectTo(/\/report\-a\-discrepancy\/confirmation/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/confirmation/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
       });
   });
 
   it('should return the discrepancy details page with error message if details are not entered', () => {
-
-    let data = { details: "" };
-    let validationError = errorManifest.details;
-    let slug = '/report-a-discrepancy/discrepancy-details';
-    let stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').rejects(validationError);
+    const data = { details: '' };
+    const validationError = errorManifest.details;
+    const slug = '/report-a-discrepancy/discrepancy-details';
+    const stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').rejects(validationError);
 
     return request(app)
       .post(slug)
@@ -334,7 +328,7 @@ describe('routes/report', () => {
   });
 
   it('should serve up the confirmation page with confirmation path', () => {
-    let slug = '/report-a-discrepancy/confirmation';
+    const slug = '/report-a-discrepancy/confirmation';
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
@@ -343,5 +337,4 @@ describe('routes/report', () => {
         expect(stubLogger).to.have.been.calledOnce;
       });
   });
-
 });
