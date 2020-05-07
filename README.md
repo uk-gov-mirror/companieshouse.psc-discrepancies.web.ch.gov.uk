@@ -45,6 +45,13 @@ npm install && npm install mocha -g
 - The signature config file for local (non-Vagrant) installs is located at `config/.env.example` and should be copied over to `config/.env`.
 - You will need to tweak some values in `.env` to suit your local set up e.g. port number, hostname, SSL settings, etc...
 
+### Redis set-up
+
+- Install and configure Redis on Mac OS X via Homebrew: `brew install redis`
+- Start Redis server with: `brew services start redis`. This will run Redis on default port is `6379` on `127.0.0.1`
+- Test if Redis server is running by typing the command: `redis-cli ping`.  If it replies with `PONG`, then it's good to go!
+- Stop Redis server using brew: `brew services stop redis`
+
 #### SSL set-up (optional)
 
 - If you wish to work with ssl-enabled endpoints locally, ensure you turn the `NODE_SSL_ENABLED` property to `ON` in the config and also provide paths to your private key and certificate.
