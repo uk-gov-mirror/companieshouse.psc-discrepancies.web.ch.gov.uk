@@ -27,8 +27,8 @@
     "test:watch": "source ./server/config/.env && mocha --recursive --watch --reporter nyan test/server",
     "coverage": "nyc --check-coverage --reporter=text-summary npm run test",
     "coverage:report": "nyc --reporter=lcov --reporter=text npm run test",
-    "lint": "eslint server/*.js server/**/*.js",
-    "lint:fix": "eslint server/*.js server/**/*.js --fix"
+    "lint": "eslint server/*.js server/**/*.js test/*.js test/**/*.js",
+    "lint:fix": "eslint server/*.js server/**/*.js test/*.js test/**/*.js --fix"
   },
   "husky": {
     "hooks": {

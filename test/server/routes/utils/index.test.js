@@ -1,11 +1,10 @@
 describe('routes/utils/defaultRouteUtil', () => {
-
   const Utility = require(`${serverRoot}/lib/Utility`);
   const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).generic;
 
   const { validationException, serviceException, genericServerException, exceptionWithNoStatus } = require(`${testRoot}/server/_fakes/mocks`);
 
-  let ModuleUnderTest = require(`${serverRoot}/routes/utils`);
+  const ModuleUnderTest = require(`${serverRoot}/routes/utils`);
 
   beforeEach(() => {
     sinon.reset();
