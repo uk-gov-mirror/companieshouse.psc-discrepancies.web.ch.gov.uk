@@ -2,6 +2,14 @@
 
 This is a Web Service (User Interface) that provides a means for reporting PSC Register discrepancies as part of a compliance effort for The Fifth anti-Money Laundering Directive, commonly known as "5MLD".
 
+## Dependencies
+
+You'll need the following software installed before-hand:
+
+  - [NodeJS](https://nodejs.org/en/)
+  - [VirtualBox](https://www.virtualbox.org/)
+  - [Redis](https://redis.io/topics/quickstart)
+
 ## Downloading and installing
 
 There are two ways to download, install and run this Web Service:
@@ -48,7 +56,7 @@ npm install && npm install mocha -g
 ### Redis set-up
 
 - Install and configure Redis on Mac OS X via Homebrew: `brew install redis`
-- Start Redis server with: `brew services start redis`. This will run Redis on default port is `6379` on `127.0.0.1`
+- Start Redis server with: `brew services start redis`. This will run Redis on default port `6379` on `127.0.0.1`
 - Test if Redis server is running by typing the command: `redis-cli ping`.  If it replies with `PONG`, then it's good to go!
 - Stop Redis server using brew: `brew services stop redis`
 
@@ -146,7 +154,6 @@ Presently, this service is not yet behind sign in but eventually will be . When 
 ### To-do
 
 - [] Integrate Structured Logging
-- [] Integrate SonarQube
 - [] Form-based validation
 - [] Multple form submissions
 - [] Lock down major dependencies to specific versions that are proven to work well
