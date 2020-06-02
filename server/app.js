@@ -5,14 +5,16 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
-const morgan = require('morgan');
+//const morgan = require('morgan');
 global.serverRoot = __dirname;
 
-const Session = require(`${serverRoot}/lib/Session`);
+//const Session = require(`${serverRoot}/lib/Session`);
 const Utility = require(`${serverRoot}/lib/Utility`);
-
+const session = require(`${serverRoot}/../../node-session-handler`);
+//const Session = require(`${serverRoot}/lib/Session`);
+//let session; // eslint-disable-line no-unused-vars
 // log requests
-app.use(morgan('combined'));
+//app.use(morgan('combined'));
 
 // views path + engine set-up
 app.set('views', [
@@ -52,13 +54,13 @@ njk.addGlobal('cdnHost', process.env.CDN_HOST);
 
 // load the session data into res.locals
 app.use((req, res, next) => {
-  const session = new Session(req, res);
-  session.read()
-    .then(data => {
-      res.locals.session = data;
+  session.start(req, res)
+    .then(_ => {
+      console.log('bootstrap - res.locals.session');
+      console.log(res.locals.session);
       next();
     }).catch(err => {
-      Utility.logException(err);
+      console.log('error bootstrap');
       next();
     });
 });

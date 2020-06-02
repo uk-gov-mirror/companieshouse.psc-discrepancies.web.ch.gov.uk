@@ -27,7 +27,7 @@
   "scripts": {
     "build": "gulp build",
     "start": "source ./server/config/.env && node server.js",
-    "watch": "source ./server/config/.env && nodemon -e js,json,html,njk --watch ./ --config ./config/nodemon.json server.js",
+    "watch": "source ./server/config/.env && nodemon -e js,json,html,njk --watch ./ --watch ./../node-session-handler/lib --config ./config/nodemon.json server.js",
     "test": "source ./server/config/.env && mocha --recursive test/server",
     "test:watch": "source ./server/config/.env && mocha --recursive --watch --reporter nyan test/server",
     "coverage": "nyc --check-coverage --reporter=text-summary npm run test",
@@ -38,7 +38,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm test && npm run lint"
+      
     }
   },
   "author": "Moses Wejuli<mwejuli@companieshouse.gov.uk>",

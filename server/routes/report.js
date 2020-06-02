@@ -7,22 +7,28 @@ const validator = new Validator();
 const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
 
-const Session = require(`${serverRoot}/lib/Session`);
-let session; // eslint-disable-line no-unused-vars
-
+const session = require(`${serverRoot}/../../node-session-handler`);
+//const Session = require(`${serverRoot}/lib/Session`);
+//let session; // eslint-disable-line no-unused-vars
 const routeUtils = require(`${serverRoot}/routes/utils`);
 const routeViews = 'report';
 
 let selfLink; // eslint-disable-line no-unused-vars
 
-router.use((req, res, next) => {
-  session = new Session(req, res);
-  next();
-});
-
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
+  try {
   logger.info(`GET request to serve index page: ${req.path}`);
+  console.log('second - res.locals.session');
+  console.log(res.locals.session);
+  let myAppSessionData = { some_key: "some_value" };
+  session.write(res, myAppSessionData);
+  console.log('route handler - res.locals.session');
+  console.log(res.locals.session);
   res.render(`${routeViews}/index.njk`);
+  } catch (err) {
+    console.log('start app error');
+    console.log(err);
+  }
 });
 
 router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next) => {
