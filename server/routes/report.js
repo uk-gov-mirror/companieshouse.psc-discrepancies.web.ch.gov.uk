@@ -21,10 +21,23 @@ router.get('(/report-a-discrepancy)?', (req, res, next) => {
   console.log('second - res.locals.session');
   console.log(res.locals.session);
   let myAppSessionData = { some_key: "some_value" };
-  session.write(res, myAppSessionData);
-  console.log('route handler - res.locals.session');
-  console.log(res.locals.session);
-  res.render(`${routeViews}/index.njk`);
+  session.write(res, myAppSessionData)
+    .then(r => {
+      console.log('written');
+      console.log(r);
+      console.log('route handler before delete - res.locals.session');
+      console.log(res.locals.session);
+      return session.delete(res);
+    }).then(t => {
+      console.log('deleted');
+      console.log(t);
+      console.log('route handler after delete - res.locals.session');
+      console.log(res.locals.session);
+      res.render(`${routeViews}/index.njk`);
+    }).catch(err => {
+      console.log('err-route');
+      console.log(err);
+    });
   } catch (err) {
     console.log('start app error');
     console.log(err);

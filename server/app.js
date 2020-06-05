@@ -11,6 +11,8 @@ global.serverRoot = __dirname;
 //const Session = require(`${serverRoot}/lib/Session`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const session = require(`${serverRoot}/../../node-session-handler`);
+console.log('Object.keys(session)');
+console.log(Object.keys(session));
 //const Session = require(`${serverRoot}/lib/Session`);
 //let session; // eslint-disable-line no-unused-vars
 // log requests
