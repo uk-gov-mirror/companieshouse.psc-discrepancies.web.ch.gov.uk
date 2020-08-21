@@ -26,8 +26,8 @@ router.get('(/report-a-discrepancy)?', (req, res, next) => {
 });
 
 router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
-    logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
-    res.render(`${routeViews}/organisation_name.njk`)
+  logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
+  res.render(`${routeViews}/organisation_name.njk`)
 });
 
 router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
