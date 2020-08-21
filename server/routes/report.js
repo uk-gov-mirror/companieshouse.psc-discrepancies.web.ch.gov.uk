@@ -25,6 +25,31 @@ router.get('(/report-a-discrepancy)?', (req, res, next) => {
   res.render(`${routeViews}/index.njk`);
 });
 
+router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
+    logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
+    res.render(`${routeViews}/organisation_name.njk`)
+});
+
+router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
+  logger.info('POST request to save obliged entity organisation name, with payload: ', req.body);
+  validator.isValidOrganisationName(req.body.organisationName)
+    .then(r => {
+      return pscDiscrepancyService.saveOrganisationName(req.body.organisationName);
+    }).then(r => {
+      const o = res.locals.session;
+      o.appData.initalServiceResponse = r;
+      res.locals.session = o;
+      return session.write(o);
+    }).then(_ => {
+      res.redirect(302, '/report-a-discrepancy/obliged-entity/contact-name');
+    }).catch(err => {
+      res.render(`${routeViews}/organisation_name.njk`, {
+          this_errors: routeUtils.processException(err),
+          this_data: req.body
+      });
+    });
+});
+
 router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity contact name page: ${req.path}`);
   res.render(`${routeViews}/contact_name.njk`);

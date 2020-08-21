@@ -36,9 +36,34 @@ class PscDiscrepancy {
     return this.request(options);
   }
 
-  saveContactName (contactName) {
+  saveOrganisationType (oeType) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
+      body: {
+        obliged_entity_type: oeType,
+        status: 'INCOMPLETE'
+      }
+    });
+    logger.info('Service request to save contact name, with payload: ', options);
+    return this.request(options);
+  }
+
+  saveOrganisationName (data) {
+    const options = Object.assign(this._getBaseOptions(), {
+      method: 'PUT',
+      body: {
+        obliged_entity_type: data.obliged_entity_type,
+        obliged_entity_organisation_name: data.obliged_entity_organisation_name,
+        status: 'INCOMPLETE'
+      }
+    });
+    logger.info('Service request to save contact name, with payload: ', options);
+    return this.request(options);
+  }
+
+  saveContactName (contactName) {
+    const options = Object.assign(this._getBaseOptions(), {
+      method: 'PUT',
       body: {
         obliged_entity_contact_name: contactName,
         status: 'INCOMPLETE'
