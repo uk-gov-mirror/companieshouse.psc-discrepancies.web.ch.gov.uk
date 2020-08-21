@@ -27,7 +27,7 @@ router.get('(/report-a-discrepancy)?', (req, res, next) => {
 
 router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
-  res.render(`${routeViews}/organisation_name.njk`)
+  res.render(`${routeViews}/organisation_name.njk`);
 });
 
 router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
@@ -44,8 +44,8 @@ router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res,
       res.redirect(302, '/report-a-discrepancy/obliged-entity/contact-name');
     }).catch(err => {
       res.render(`${routeViews}/organisation_name.njk`, {
-          this_errors: routeUtils.processException(err),
-          this_data: req.body
+        this_errors: routeUtils.processException(err),
+        this_data: req.body
       });
     });
 });
