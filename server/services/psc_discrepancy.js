@@ -36,12 +36,27 @@ class PscDiscrepancy {
     return this.request(options);
   }
 
-  saveContactName (contactName) {
+  saveObligedEntityType(obligedEntityType) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
       body: {
-        obliged_entity_contact_name: contactName,
+        obliged_entity_type: obligedEntityType,
         status: 'INCOMPLETE'
+      }
+    });
+    logger.info('Service request to save obliged entity type, with payload: ', options);
+    return this.request(options);
+  }
+
+  saveContactName (data) {
+    const options = Object.assign(this._getBaseOptions(), {
+      method: 'PUT',
+      uri: `${this.server.baseUrl}${data.selfLink}`,
+      body: {
+        obliged_entity_type: data.obliged_entity_type,
+        obliged_entity_contact_name: data.obliged_entity_contact_name,
+        status: 'INCOMPLETE',
+        etag: data.etag
       }
     });
     logger.info('Service request to save contact name, with payload: ', options);
@@ -53,6 +68,7 @@ class PscDiscrepancy {
       method: 'PUT',
       uri: `${this.server.baseUrl}${data.selfLink}`,
       body: {
+        obliged_entity_type: data.obliged_entity_type,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
         obliged_entity_telephone_number: data.obliged_entity_telephone_number,
@@ -69,6 +85,7 @@ class PscDiscrepancy {
       method: 'PUT',
       uri: `${this.server.baseUrl}${data.selfLink}`,
       body: {
+        obliged_entity_type: data.obliged_entity_type,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
         obliged_entity_telephone_number: data.obliged_entity_telephone_number,
@@ -86,6 +103,7 @@ class PscDiscrepancy {
       method: 'PUT',
       uri: `${this.server.baseUrl}${data.selfLink}`,
       body: {
+        obliged_entity_type: data.obliged_entity_type,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
         obliged_entity_telephone_number: data.obliged_entity_telephone_number,
