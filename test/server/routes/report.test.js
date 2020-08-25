@@ -1,6 +1,9 @@
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
+const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
+const routeUtils = require(`${serverRoot}/routes/utils`);
+
 let stubLogger;
 
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
@@ -12,6 +15,7 @@ const pscDiscrepancyService = new PscDiscrepancyService();
 
 const serviceData = require(`${testRoot}/server/_fakes/data/services/psc_discrepancy`);
 const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
+const validationException = require(`${testRoot}/server/_fakes/mocks`).validationException;
 
 const cookieStr = 'PSC_SID=abc123';
 
@@ -68,6 +72,61 @@ describe('routes/report', () => {
       });
   });
 
+  it('should serve up the obliged entity obliged entity type page', () => {
+    const slug = '/report-a-discrepancy/obliged-entity/type';
+    return request(app)
+      .get(slug)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
+  it('should process the obliged entity type page payload and redirect to obliged entity contact name page', () => {
+    const slug = '/report-a-discrepancy/obliged-entity/type';
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidObligedEntityType').returns(Promise.resolve(true));
+    const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveObligedEntityType').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+    const data = { obligedEntityType: 'financial' };
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(data)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubValidator).to.have.been.calledWith(data, Object.keys(obligedEntityTypes));
+        expect(validator.isValidObligedEntityType(data.obligedEntityType)).to.eventually.equal(true);
+        expect(stubPscService).to.have.been.calledOnce;
+        expect(stubPscService).to.have.been.calledWith(obligedEntityTypes[data.obligedEntityType]);
+        // expect(pscDiscrepancyService.saveObligedEntityType(obligedEntityTypes[data.obligedEntityType])).to.eventually.eql(serviceData.obligedEntityTypePost);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/contact-name/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
+      });
+  });
+
+  it('should return the obliged entity type page with error message if obliged entity type is not selected', () => {
+    const data = { obigedEntityType: 'incorrect type' };
+    const slug = '/report-a-discrepancy/obliged-entity/type';
+    validationException.stack = errorManifest.obligedEntityType.blank;
+    const stub = sinon.stub(Validator.prototype, 'isValidObligedEntityType').rejects(validationException);
+    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
+
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(data)
+      .then(response => {
+        expect(stubLogger).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data, Object.keys(obligedEntityTypes));
+        expect(validator.isValidObligedEntityType(data, Object.keys(obligedEntityTypes))).to.be.rejectedWith(validationException);
+        expect(processException).to.have.been.calledOnce;
+        expect(processException).to.have.been.calledWith(validationException);
+        // expect(response.text).include('Select what type of obliged entity you are');
+        expect(response).to.have.status(200);
+      });
+  });
+
   it('should serve up the obliged entity contact name page', () => {
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     return request(app)
@@ -81,8 +140,15 @@ describe('routes/report', () => {
   it('should process the obliged entity contact name page payload and redirect to obliged entity email page', () => {
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     const stubValidator = sinon.stub(Validator.prototype, 'isValidContactName').returns(Promise.resolve(true));
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
     const data = { fullName: 'matt le-matt' };
+    const servicePayload = {
+      obliged_entity_type: sessionData.appData.initialServiceResponse.obliged_entity_type,
+      obliged_entity_contact_name: data.fullName,
+      etag: sessionData.appData.initialServiceResponse.etag,
+      selfLink: sessionData.appData.initialServiceResponse.links.self
+    };
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -91,9 +157,10 @@ describe('routes/report', () => {
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubValidator).to.have.been.calledWith(data.fullName);
         expect(validator.isValidContactName(data.fullName)).to.eventually.equal(true);
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
         expect(stubPscService).to.have.been.calledOnce;
-        expect(stubPscService).to.have.been.calledWith(data.fullName);
-        expect(pscDiscrepancyService.saveContactName(data.fullName)).to.eventually.eql(serviceData.obligedEntityContactNamePost);
+        expect(stubPscService).to.have.been.calledWith(servicePayload);
+        expect(pscDiscrepancyService.saveContactName(servicePayload)).to.eventually.eql(serviceData.obligedEntityContactNamePost);
         expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/email/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
