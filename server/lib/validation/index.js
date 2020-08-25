@@ -17,7 +17,7 @@ class Validator {
     }
   }
 
-  isValidObligedEntity(payload, validTypes) {
+  isValidObligedEntityType(payload, validTypes) {
     logger.info(`Request to validate selected obliged entity type: ${payload}`);
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
