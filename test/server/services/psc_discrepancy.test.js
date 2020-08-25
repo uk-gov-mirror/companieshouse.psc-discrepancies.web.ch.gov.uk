@@ -48,10 +48,10 @@ describe('services/pscDiscrepancy', () => {
   });
 
   it('should save an obliged entity type to the PSC Discrepancy Service', () => {
-    const stubRequest = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+    const stubRequest = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityTypePost));
     const stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
     service.request = stubRequest;
-    expect(service.saveObligedEntityType('Financial institution')).to.eventually.eql(serviceData.obligedEntityContactNamePost);
+    expect(service.saveObligedEntityType('Financial institution')).to.eventually.eql(serviceData.obligedEntityTypePost);
     expect(stubRequest).to.have.been.calledOnce;
     expect(stubOpts).to.have.been.calledOnce;
     expect(stubLogger).to.have.been.calledOnce;
