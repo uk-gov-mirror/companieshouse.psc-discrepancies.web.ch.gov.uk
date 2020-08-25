@@ -94,6 +94,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
+        obliged_entity_type: report.obliged_entity_type,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: req.body.email,
         obliged_entity_telephone_number: req.body.phoneNumber.trim(),
@@ -124,6 +125,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
+        obliged_entity_type: report.obliged_entity_type,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: report.obliged_entity_email,
         obliged_entity_telephone_number: report.obliged_entity_telephone_number,
@@ -159,6 +161,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
+      data.obliged_entity_type = report.obliged_entity_type;
       data.obliged_entity_contact_name = report.obliged_entity_contact_name;
       data.obliged_entity_email = report.obliged_entity_email;
       data.obliged_entity_telephone_number = report.obliged_entity_telephone_number;
