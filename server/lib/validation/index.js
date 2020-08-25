@@ -17,6 +17,19 @@ class Validator {
     }
   }
 
+  isValidObligedEntityType(payload, validTypes) {
+    logger.info(`Request to validate selected obliged entity type: ${payload}`);
+    let errors = this._getErrorSignature();
+    return new Promise((resolve, reject) => {
+      if(typeof payload.obligedEntityType === 'undefined' ||  !validTypes.includes(payload.obligedEntityType)){
+        errors.stack.obligedEntityType = errorManifest.obligedEntityType.blank;
+        reject(errors);
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
   isValidEmail(email) {
     logger.info(`Request to validate email: ${email}`);
     let errors = this._getErrorSignature();

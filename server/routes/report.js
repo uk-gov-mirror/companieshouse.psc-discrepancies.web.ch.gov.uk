@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const logger = require(`${serverRoot}/config/winston`);
 
+const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
+
 const Validator = require(`${serverRoot}/lib/validation`);
 const validator = new Validator();
 
@@ -25,6 +27,31 @@ router.get('(/report-a-discrepancy)?', (req, res, next) => {
   res.render(`${routeViews}/index.njk`);
 });
 
+router.get('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
+  logger.info(`GET request to render obliged entity type page: ${req.path}`);
+  res.render(`${routeViews}/oe_type.njk`, { this_data: obligedEntityTypes });
+});
+
+router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
+  logger.info('POST request to save obliged entity contact type, with payload: ', req.body);
+  validator.isValidObligedEntityType(req.body, Object.keys(obligedEntityTypes))
+    .then(r => {
+      return pscDiscrepancyService.saveObligedEntityType(obligedEntityTypes[req.body.obligedEntityType]);
+    }).then(r => {
+      const o = res.locals.session;
+      o.appData.initialServiceResponse = r;
+      res.locals.session = o;
+      return session.write(o);
+    }).then(_ => {
+      res.redirect(302, '/report-a-discrepancy/obliged-entity/contact-name');
+    }).catch(err => {
+      res.render(`${routeViews}/oe_type.njk`, {
+        this_errors: routeUtils.processException(err),
+        this_data: obligedEntityTypes
+      });
+    });
+});
+
 router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity contact name page: ${req.path}`);
   res.render(`${routeViews}/contact_name.njk`);
@@ -34,12 +61,16 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
   logger.info('POST request to save obliged entity contact name, with payload: ', req.body);
   validator.isValidContactName(req.body.fullName)
     .then(r => {
-      return pscDiscrepancyService.saveContactName(req.body.fullName);
-    }).then(r => {
-      const o = res.locals.session;
-      o.appData.initialServiceResponse = r;
-      res.locals.session = o;
-      return session.write(o);
+      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+      return pscDiscrepancyService.getReport(selfLink);
+    }).then(report => {
+      const data = {
+        obliged_entity_type: report.obliged_entity_type,
+        obliged_entity_contact_name: report.obliged_entity_contact_name,
+        etag: report.etag,
+        selfLink: selfLink
+      };
+      return pscDiscrepancyService.saveContactName(data);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/email');
     }).catch(err => {
@@ -63,6 +94,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
+        obliged_entity_type: report.obliged_entity_type,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: req.body.email,
         obliged_entity_telephone_number: req.body.phoneNumber.trim(),
@@ -93,6 +125,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
+        obliged_entity_type: report.obliged_entity_type,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: report.obliged_entity_email,
         obliged_entity_telephone_number: report.obliged_entity_telephone_number,
@@ -128,6 +161,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
+      data.obliged_entity_type = report.obliged_entity_type;
       data.obliged_entity_contact_name = report.obliged_entity_contact_name;
       data.obliged_entity_email = report.obliged_entity_email;
       data.obliged_entity_telephone_number = report.obliged_entity_telephone_number;

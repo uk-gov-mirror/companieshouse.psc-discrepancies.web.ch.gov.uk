@@ -70,7 +70,7 @@ module.exports.sessionData = {
       },
       etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
       kind: 'psc_discrepancy_report#psc_discrepancy_report',
-      obliged_entity_contact_name: 'matt le-matt'
+      obliged_entity_type: 'Financial institution'
     }
   },
   accountData: {}
