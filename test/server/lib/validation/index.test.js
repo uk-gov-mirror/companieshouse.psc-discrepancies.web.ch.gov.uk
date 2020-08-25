@@ -2,6 +2,7 @@ const logger = require(`${serverRoot}/config/winston`);
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
 const Validator = require(`${serverRoot}/lib/validation`);
 const validator = new Validator();
+const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
 
 describe('server/lib/validation/index', () => {
   let stubLogger;
@@ -17,6 +18,20 @@ describe('server/lib/validation/index', () => {
     sinon.reset();
     sinon.restore();
     done();
+  });
+
+  it('should validate a correct obliged entity type', () => {
+    const data = { obligedEntityType: 'financial' };
+    expect(validator.isValidObligedEntityType(data, Object.keys(obligedEntityTypes))).to.eventually.equal(true);
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
+  it('should validate and return an error if an incorrect obliged entity type is supplied', () => {
+    const data = { obligedEntityType: 'incorrect type' };
+    const errors = {};
+    errors.obligedEntityType = errorManifest.obligedEntityType.blank;
+    expect(validator.isValidObligedEntityType(data, Object.keys(obligedEntityTypes))).to.be.rejectedWith(errors);
+    expect(stubLogger).to.have.been.calledOnce;
   });
 
   it('should validate a correctly formatted contact name', () => {
