@@ -55,7 +55,8 @@ class PscDiscrepancy {
       body: {
         obliged_entity_type: data.obliged_entity_type,
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
-        status: 'INCOMPLETE'
+        status: 'INCOMPLETE',
+        etag: data.etag
       }
     });
     logger.info('Service request to save contact name, with payload: ', options);
