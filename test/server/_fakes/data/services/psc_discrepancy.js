@@ -5,11 +5,22 @@ const serviceData = {
     },
     etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
     kind: 'psc_discrepancy_report#psc_discrepancy_report',
+    obliged_entity_type: 'Financial institution',
     obliged_entity_contact_name: 'matt le-matt',
     obliged_entity_email: 'm@m.com',
     obliged_entity_telephone_number: '0777777777',
     company_number: '12345678',
     status: 'COMPLETE'
+  },
+  obligedEntityTypePost: {
+    links: {
+      links: {
+        self: '/psc-discrepancy-reports/f3cea2d7-5995-4168-a800-389e81b0bc65'
+      }
+    },
+    etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
+    kind: 'psc_discrepancy_report#psc_discrepancy_report',
+    obliged_entity_type: 'Financial institution'
   },
   obligedEntityContactNamePost: {
     links: {
@@ -19,6 +30,7 @@ const serviceData = {
     },
     etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
     kind: 'psc_discrepancy_report#psc_discrepancy_report',
+    obliged_entity_type: 'Financial institution',
     obliged_entity_contact_name: 'matt le-matt'
   },
   obligedEntityEmailPost: {
@@ -29,6 +41,7 @@ const serviceData = {
     },
     etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
     kind: 'psc_discrepancy_report#psc_discrepancy_report',
+    obliged_entity_type: 'Financial institution',
     obliged_entity_contact_name: 'matt le-matt',
     obliged_entity_email: 'm@m.com',
     obliged_entity_telephone_number: '0777777777'
@@ -41,6 +54,7 @@ const serviceData = {
     },
     etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
     kind: 'psc_discrepancy_report#psc_discrepancy_report',
+    obliged_entity_type: 'Financial institution',
     obliged_entity_contact_name: 'matt le-matt',
     obliged_entity_email: 'm@m.com',
     obliged_entity_telephone_number: '0777777777',
@@ -54,6 +68,7 @@ const serviceData = {
     },
     etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
     kind: 'psc_discrepancy_report#psc_discrepancy_report',
+    obliged_entity_type: 'Financial institution',
     obliged_entity_contact_name: 'matt le-matt',
     obliged_entity_email: 'm@m.com',
     obliged_entity_telephone_number: '0777777777',

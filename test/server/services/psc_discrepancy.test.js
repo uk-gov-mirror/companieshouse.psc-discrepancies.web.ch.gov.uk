@@ -47,21 +47,44 @@ describe('services/pscDiscrepancy', () => {
     expect(stubLogger).to.have.been.calledOnce;
   });
 
-  it('should save an obliged entity\'s contact name to the PSC Discrepancy Service', () => {
-    const stubRequest = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+  it('should save an obliged entity type to the PSC Discrepancy Service', () => {
+    const stubRequest = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityTypePost));
     const stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
     service.request = stubRequest;
-    expect(service.saveContactName('matt le-matt')).to.eventually.eql(serviceData.obligedEntityContactNamePost);
+    expect(service.saveObligedEntityType('Financial institution')).to.eventually.eql(serviceData.obligedEntityTypePost);
+    expect(stubRequest).to.have.been.calledOnce;
+    expect(stubOpts).to.have.been.calledOnce;
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
+  it('should save an obliged entity\'s contact name to the PSC Discrepancy Service', () => {
+    const servicePayload = {
+      obliged_entity_type: 'Financial institution',
+      obliged_entity_contact_name: 'matt le-matt',
+      etag: 'xyz123',
+      selfLink: 'psc-discrepancy-reports/abc123'
+    };
+    const stubRequest = sinon.stub(request, 'put').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+    const stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
+    service.request = stubRequest;
+    expect(service.saveContactName(servicePayload)).to.eventually.eql(serviceData.obligedEntityContactNamePost);
     expect(stubRequest).to.have.been.calledOnce;
     expect(stubOpts).to.have.been.calledOnce;
     expect(stubLogger).to.have.been.calledOnce;
   });
 
   it('should save an obliged entity\'s email to the PSC Discrepancy Service', () => {
-    const stubRequest = sinon.stub(request, 'post').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
+    const servicePayload = {
+      obliged_entity_type: 'Financial institution',
+      obliged_entity_contact_name: 'matt le-matt',
+      obliged_entity_email: 'm@m.com',
+      etag: 'xyz123',
+      selfLink: 'psc-discrepancy-reports/abc123'
+    };
+    const stubRequest = sinon.stub(request, 'put').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
     const stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
     service.request = stubRequest;
-    expect(service.saveEmail('matt@matt.com')).to.eventually.eql(serviceData.obligedEntityEmailPost);
+    expect(service.saveEmail(servicePayload)).to.eventually.eql(serviceData.obligedEntityEmailPost);
     expect(stubRequest).to.have.been.calledOnce;
     expect(stubOpts).to.have.been.calledOnce;
     expect(stubLogger).to.have.been.calledOnce;

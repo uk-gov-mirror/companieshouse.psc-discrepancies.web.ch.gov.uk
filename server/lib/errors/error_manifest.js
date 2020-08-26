@@ -9,6 +9,12 @@ let ErrorManifest = {
       summary: "Your request contains validation errors",
       inline: "Your request contains validation errors"
     },
+    obligedEntityType: {
+      blank: {
+        summary: "Select what type of obliged entity you are",
+        inline: "Select what type of obliged entity you are"
+      }
+    },
     fullName: {
       empty: {
         summary: "Enter your full name",
