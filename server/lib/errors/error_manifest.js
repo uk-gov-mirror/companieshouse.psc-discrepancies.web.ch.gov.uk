@@ -25,6 +25,16 @@ let ErrorManifest = {
         inline: "Full name must only include letters a-z, A-Z, hyphens, spaces and apostrophes"
       }
     },
+    organisationName: {
+        empty: {
+            summary: "Enter your organisation name",
+            inline: "Enter your organisation name"
+        },
+        incorrect: {
+            summary: "Organisation name must only include letters a-z, A-Z, hyphens, spaces and apostrophes",
+            inline: "Organisation name must only include letters a-z, A-Z, hyphens, spaces and apostrophes"
+        }
+    },
     email: {
       blank: {
         summary: "Enter your email address",

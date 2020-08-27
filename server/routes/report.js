@@ -43,11 +43,40 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/obliged-entity/contact-name');
+      res.redirect(302, '/report-a-discrepancy/obliged-entity/organisation-name');
     }).catch(err => {
       res.render(`${routeViews}/oe_type.njk`, {
         this_errors: routeUtils.processException(err),
         this_data: obligedEntityTypes
+      });
+    });
+});
+
+router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
+  logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
+  res.render(`${routeViews}/organisation_name.njk`);
+});
+
+router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
+  logger.info('POST request to save obliged entity organisation name, with payload: ', req.body);
+  validator.isValidOrganisationName(req.body.organisationName)
+    .then(r => {
+      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+      return pscDiscrepancyService.getReport(selfLink);
+    }).then(report => {
+      const data = {
+        obliged_entity_type: report.obliged_entity_type,
+        obliged_entity_organisation_name: req.body.organisationName,
+        etag: report.etag,
+        selfLink: selfLink
+      };
+      return pscDiscrepancyService.saveOrganisationName(data);
+    }).then(_ => {
+      res.redirect(302, '/report-a-discrepancy/obliged-entity/contact-name');
+    }).catch(err => {
+      res.render(`${routeViews}/organisation_name.njk`, {
+        this_errors: routeUtils.processException(err),
+        this_data: req.body
       });
     });
 });
@@ -66,7 +95,8 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
     }).then(report => {
       const data = {
         obliged_entity_type: report.obliged_entity_type,
-        obliged_entity_contact_name: report.obliged_entity_contact_name,
+        obliged_entity_organisation_name: report.obliged_entity_organisation_name,
+        obliged_entity_contact_name: req.body.fullName,
         etag: report.etag,
         selfLink: selfLink
       };
@@ -95,6 +125,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
     }).then(report => {
       const data = {
         obliged_entity_type: report.obliged_entity_type,
+        obliged_entity_organisation_name: report.obliged_entity_organisation_name,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: req.body.email,
         obliged_entity_telephone_number: req.body.phoneNumber.trim(),
@@ -126,6 +157,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
     }).then(report => {
       const data = {
         obliged_entity_type: report.obliged_entity_type,
+        obliged_entity_organisation_name: report.obliged_entity_organisation_name,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: report.obliged_entity_email,
         obliged_entity_telephone_number: report.obliged_entity_telephone_number,
@@ -162,6 +194,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       data.obliged_entity_type = report.obliged_entity_type;
+      data.obliged_entity_organisation_name = report.obliged_entity_organisation_name;
       data.obliged_entity_contact_name = report.obliged_entity_contact_name;
       data.obliged_entity_email = report.obliged_entity_email;
       data.obliged_entity_telephone_number = report.obliged_entity_telephone_number;

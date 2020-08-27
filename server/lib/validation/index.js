@@ -93,6 +93,23 @@ class Validator {
       }
     });
   }
+
+  isValidOrganisationName(organisationName) {
+    logger.info(`Request to validate contact name: ${organisationName}`);
+    let errors = this._getErrorSignature();
+    return new Promise((resolve, reject) => {
+      let validNameRegex = new RegExp(/^[AÀÁÂÃÄÅĀĂĄǺaàáâãäåāăąǻÆǼæǽBbCcçćĉċčDÞĎĐdþďđEÈÉÊËĒĔĖĘĚeèéêëēĕėęěFfGĜĞĠĢgĝğġģHĤĦhĥħIÌÍÎÏĨĪĬĮİiìíîïĩīĭįJĴjĵKĶkķLĹĻĽĿŁlĺļľŀłMmNÑŃŅŇŊnñńņňŋOÒÓÔÕÖØŌŎŐǾoòóôõöøōŏőǿŒœPpQqRŔŖŘrŕŗřSŚŜŞŠsśŝşšTŢŤŦtţťŧUÙÚÛÜŨŪŬŮŰŲuùúûüũūŭůűųVvWŴẀẂẄwŵẁẃẅXxYỲÝŶŸyỳýŷÿZŹŻŽzźżž&@£$€¥*=#%+‘ʼ'()\/\[\]{}<>!«»?“ˮ\"0123456789.,:;\–\-  \\r\\n]*$/);
+      if(typeof organisationName === 'undefined' || organisationName === null || organisationName.length === 0) {
+        errors.stack.organisationName = errorManifest.fullName.empty;
+        reject(errors);
+      } else if(!validNameRegex.test(organisationName)) {
+        errors.stack.organisationName = errorManifest.fullName.incorrect;
+        reject(errors);
+      } else {
+        resolve(true);
+      }
+    });
+  }
 }
 
 module.exports = Validator;

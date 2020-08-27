@@ -34,6 +34,20 @@ describe('server/lib/validation/index', () => {
     expect(stubLogger).to.have.been.calledOnce;
   });
 
+  it('should validate a correctly formatted organisation name', () => {
+    expect(validator.isValidOrganisationName('OrgName')).to.eventually.equal(true);
+    expect(validator.isValidOrganisationName('valid hyphenated-orgName')).to.eventually.equal(true);
+    expect(validator.isValidOrganisationName('valid quoted\'orgName')).to.eventually.equal(true);
+    expect(stubLogger).to.have.been.calledThrice;
+  });
+
+  it('should validate and return an error if contact name is not correctly formatted', () => {
+    const errors = {};
+    errors.fullName = errorManifest.fullName.incorrect;
+    expect(validator.isValidContactName('Invalid$£@^OrgName')).to.be.rejectedWith(errors);
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
   it('should validate a correctly formatted contact name', () => {
     expect(validator.isValidContactName('valid name')).to.eventually.equal(true);
     expect(validator.isValidContactName('valid hyphenated-name')).to.eventually.equal(true);

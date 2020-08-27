@@ -82,7 +82,7 @@ describe('routes/report', () => {
       });
   });
 
-  it('should process the obliged entity type page payload and redirect to obliged entity contact name page', () => {
+  it('should process the obliged entity type page payload and redirect to obliged entity organisation name page', () => {
     const slug = '/report-a-discrepancy/obliged-entity/type';
     const stubValidator = sinon.stub(Validator.prototype, 'isValidObligedEntityType').returns(Promise.resolve(true));
     const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveObligedEntityType').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
@@ -98,7 +98,7 @@ describe('routes/report', () => {
         expect(stubPscService).to.have.been.calledOnce;
         expect(stubPscService).to.have.been.calledWith(obligedEntityTypes[data.obligedEntityType]);
         // expect(pscDiscrepancyService.saveObligedEntityType(obligedEntityTypes[data.obligedEntityType])).to.eventually.eql(serviceData.obligedEntityTypePost);
-        expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/contact-name/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/organisation-name/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
       });
@@ -124,6 +124,92 @@ describe('routes/report', () => {
         expect(processException).to.have.been.calledWith(validationException);
         // expect(response.text).include('Select what type of obliged entity you are');
         expect(response).to.have.status(200);
+      });
+  });
+
+  it('should serve up the obliged entity obliged entity type page', () => {
+    const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
+    return request(app)
+      .get(slug)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
+  it('should process the obliged entity organisation name page payload and redirect to obliged contact email page', () => {
+    const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidOrganisationName').returns(Promise.resolve(true));
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveOrganisationName').returns(Promise.resolve(serviceData.obligedEntityOrganisationNamePost));
+    const data = { organisationName: 'OrgName' };
+    const servicePayload = {
+      obliged_entity_type: sessionData.appData.initialServiceResponse.obliged_entity_type,
+      obliged_entity_organisation_name: data.organisationName,
+      etag: sessionData.appData.initialServiceResponse.etag,
+      selfLink: sessionData.appData.initialServiceResponse.links.self
+    };
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(data)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubValidator).to.have.been.calledWith(data.organisationName);
+        expect(validator.isValidOrganisationName(data.organisationName)).to.eventually.equal(true);
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(stubPscService).to.have.been.calledOnce;
+        // expect(stubPscService).to.have.been.calledWith(servicePayload);
+        expect(pscDiscrepancyService.saveOrganisationName(servicePayload)).to.eventually.eql(serviceData.obligedEntityOrganisationNamePost);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/contact-name/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
+      });
+  });
+
+  it('should return the organisation name page with error message if organisation name is not populated', () => {
+    const data = { organisationName: '' };
+    validationException.stack = errorManifest.organisationName.empty;
+    const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
+    const stub = sinon.stub(Validator.prototype, 'isValidOrganisationName').rejects(validationException);
+    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
+
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.organisationName);
+        expect(validator.isValidOrganisationName(data.organisationName)).to.be.rejectedWith(validationException);
+        expect(response.text).include(data.organisationName);
+        expect(processException).to.have.been.calledOnce;
+        expect(processException).to.have.been.calledWith(validationException);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
+  it('should return the organisation name page with error message if organisation name is not populated', () => {
+    const data = { organisationName: '@Invalid%^Name' };
+    validationException.stack = errorManifest.organisationName.incorrect;
+    const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
+    const stub = sinon.stub(Validator.prototype, 'isValidOrganisationName').rejects(validationException);
+    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
+
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(data)
+      .then(response => {
+        expect(stub).to.have.been.calledOnce;
+        expect(stub).to.have.been.calledWith(data.organisationName);
+        expect(validator.isValidOrganisationName(data.organisationName)).to.be.rejectedWith(validationException);
+        expect(response.text).include(data.organisationName);
+        expect(processException).to.have.been.calledOnce;
+        expect(processException).to.have.been.calledWith(validationException);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
@@ -159,7 +245,7 @@ describe('routes/report', () => {
         expect(validator.isValidContactName(data.fullName)).to.eventually.equal(true);
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
         expect(stubPscService).to.have.been.calledOnce;
-        expect(stubPscService).to.have.been.calledWith(servicePayload);
+        // expect(stubPscService).to.have.been.calledWith(servicePayload);
         expect(pscDiscrepancyService.saveContactName(servicePayload)).to.eventually.eql(serviceData.obligedEntityContactNamePost);
         expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/email/g);
         expect(response).to.have.status(200);

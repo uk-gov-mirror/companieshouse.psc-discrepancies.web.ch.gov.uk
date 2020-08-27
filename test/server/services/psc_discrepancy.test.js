@@ -57,9 +57,26 @@ describe('services/pscDiscrepancy', () => {
     expect(stubLogger).to.have.been.calledOnce;
   });
 
+  it('should save an obliged entity\'s organisation name to the PSC Discrepancy Service', () => {
+    const servicePayload = {
+      obliged_entity_type: 'Financial institution',
+      obliged_entity_organisation_name: 'OrgName',
+      etag: 'xyz123',
+      selfLink: 'psc-discrepancy-reports/abc123'
+    };
+    const stubRequest = sinon.stub(request, 'put').returns(Promise.resolve(serviceData.obligedEntityOrganisationNamePost));
+    const stubOpts = sinon.stub(Service.prototype, '_getBaseOptions').returns(baseOptions);
+    service.request = stubRequest;
+    expect(service.saveContactName(servicePayload)).to.eventually.eql(serviceData.obligedEntityOrganisationNamePost);
+    expect(stubRequest).to.have.been.calledOnce;
+    expect(stubOpts).to.have.been.calledOnce;
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
   it('should save an obliged entity\'s contact name to the PSC Discrepancy Service', () => {
     const servicePayload = {
       obliged_entity_type: 'Financial institution',
+      obliged_entity_organisation_name: 'OrgName',
       obliged_entity_contact_name: 'matt le-matt',
       etag: 'xyz123',
       selfLink: 'psc-discrepancy-reports/abc123'
@@ -76,6 +93,7 @@ describe('services/pscDiscrepancy', () => {
   it('should save an obliged entity\'s email to the PSC Discrepancy Service', () => {
     const servicePayload = {
       obliged_entity_type: 'Financial institution',
+      obliged_entity_organisation_name: 'OrgName',
       obliged_entity_contact_name: 'matt le-matt',
       obliged_entity_email: 'm@m.com',
       etag: 'xyz123',
