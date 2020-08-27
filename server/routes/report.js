@@ -67,7 +67,6 @@ router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res,
       const data = {
         obliged_entity_type: report.obliged_entity_type,
         obliged_entity_organisation_name: req.body.organisationName,
-        obliged_entity_contact_name: report.obliged_entity_contact_name,
         etag: report.etag,
         selfLink: selfLink
       };
