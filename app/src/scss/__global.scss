@@ -3,3 +3,6 @@ $govuk-assets-path: "/" !default;
 
 @import "node_modules/govuk-frontend/govuk/all";
 @import 'partials/banner';
+@import 'partials/footer';
+@import 'partials/menu';
+@import 'partials/nav';

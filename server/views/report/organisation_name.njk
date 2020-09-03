@@ -15,13 +15,13 @@
                             </h2>
                             <div class="govuk-error-summary__body">
                                 {% if this_errors.genericError is not undefined %}
-                                <p class="govuk-error-message">{{this_errors.genericError.summary}}</p>
+                                <p class="govuk-error-message">{{ this_errors.genericError.summary }}</p>
                                 {% else %}
                                 <ul class="govuk-list govuk-error-summary__list">
                                     <ul class="govuk-list govuk-error-summary__list">
                                         {% for errKey, errMsg in this_errors%}
                                             <li>
-                                                <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                                                <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -32,12 +32,12 @@
                     <form action="/report-a-discrepancy/obliged-entity/organisation-name" method="post" enctype="application/json">
                         <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
                             <h1 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--xl" for="full-name">
+                                <label class="govuk-label govuk-label--xl" for="organisation-name">
                                     What is the name of your organisation?
                                 </label>
                             </h1>
-                            <span id="organisation-name-error" class="govuk-error-message">
-                                <span class="govuk-visually-hidden">Error:</span>{{this_errors.organisationName.inline}}
+                            <span id="err-elm-organisationName" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>{{ this_errors.organisationName.inline }}
                             </span>
 
                             <input class="govuk-input govuk-input--width-20{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.organisationName }}" id="organisation-name" name="organisationName" type="text" autocomplete="orgName" spellcheck="false" maxlength="160" />

@@ -18,7 +18,7 @@
                   <ul class="govuk-list govuk-error-summary__list">
                   {% for errKey, errMsg in this_errors%}
                     <li>
-                      <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                      <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
                     </li>
                   {% endfor %}
                   </ul>
@@ -31,11 +31,11 @@
                       <label class="govuk-label" for="details">
                           <h1 class="govuk-fieldset__legend--xl govuk-!-margin-top-0">What information is incorrect for the PSC?</h1>
                       </label>
-                      <span id="name-error" class="govuk-error-message">
+                      <span id="err-elm-details" class="govuk-error-message">
                           <span class="govuk-visually-hidden">Error:</span>
-                          {{this_errors.details.inline}}
+                          {{ this_errors.details.inline }}
                       </span>
-                      <textarea class="govuk-textarea{{ ' govuk-textarea--error' if this_errors is not undefined }}" id="details" name="details" rows="5" maxLength="5000">{{this_data.details}}</textarea>
+                      <textarea class="govuk-textarea{{ ' govuk-textarea--error' if this_errors is not undefined }}" id="details" name="details" rows="5" maxLength="5000">{{ this_data.details }}</textarea>
                   </div>
 
                   <button class="govuk-button" data-module="govuk-button">
