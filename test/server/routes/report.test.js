@@ -86,7 +86,7 @@ describe('routes/report', () => {
     const slug = '/report-a-discrepancy/obliged-entity/type';
     const stubValidator = sinon.stub(Validator.prototype, 'isValidObligedEntityType').returns(Promise.resolve(true));
     const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveObligedEntityType').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
-    const data = { obligedEntityType: 'financial' };
+    const data = { obligedEntityType: '2' };
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -96,7 +96,7 @@ describe('routes/report', () => {
         expect(stubValidator).to.have.been.calledWith(data, Object.keys(obligedEntityTypes));
         expect(validator.isValidObligedEntityType(data.obligedEntityType)).to.eventually.equal(true);
         expect(stubPscService).to.have.been.calledOnce;
-        expect(stubPscService).to.have.been.calledWith(obligedEntityTypes[data.obligedEntityType]);
+        expect(stubPscService).to.have.been.calledWith(data.obligedEntityType);
         // expect(pscDiscrepancyService.saveObligedEntityType(obligedEntityTypes[data.obligedEntityType])).to.eventually.eql(serviceData.obligedEntityTypePost);
         expect(response).to.redirectTo(/\/report-a-discrepancy\/obliged-entity\/organisation-name/g);
         expect(response).to.have.status(200);
