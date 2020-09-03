@@ -21,7 +21,7 @@ describe('server/lib/validation/index', () => {
   });
 
   it('should validate a correct obliged entity type', () => {
-    const data = { obligedEntityType: 'financial' };
+    const data = { obligedEntityType: '2' };
     expect(validator.isValidObligedEntityType(data, Object.keys(obligedEntityTypes))).to.eventually.equal(true);
     expect(stubLogger).to.have.been.calledOnce;
   });

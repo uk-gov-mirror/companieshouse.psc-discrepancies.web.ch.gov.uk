@@ -36,11 +36,11 @@ class PscDiscrepancy {
     return this.request(options);
   }
 
-  saveObligedEntityType (obligedEntityType) {
+  saveObligedEntityType (obligedEntityTypeId) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
       body: {
-        obliged_entity_type: obligedEntityType,
+        obliged_entity_type: obligedEntityTypeId,
         status: 'INCOMPLETE'
       }
     });
