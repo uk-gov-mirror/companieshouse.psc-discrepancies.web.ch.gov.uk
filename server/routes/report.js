@@ -40,7 +40,7 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
   logger.info('POST request to save obliged entity contact type, with payload: ', req.body);
   validator.isValidObligedEntityType(req.body, Object.keys(obligedEntityTypes))
     .then(r => {
-      return pscDiscrepancyService.saveObligedEntityType(obligedEntityTypes[req.body.obligedEntityType]);
+      return pscDiscrepancyService.saveObligedEntityType(req.body.obligedEntityType);
     }).then(r => {
       const o = res.locals.session;
       o.appData.initialServiceResponse = r;
