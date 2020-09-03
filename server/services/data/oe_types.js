@@ -3,14 +3,15 @@ const obligedEntityTypes = {
   2: "Financial institution",
   3: "Auditor, external accountant or tax advisor",
   4: "Notary or independent legal professional",
-  5: "Estate agent or intermediary",
-  6: "Entity trading goods in cash over €10,000",
-  7: "Gambling service provider",
-  8: "Exchange service provider of fiat and virtual currencies",
-  9: "Custodian wallet provider",
-  10: "Art dealer - galleries and auction houses",
-  11: "Art dealer - free ports",
-  12: "Insolvency practitioner"
+  5: "Trust or company service providers",
+  6: "Estate agent or intermediary",
+  7: "Entity trading goods in cash over €10,000",
+  8: "Gambling service provider",
+  9: "Exchange service provider of fiat and virtual currencies",
+  10: "Custodian wallet provider",
+  11: "Art dealer - galleries and auction houses",
+  12: "Art dealer - free ports",
+  13: "Insolvency practitioner"
 };
 
 module.exports = obligedEntityTypes;
