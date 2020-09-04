@@ -3,7 +3,7 @@ const obligedEntityTypes = {
   2: "Financial institution",
   3: "Auditor, external accountant or tax advisor",
   4: "Notary or independent legal professional",
-  5: "Trust or company service providers",
+  5: "Trust or company service provider",
   6: "Estate agent or intermediary",
   7: "Entity trading goods in cash over €10,000",
   8: "Gambling service provider",
