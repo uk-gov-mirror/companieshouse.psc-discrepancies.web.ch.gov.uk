@@ -20,7 +20,7 @@
                                 <ul class="govuk-list govuk-error-summary__list">
                                     {% for errKey, errMsg in this_errors%}
                                         <li>
-                                            <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                                            <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
                                         </li>
                                     {% endfor %}
                                 </ul>
@@ -40,11 +40,11 @@
                             <span id="number-hint" class="govuk-hint">
                                 This is the 8 character reference issued by Companies House when the company was set up.
                             </span>
-                            <span id="number-error" class="govuk-error-message">
-                                <span class="govuk-visually-hidden">Error:</span>{{this_errors.number.inline}}
+                            <span id="err-elm-number" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>{{ this_errors.number.inline }}
                             </span>
 
-                            <input class="govuk-input govuk-input--width-5{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.number }}" id="number" name="number" type="text" aria-describedby="number-hint">
+                            <input class="govuk-input govuk-input--width-5{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.number }}" id="number" name="number" type="text" aria-describedby="number-hint" />
                         </div>
 
                         <details class="govuk-details" data-module="govuk-details">

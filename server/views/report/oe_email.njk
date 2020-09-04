@@ -17,12 +17,12 @@
           </h2>
           <div class="govuk-error-summary__body">
             {% if this_errors.genericError is not undefined %}
-              <p class="govuk-error-message">{{this_errors.genericError.summary}}</p>
+              <p class="govuk-error-message">{{ this_errors.genericError.summary }}</p>
             {% else %}
               <ul class="govuk-list govuk-error-summary__list">
               {% for errKey, errMsg in this_errors%}
                 <li>
-                  <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                  <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
                 </li>
               {% endfor %}
               </ul>
@@ -41,7 +41,7 @@
               We’ll only use this to contact you for more information
             </span>
             {% if this_errors.email is not undefined %}
-              <span id="name-error" class="govuk-error-message">
+              <span id="err-elm-email" class="govuk-error-message">
                   <span class="govuk-visually-hidden">Error:</span>
                   {{ this_errors.email.inline }}
               </span>
@@ -54,7 +54,7 @@
               Phone number (optional)
             </label>
             {% if this_errors.phoneNumber is not undefined %}
-              <span id="name-error" class="govuk-error-message">
+              <span id="err-elm-phoneNumber" class="govuk-error-message">
                   <span class="govuk-visually-hidden">Error:</span>
                   {{ this_errors.phoneNumber.inline }}
               </span>

@@ -24,12 +24,16 @@ router.use((req, res, next) => {
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
   logger.info(`GET request to serve index page: ${req.path}`);
-  res.render(`${routeViews}/index.njk`);
+  res.render(`${routeViews}/index.njk`, { title: 'Report a discrepancy about a beneficial owner on the PSC register' });
 });
 
 router.get('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
   logger.info(`GET request to render obliged entity type page: ${req.path}`);
-  res.render(`${routeViews}/oe_type.njk`, { this_data: obligedEntityTypes });
+  const viewData = {
+    this_data: obligedEntityTypes,
+    title: 'Obliged entity type'
+  };
+  res.render(`${routeViews}/oe_type.njk`, viewData);
 });
 
 router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
@@ -45,16 +49,18 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/organisation-name');
     }).catch(err => {
-      res.render(`${routeViews}/oe_type.njk`, {
+      const viewData = {
+        this_data: obligedEntityTypes,
         this_errors: routeUtils.processException(err),
-        this_data: obligedEntityTypes
-      });
+        title: 'Obliged entity type'
+      };
+      res.render(`${routeViews}/oe_type.njk`, viewData);
     });
 });
 
 router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
-  res.render(`${routeViews}/organisation_name.njk`);
+  res.render(`${routeViews}/organisation_name.njk`, { title: 'Your organisation name' });
 });
 
 router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
@@ -74,16 +80,18 @@ router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res,
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/contact-name');
     }).catch(err => {
-      res.render(`${routeViews}/organisation_name.njk`, {
+      const viewData = {
+        this_data: req.body,
         this_errors: routeUtils.processException(err),
-        this_data: req.body
-      });
+        title: 'Your organisation name'
+      };
+      res.render(`${routeViews}/organisation_name.njk`, viewData);
     });
 });
 
 router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity contact name page: ${req.path}`);
-  res.render(`${routeViews}/contact_name.njk`);
+  res.render(`${routeViews}/contact_name.njk`, { title: 'Your contact name' });
 });
 
 router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
@@ -104,16 +112,18 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/email');
     }).catch(err => {
-      res.render(`${routeViews}/contact_name.njk`, {
+      const viewData = {
+        this_data: req.body,
         this_errors: routeUtils.processException(err),
-        this_data: req.body
-      });
+        title: 'Your contact name'
+      };
+      res.render(`${routeViews}/contact_name.njk`, viewData);
     });
 });
 
 router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   logger.info(`GET request to serve obliged entity email page: ${req.path}`);
-  res.render(`${routeViews}/oe_email.njk`);
+  res.render(`${routeViews}/oe_email.njk`, { title: 'Your contact details' });
 });
 
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
@@ -136,16 +146,18 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
     }).then(_ => {
       return res.redirect(302, '/report-a-discrepancy/company-number');
     }).catch(err => {
-      res.render(`${routeViews}/oe_email.njk`, {
+      const viewData = {
+        this_data: req.body,
         this_errors: routeUtils.processException(err),
-        this_data: req.body
-      });
+        title: 'Your contact details'
+      };
+      res.render(`${routeViews}/oe_email.njk`, viewData);
     });
 });
 
 router.get('/report-a-discrepancy/company-number', (req, res) => {
   logger.info(`GET request to serve company number page: ${req.path}`);
-  res.render(`${routeViews}/company_number.njk`);
+  res.render(`${routeViews}/company_number.njk`, { title: 'Your company number' });
 });
 
 router.post('/report-a-discrepancy/company-number', (req, res) => {
@@ -169,16 +181,18 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/discrepancy-details');
     }).catch(err => {
-      res.render(`${routeViews}/company_number.njk`, {
+      const viewData = {
+        this_data: req.body,
         this_errors: routeUtils.processException(err),
-        this_data: req.body
-      });
+        title: 'Your company number'
+      };
+      res.render(`${routeViews}/company_number.njk`, viewData);
     });
 });
 
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
   logger.info(`GET request to serve discrepancy details page: ${req.path}`);
-  res.render(`${routeViews}/discrepancy_details.njk`);
+  res.render(`${routeViews}/discrepancy_details.njk`, { title: 'Discrepancy details' });
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
@@ -209,16 +223,18 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
     }).catch(err => {
-      res.render(`${routeViews}/discrepancy_details.njk`, {
+      const viewData = {
+        this_data: req.body,
         this_errors: routeUtils.processException(err),
-        this_data: req.body
-      });
+        title: 'Discrepancy details'
+      };
+      res.render(`${routeViews}/discrepancy_details.njk`, viewData);
     });
 });
 
 router.get('/report-a-discrepancy/confirmation', (req, res) => {
   logger.info(`GET request to serve confirmation page: ${req.path}`);
-  res.render(`${routeViews}/confirmation.njk`);
+  res.render(`${routeViews}/confirmation.njk`, { title: 'PSC discrepancy submitted' });
 });
 
 module.exports = router;

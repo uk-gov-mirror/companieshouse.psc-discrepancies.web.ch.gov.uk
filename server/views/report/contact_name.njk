@@ -16,12 +16,12 @@
                             </h2>
                             <div class="govuk-error-summary__body">
                                 {% if this_errors.genericError is not undefined %}
-                                <p class="govuk-error-message">{{this_errors.genericError.summary}}</p>
+                                <p class="govuk-error-message">{{ this_errors.genericError.summary }}</p>
                                 {% else %}
                                     <ul class="govuk-list govuk-error-summary__list">
                                         {% for errKey, errMsg in this_errors%}
                                             <li>
-                                                <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                                                <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -36,11 +36,11 @@
                                     Your full name
                                 </label>
                             </h1>
-                            <span id="full-name-error" class="govuk-error-message">
-                                <span class="govuk-visually-hidden">Error:</span>{{this_errors.fullName.inline}}
+                            <span id="err-elm-fullName" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span>{{ this_errors.fullName.inline }}
                             </span>
 
-                            <input class="govuk-input{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.fullName }}" id="full-name" name="fullName" type="text" autocomplete="name" spellcheck="false">
+                            <input class="govuk-input{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.fullName }}" id="full-name" name="fullName" type="text" autocomplete="name" spellcheck="false" />
                         </div>
 
                         <button class="govuk-button" data-module="govuk-button">

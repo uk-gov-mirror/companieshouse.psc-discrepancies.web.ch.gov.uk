@@ -17,12 +17,12 @@
           </h2>
           <div class="govuk-error-summary__body">
             {% if this_errors.genericError is not undefined %}
-              <p class="govuk-error-message">{{this_errors.genericError.summary}}</p>
+              <p class="govuk-error-message">{{ this_errors.genericError.summary }}</p>
             {% else %}
               <ul class="govuk-list govuk-error-summary__list">
               {% for errKey, errMsg in this_errors%}
                 <li>
-                  <a href="#{{errKey}}">{{errMsg.summary}}</a>
+                  <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
                 </li>
               {% endfor %}
               </ul>
@@ -40,7 +40,7 @@
                 </h1>
               </legend>
               {% if this_errors.obligedEntityType is not undefined %}
-                <span id="name-error" class="govuk-error-message">
+                <span id="err-elm-obligedEntityType" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span>
                     {{ this_errors.obligedEntityType.inline }}
                 </span>
@@ -49,7 +49,7 @@
                 {% for key, value in this_data %}
 
                   <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="obliged-entity-type-{{ key }}" name="obligedEntityType" type="radio" value="{{ key }}">
+                    <input class="govuk-radios__input" id="obliged-entity-type-{{ key }}" name="obligedEntityType" type="radio" value="{{ key }}" />
                     <label class="govuk-label govuk-radios__label" for="obliged-entity-type-{{ key }}">
                       {{ value }}
                     </label>
