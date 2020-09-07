@@ -179,7 +179,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       };
       return pscDiscrepancyService.saveCompanyNumber(data);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+      res.redirect(302, '/report-a-discrepancy/psc-names');
     }).catch(err => {
       const viewData = {
         this_data: req.body,
@@ -187,6 +187,42 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
         title: 'Your company number'
       };
       res.render(`${routeViews}/company_number.njk`, viewData);
+    });
+});
+
+router.get('/report-a-discrepancy/psc-name', (req, res) => {
+  logger.info(`GET request to serve PSC name page: ${req.path}`);
+  res.render(`${routeViews}/psc_name.njk`, { title: 'PSC information' });
+});
+
+router.post('/report-a-discrepancy/psc-name', (req, res) => {
+  logger.info('POST request to save PSC name, with payload: ', req.body);
+  validator.isValidPscName(req.body.pscName)
+    .then(_ => {
+      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+      return pscDiscrepancyService.getReport(selfLink);
+    }).then(report => {
+      const data = {
+        obliged_entity_type: report.obliged_entity_type,
+        obliged_entity_organisation_name: report.obliged_entity_organisation_name,
+        obliged_entity_contact_name: report.obliged_entity_contact_name,
+        obliged_entity_email: report.obliged_entity_email,
+        obliged_entity_telephone_number: report.obliged_entity_telephone_number,
+        company_number: report.company_number,
+        psc_name: req.body.pscName,
+        etag: report.etag,
+        selfLink: selfLink
+      };
+      return pscDiscrepancyService.savePscName(data);
+    }).then(_ => {
+      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+    }).catch(err => {
+      const viewData = {
+        this_data: req.body,
+        this_errors: routeUtils.processException(err),
+        title: 'PSC information'
+      };
+      res.render(`${routeViews}/psc_names.njk`, viewData);
     });
 });
 
@@ -213,6 +249,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
       data.obliged_entity_email = report.obliged_entity_email;
       data.obliged_entity_telephone_number = report.obliged_entity_telephone_number;
       data.company_number = report.company_number;
+      data.psc_name = report.psc_name;
       data.etag = report.etag;
       return pscDiscrepancyService.saveStatus(data);
     }).then(_ => {
