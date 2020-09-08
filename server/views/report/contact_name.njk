@@ -5,51 +5,34 @@
     {% from "govuk/components/details/macro.njk" import govukDetails %}
 
     <div class="govuk-width-container ">
-        <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+      <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                   {% if this_errors is not undefined %}
-                        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-                            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                                There is a problem
-                            </h2>
-                            <div class="govuk-error-summary__body">
-                                {% if this_errors.genericError is not undefined %}
-                                <p class="govuk-error-message">{{ this_errors.genericError.summary }}</p>
-                                {% else %}
-                                    <ul class="govuk-list govuk-error-summary__list">
-                                        {% for errKey, errMsg in this_errors%}
-                                            <li>
-                                                <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endif %}
-                    <form action="/report-a-discrepancy/obliged-entity/contact-name" method="post" enctype="application/json">
-                        <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
-                            <h1 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--xl" for="full-name">
-                                    Your full name
-                                </label>
-                            </h1>
-                            <span id="err-elm-fullName" class="govuk-error-message">
-                                <span class="govuk-visually-hidden">Error:</span>{{ this_errors.fullName.inline }}
-                            </span>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
 
-                            <input class="govuk-input{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.fullName }}" id="full-name" name="fullName" type="text" autocomplete="name" spellcheck="false" />
-                        </div>
+               {% include "_partials/error_summary.njk" %}
+               
+                <form action="/report-a-discrepancy/obliged-entity/contact-name" method="post" enctype="application/json">
+                  <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
+                    <h1 class="govuk-label-wrapper">
+                      <label class="govuk-label govuk-label--xl" for="full-name">
+                        Your full name
+                      </label>
+                    </h1>
+                    <span id="err-elm-fullName" class="govuk-error-message">
+                      <span class="govuk-visually-hidden">Error:</span>{{ this_errors.fullName.inline }}
+                    </span>
 
-                        <button class="govuk-button" data-module="govuk-button">
-                            Continue
-                        </button>
-                    </form>
-                </div>
+                    <input class="govuk-input{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.fullName }}" id="full-name" name="fullName" type="text" autocomplete="name" spellcheck="false" />
+                  </div>
+
+                  <button class="govuk-button" data-module="govuk-button">
+                    Continue
+                  </button>
+                </form>
             </div>
-        </main>
+        </div>
+      </main>
     </div>
 
 {% endblock %}

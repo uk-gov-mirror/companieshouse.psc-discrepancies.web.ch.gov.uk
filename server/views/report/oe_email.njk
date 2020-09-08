@@ -10,26 +10,9 @@
 
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        {% if this_errors is not undefined %}
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-          <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-          </h2>
-          <div class="govuk-error-summary__body">
-            {% if this_errors.genericError is not undefined %}
-              <p class="govuk-error-message">{{ this_errors.genericError.summary }}</p>
-            {% else %}
-              <ul class="govuk-list govuk-error-summary__list">
-              {% for errKey, errMsg in this_errors%}
-                <li>
-                  <a href="#err-elm-{{ errKey }}">{{ errMsg.summary }}</a>
-                </li>
-              {% endfor %}
-              </ul>
-            {% endif %}
-          </div>
-        </div>
-        {% endif %}
+
+        {% include "_partials/error_summary.njk" %}
+        
         <h1 class="govuk-heading-xl">What are your contact details?</h1>
         <form action="/report-a-discrepancy/obliged-entity/email" method="post" enctype="application/json">
 
