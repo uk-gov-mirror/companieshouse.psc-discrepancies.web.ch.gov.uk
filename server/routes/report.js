@@ -237,4 +237,9 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
   res.render(`${routeViews}/confirmation.njk`, { title: 'PSC discrepancy submitted' });
 });
 
+router.get('/report-a-discrepancy/**', (req, res) => {
+  logger.info(`GET request to show NOT FOUND page: ${req.path}`);
+  res.render(`${routeViews}/error.njk`);
+});
+
 module.exports = router;
