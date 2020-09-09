@@ -242,4 +242,9 @@ router.get('/report-a-discrepancy/**', (req, res) => {
   res.render(`${routeViews}/error.njk`);
 });
 
+router.get('/report-a-discrepancy/**', (req, res) => {
+  logger.info(`GET request to show NOT FOUND page: ${req.path}`);
+  res.render(`${routeViews}/error.njk`);
+});
+
 module.exports = router;
