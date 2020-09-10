@@ -140,7 +140,8 @@ class PscDiscrepancy {
       method: 'POST',
       uri: `${this.server.baseUrl}${data.selfLink}/discrepancies`,
       body: {
-        details: data.details
+        details: data.details,
+        psc_name: data.psc_name
       }
     });
     logger.info('Service request to save discrepancy details, with payload: ', options);

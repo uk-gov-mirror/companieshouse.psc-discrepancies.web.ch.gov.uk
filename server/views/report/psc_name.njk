@@ -10,32 +10,31 @@
       <div class="govuk-grid-column-two-thirds">
 
         {% include "_partials/error_summary.njk" %}
-        
-        <form action="/discrepancy-details/psc-names" method="post">
+
+        <form action="/report-a-discrepancy/psc-name" method="post" enctype="application/json">
           <div class="govuk-form-group">
             <fieldset class="govuk-fieldset">
               <legend class="govuk-fieldset__legend govuk-label--xl">
-                <h1 class="govuk-fieldset__heading">Which PSC is incorrect for ZLC LTD?</h1>
+                <h1 class="govuk-fieldset__heading">Which PSC is incorrect for {{ this_data.organisationName | title }}?</h1>
               </legend>
               <div class="govuk-radios">
-                <div class="govuk-radios__item">
-                  <input class="govuk-radios__input" id="psc" name="psc" type="radio" value="british" aria-describedby="psc-item-hint">
-                  <label class="govuk-label govuk-radios__label" for="psc">
-                    Mrs Catherine Isabel Gaynor
-                  </label>
-                  <div id="psc-item-hint" class="govuk-hint govuk-radios__hint">Born November 1962</div>
-                </div>
-                <div class="govuk-radios__item">
-                  <input class="govuk-radios__input" id="psc-2" name="psc" type="radio" value="other" aria-describedby="psc-2-item-hint">
-                  <label class="govuk-label govuk-radios__label" for="psc-2">Mr Jonathan Charles Gaynor</label>
-                  <div id="psc-2-item-hint" class="govuk-hint govuk-radios__hint">
-                    Born June 1952
+                {% set officerCount = 1 %}
+                {% for officer in this_data.officers %}
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="pscName-{{ officerCount }}" name="pscName" type="radio" value="{{ officer.name }}" aria-describedby="psc-item-hint" />
+                    <label class="govuk-label govuk-radios__label" for="pscName-{{ officerCount }}">
+                      {{ officer.name }}
+                    </label>
+                    <div id="psc-item-hint" class="govuk-hint govuk-radios__hint">{{ officer.dobFormatted }}</div>
                   </div>
-                </div>
-                <div class="govuk-radios__divider">or</div>
+                  {% set officerCount = officerCount + 1 %}
+                {% endfor %}
+                {% if this_data.officers.length %}
+                  <div class="govuk-radios__divider">or</div>
+                {% endif %}
                 <div class="govuk-radios__item">
-                  <input class="govuk-radios__input" id="psc-4" name="psc" type="radio" value="other">
-                  <label class="govuk-label govuk-radios__label" for="psc-4">
+                  <input class="govuk-radios__input" id="psc-missing" name="pscName" type="radio" value="PSC missing" />
+                  <label class="govuk-label govuk-radios__label" for="psc-missing">
                     PSC is missing
                   </label>
                 </div>
