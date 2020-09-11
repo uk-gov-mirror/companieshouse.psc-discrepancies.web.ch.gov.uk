@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
-const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
 
 const apiSdk = require('ch-sdk-node');
 
