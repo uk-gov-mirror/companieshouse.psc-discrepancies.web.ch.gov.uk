@@ -1,0 +1,51 @@
+{% extends "_layouts/default.njk" %}
+
+{% block main_content %}
+
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+<div class="govuk-width-container ">
+  <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+        {% include "_partials/error_summary.njk" %}
+
+        <form action="/report-a-discrepancy/psc-name" method="post" enctype="application/json">
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-label--xl">
+                <h1 class="govuk-fieldset__heading">Which PSC is incorrect for {{ this_data.organisationName | title }}?</h1>
+              </legend>
+              <div class="govuk-radios">
+                {% set officerCount = 1 %}
+                {% for officer in this_data.officers %}
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="pscName-{{ officerCount }}" name="pscName" type="radio" value="{{ officer.name }}" aria-describedby="psc-item-hint" />
+                    <label class="govuk-label govuk-radios__label" for="pscName-{{ officerCount }}">
+                      {{ officer.name }}
+                    </label>
+                    <div id="psc-item-hint" class="govuk-hint govuk-radios__hint">{{ officer.dobFormatted }}</div>
+                  </div>
+                  {% set officerCount = officerCount + 1 %}
+                {% endfor %}
+                {% if this_data.officers.length %}
+                  <div class="govuk-radios__divider">or</div>
+                {% endif %}
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="psc-missing" name="pscName" type="radio" value="PSC missing" />
+                  <label class="govuk-label govuk-radios__label" for="psc-missing">
+                    PSC is missing
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <button class="govuk-button" data-module="govuk-button">Continue</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% endblock %}

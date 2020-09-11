@@ -1,5 +1,8 @@
 const router = require('express').Router();
 const logger = require(`${serverRoot}/config/winston`);
+const Utility = require(`${serverRoot}/lib/Utility`);
+
+const apiSdk = require('ch-sdk-node');
 
 const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
 
@@ -179,7 +182,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       };
       return pscDiscrepancyService.saveCompanyNumber(data);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+      res.redirect(302, '/report-a-discrepancy/psc-name');
     }).catch(err => {
       const viewData = {
         this_data: req.body,
@@ -187,6 +190,66 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
         title: 'Your company number'
       };
       res.render(`${routeViews}/company_number.njk`, viewData);
+    });
+});
+
+router.get('/report-a-discrepancy/psc-name', (req, res) => {
+  logger.info(`GET request to serve PSC name page: ${req.path}`);
+  selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+  const viewData = {
+    title: 'PSC information',
+    this_data: {},
+    this_errors: null
+  };
+  const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
+  pscDiscrepancyService.getReport(selfLink)
+    .then(report => {
+      viewData.this_data.organisationName = report.obliged_entity_organisation_name;
+      return api.companyOfficers.getCompanyOfficers(report.company_number.toUpperCase());
+    }).then(officers => {
+      let pscOfficers = [];
+      let pscOfficer;
+      const months = Utility.getMonthsOfYear();
+      if (typeof officers.resource === 'undefined' || typeof officers.resource.items === 'undefined') {
+        viewData.this_data.officers = [];
+      } else {
+        for (let o of officers.resource.items) {
+          if(typeof o.resignedOn === 'undefined') {
+            pscOfficer = o;
+            if(typeof o.dateOfBirth === 'undefined') {
+              pscOfficer.dobFormatted = 'DoB not available';
+            } else {
+              pscOfficer.dobFormatted = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
+            }
+          }
+          pscOfficers.push(pscOfficer);
+        }
+        viewData.this_data.officers = pscOfficers;
+      }
+      res.render(`${routeViews}/psc_name.njk`, viewData);
+    }).catch(err => {
+      viewData.this_errors = routeUtils.processException(err);
+      res.render(`${routeViews}/psc_name.njk`, viewData);
+    });
+});
+
+router.post('/report-a-discrepancy/psc-name', (req, res) => {
+  logger.info('POST request to save PSC name, with payload: ', req.body);
+  validator.isValidPscName(req.body.pscName)
+    .then(r => {
+      const o = res.locals.session;
+      o.appData.pscName = req.body.pscName;
+      res.locals.session = o;
+      return session.write(o);
+    }).then(_ => {
+      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+    }).catch(err => {
+      const viewData = {
+        this_data: req.body,
+        this_errors: routeUtils.processException(err),
+        title: 'PSC information'
+      };
+      res.render(`${routeViews}/psc_name.njk`, viewData);
     });
 });
 
@@ -201,6 +264,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
       selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+      data.psc_name = res.locals.session.appData.pscName;
       data.details = req.body.details;
       data.selfLink = selfLink;
       return pscDiscrepancyService.saveDiscrepancyDetails(data);

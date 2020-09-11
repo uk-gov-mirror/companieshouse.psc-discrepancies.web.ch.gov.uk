@@ -398,7 +398,7 @@ describe('routes/report', () => {
         expect(validator.isCompanyNumberFormatted(clientPayload.number)).to.eventually.equal(true);
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
         expect(stubPscServiceSaveCompanyNumber).to.have.been.calledOnce;
-        expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/psc-name/g);
         expect(stubLogger).to.have.been.calledTwice;
       });
   });

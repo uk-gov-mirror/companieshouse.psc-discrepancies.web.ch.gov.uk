@@ -110,6 +110,10 @@ class Validator {
       }
     });
   }
+
+  isValidPscName () {
+    return Promise.resolve(true);
+  }
 }
 
 module.exports = Validator;
