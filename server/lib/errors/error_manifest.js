@@ -58,6 +58,12 @@ let ErrorManifest = {
         summary: "Company number must be 8 characters",
         inline: "Company number must be 8 characters"
       }
+    },
+    pscName: {
+      empty: {
+        summary: "Select the PSC with the incorrect information",
+        inline: "Select the PSC with the incorrect information"
+      }
     }
   }
 }
