@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
+const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
 
 const apiSdk = require('ch-sdk-node');
 
@@ -198,8 +199,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   selfLink = res.locals.session.appData.initialServiceResponse.links.self;
   const viewData = {
     title: 'PSC information',
-    this_data: {},
-    this_errors: null
+    this_data: {}
   };
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
   pscDiscrepancyService.getReport(selfLink)
@@ -225,7 +225,12 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
           pscOfficers.push(pscOfficer);
         }
         viewData.this_data.officers = pscOfficers;
+        const o = res.locals.session;
+        o.appData.pscOfficers = pscOfficers;
+        res.locals.session = o;
+        return session.write(o);
       }
+    }).then(_ => {
       res.render(`${routeViews}/psc_name.njk`, viewData);
     }).catch(err => {
       viewData.this_errors = routeUtils.processException(err);
@@ -235,20 +240,23 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info('POST request to save PSC name, with payload: ', req.body);
-  validator.isValidPscName(req.body.pscName)
+  let viewData = {
+    this_data: {
+      officers: res.locals.session.appData.pscOfficers,
+    },
+    title: 'PSC information'
+  };
+  validator.isValidPscName(req.body)
     .then(r => {
       const o = res.locals.session;
       o.appData.pscName = req.body.pscName;
+      delete o.appData.pscOfficers;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/discrepancy-details');
     }).catch(err => {
-      const viewData = {
-        this_data: req.body,
-        this_errors: routeUtils.processException(err),
-        title: 'PSC information'
-      };
+      viewData.this_errors = routeUtils.processException(err);
       res.render(`${routeViews}/psc_name.njk`, viewData);
     });
 });
@@ -282,6 +290,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(_ => {
       const o = res.locals.session;
       o.appData.initialServiceResponse = {};
+      delete o.appData.pscName;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
