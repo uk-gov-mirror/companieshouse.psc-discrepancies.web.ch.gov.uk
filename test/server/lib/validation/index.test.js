@@ -132,4 +132,19 @@ describe('server/lib/validation/index', () => {
     expect(validator.isCompanyNumberFormatted('123456789')).to.be.rejectedWith(errors);
     expect(stubLogger).to.have.been.calledTwice;
   });
+
+  it('should validate a correct PSC name selection', () => {
+    const data = { pscName: 'Some name' };
+    expect(validator.isValidPscName(data)).to.eventually.equal(true);
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
+  it('should validate thar a PSC name selection was not made', () => {
+    const errors = {};
+    errors.number = errorManifest.pscName.empty;
+    const data = {};
+    expect(validator.isValidPscName(data)).to.be.rejectedWith(errors);
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
 });
