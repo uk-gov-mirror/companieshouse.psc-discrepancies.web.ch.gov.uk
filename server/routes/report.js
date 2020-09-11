@@ -51,7 +51,7 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
     }).catch(err => {
       const viewData = {
         this_data: obligedEntityTypes,
-        this_errors: routeUtils.processException(err),
+        this_errors: routeUtils.processException(err, res),
         title: 'Obliged entity type'
       };
       res.render(`${routeViews}/oe_type.njk`, viewData);
@@ -82,7 +82,7 @@ router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res,
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err),
+        this_errors: routeUtils.processException(err, res),
         title: 'Your organisation name'
       };
       res.render(`${routeViews}/organisation_name.njk`, viewData);
@@ -114,7 +114,7 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err),
+        this_errors: routeUtils.processException(err, res),
         title: 'Your contact name'
       };
       res.render(`${routeViews}/contact_name.njk`, viewData);
@@ -148,7 +148,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err),
+        this_errors: routeUtils.processException(err, res),
         title: 'Your contact details'
       };
       res.render(`${routeViews}/oe_email.njk`, viewData);
@@ -183,7 +183,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err),
+        this_errors: routeUtils.processException(err, res),
         title: 'Your company number'
       };
       res.render(`${routeViews}/company_number.njk`, viewData);
@@ -225,7 +225,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err),
+        this_errors: routeUtils.processException(err, res),
         title: 'Discrepancy details'
       };
       res.render(`${routeViews}/discrepancy_details.njk`, viewData);
@@ -239,7 +239,7 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
 
 router.get('/report-a-discrepancy/**', (req, res) => {
   logger.info(`GET request to show NOT FOUND page: ${req.path}`);
-  res.render(`${routeViews}/error.njk`);
+  res.render('_partials/error.njk');
 });
 
 module.exports = router;

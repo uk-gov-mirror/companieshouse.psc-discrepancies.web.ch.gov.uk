@@ -26,3 +26,9 @@ module.exports.exceptionWithNoStatus = {
   message: 'Error message with no status',
   stack: {}
 };
+
+module.exports.responseMock = {
+  render: () => {
+    return true;
+  }
+};
