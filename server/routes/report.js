@@ -206,16 +206,16 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
       viewData.this_data.organisationName = report.obliged_entity_organisation_name;
       return api.companyOfficers.getCompanyOfficers(report.company_number.toUpperCase());
     }).then(officers => {
-      let pscOfficers = [];
+      const pscOfficers = [];
       let pscOfficer;
       const months = Utility.getMonthsOfYear();
       if (typeof officers.resource === 'undefined' || typeof officers.resource.items === 'undefined') {
         viewData.this_data.officers = [];
       } else {
-        for (let o of officers.resource.items) {
-          if(typeof o.resignedOn === 'undefined') {
+        for (const o of officers.resource.items) { // eslint-disable-line no-unused-vars
+          if (typeof o.resignedOn === 'undefined') {
             pscOfficer = o;
-            if(typeof o.dateOfBirth === 'undefined') {
+            if (typeof o.dateOfBirth === 'undefined') {
               pscOfficer.dobFormatted = 'DoB not available';
             } else {
               pscOfficer.dobFormatted = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
@@ -239,9 +239,9 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info('POST request to save PSC name, with payload: ', req.body);
-  let viewData = {
+  const viewData = {
     this_data: {
-      officers: res.locals.session.appData.pscOfficers,
+      officers: res.locals.session.appData.pscOfficers
     },
     title: 'PSC information'
   };

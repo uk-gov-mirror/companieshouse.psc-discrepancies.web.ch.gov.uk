@@ -146,5 +146,4 @@ describe('server/lib/validation/index', () => {
     expect(validator.isValidPscName(data)).to.be.rejectedWith(errors);
     expect(stubLogger).to.have.been.calledOnce;
   });
-
 });
