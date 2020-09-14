@@ -206,7 +206,6 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
       viewData.this_data.organisationName = report.obliged_entity_organisation_name;
       return api.companyOfficers.getCompanyOfficers(report.company_number.toUpperCase());
     }).then(officers => {
-      console.log(officers);
       const pscOfficers = [];
       let pscOfficer;
       const months = Utility.getMonthsOfYear();
