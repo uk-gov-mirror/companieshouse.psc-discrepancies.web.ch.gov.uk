@@ -309,6 +309,11 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
   res.render(`${routeViews}/confirmation.njk`, { title: 'PSC discrepancy submitted' });
 });
 
+router.get('/report-a-discrepancy/accessibility', (req, res) => {
+  logger.info(`GET request to serve accessibility-statement: ${req.path}`);
+  res.render('report/accessibility.njk', { title: 'Accessibility Statement' });
+});
+
 router.get('/report-a-discrepancy/**', (req, res) => {
   logger.info(`GET request to show NOT FOUND page: ${req.path}`);
   res.render('_partials/error.njk');
