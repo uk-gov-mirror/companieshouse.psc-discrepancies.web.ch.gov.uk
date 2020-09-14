@@ -220,8 +220,8 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
             } else {
               pscOfficer.dobFormatted = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
             }
+            pscOfficers.push(pscOfficer);
           }
-          pscOfficers.push(pscOfficer);
         }
         viewData.this_data.officers = pscOfficers;
         const o = res.locals.session;
