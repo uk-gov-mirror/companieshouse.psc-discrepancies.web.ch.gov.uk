@@ -111,8 +111,17 @@ class Validator {
     });
   }
 
-  isValidPscName () {
-    return Promise.resolve(true);
+  isValidPscName (payload) {
+    logger.info(`Request to validate PSC name: ${payload.pscName}`);
+    let errors = this._getErrorSignature();
+    return new Promise((resolve, reject) => {
+      if(typeof payload.pscName === 'undefined' || payload.pscName === null || payload.pscName.length === 0) {
+        errors.stack.pscName = errorManifest.pscName.empty;
+        reject(errors);
+      } else {
+        resolve(true);
+      }
+    });
   }
 }
 
