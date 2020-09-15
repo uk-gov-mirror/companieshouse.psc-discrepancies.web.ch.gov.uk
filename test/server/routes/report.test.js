@@ -9,6 +9,7 @@ let stubLogger;
 const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).validation;
 const Validator = require(`${serverRoot}/lib/validation`);
 const validator = new Validator();
+const apiSdk = require('ch-sdk-node');
 
 const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
@@ -375,11 +376,20 @@ describe('routes/report', () => {
       });
   });
 
-  it('should process the company number page payload and redirect to discrepancy details page', () => {
+  it.only('should process the company number page payload and redirect to discrepancy details page', () => {
     const slug = '/report-a-discrepancy/company-number';
     const stubValidator = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubPscServiceSaveCompanyNumber = sinon.stub(PscDiscrepancyService.prototype, 'saveCompanyNumber').returns(Promise.resolve(serviceData.companyNumberPost));
+    const stubCreateApiClient = sinon.stub(apiSdk, createApiClient).returns({
+      companyProfile: {
+        getCompanyProfile: function () {
+          return {
+            httpStatusCode: 200
+          };
+        }
+      }
+    })
     const clientPayload = { number: '12345678' };
     /* const servicePayload = {
       company_number: clientPayload.number,
@@ -393,6 +403,7 @@ describe('routes/report', () => {
       .set('Cookie', cookieStr)
       .send(clientPayload)
       .then(response => {
+        expect(stubCreateApiClient).to.have.been.calledOnce;
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubValidator).to.have.been.calledOnceWith(clientPayload.number);
         expect(validator.isCompanyNumberFormatted(clientPayload.number)).to.eventually.equal(true);

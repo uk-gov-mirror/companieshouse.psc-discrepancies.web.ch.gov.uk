@@ -61,7 +61,7 @@ class Validator {
     });
   }
 
-  isCompanyNumberFormatted(number) {
+  isCompanyNumberFormatted(number, statusCode) {
     logger.info(`Request to validate company number: ${number}`);
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
@@ -70,6 +70,9 @@ class Validator {
         reject(errors);
       } else if (number.length !== 8) {
         errors.stack.number = errorManifest.number.incorrect;
+        reject(errors);
+      } else if (statusCode === 404) {
+        errors.stack.number = errorManifest.number.doesntExist;
         reject(errors);
       } else {
         resolve(true);
