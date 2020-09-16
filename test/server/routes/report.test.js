@@ -2,7 +2,6 @@ const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
 const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
-const routeUtils = require(`${serverRoot}/routes/utils`);
 
 let stubLogger;
 
@@ -15,7 +14,7 @@ const pscDiscrepancyService = new PscDiscrepancyService();
 
 const serviceData = require(`${testRoot}/server/_fakes/data/services/psc_discrepancy`);
 const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
-const { validationException, viewDataMock, responseMock } = require(`${testRoot}/server/_fakes/mocks`);
+const { validationException } = require(`${testRoot}/server/_fakes/mocks`);
 
 const cookieStr = 'PSC_SID=abc123';
 
@@ -123,7 +122,6 @@ describe('routes/report', () => {
         expect(validator.isValidObligedEntityType(data, Object.keys(obligedEntityTypes))).to.be.rejectedWith(validationException);
         expect(response.text).include('Select what type of obliged entity you are');
         expect(response).to.have.status(200);
-
       });
   });
 
@@ -278,7 +276,7 @@ describe('routes/report', () => {
     const data = { fullName: 'incorrect/name' };
     validationException.stack = {
       fullName: errorManifest.fullName.incorrect
-    }
+    };
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     const stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationException);
     // const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
@@ -404,7 +402,7 @@ describe('routes/report', () => {
     const data = { number: '123456' };
     validationException.stack = {
       number: errorManifest.number.incorrect
-    }
+    };
     const slug = '/report-a-discrepancy/company-number';
     const stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').rejects(validationException);
 
@@ -471,8 +469,8 @@ describe('routes/report', () => {
   it('should return the discrepancy details page with error message if details are not entered', () => {
     const data = { details: '' };
     validationException.stack = {
-      details :errorManifest.details
-    }
+      details: errorManifest.details
+    };
     const slug = '/report-a-discrepancy/discrepancy-details';
     const stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').rejects(validationException);
 

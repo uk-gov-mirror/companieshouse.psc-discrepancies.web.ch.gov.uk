@@ -38,4 +38,4 @@ module.exports.viewDataMock = {
   this_errors: null,
   path: 'somepath.njk',
   title: 'Some title'
-}
+};

@@ -204,8 +204,8 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   const viewData = {
     title: 'PSC information',
     this_data: {},
-    path: `${routeViews}/psc_name.njk`,
-    //this_errors: null,
+    path: `${routeViews}/psc_name.njk`
+    // this_errors: null,
   };
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
   pscDiscrepancyService.getReport(selfLink)
@@ -309,7 +309,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
         title: 'Discrepancy details'
       };
       routeUtils.processException(err, viewData, res);
-      //res.render(viewData);
+      // res.render(viewData);
     });
 });
 
