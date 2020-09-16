@@ -1,7 +1,7 @@
 describe('routes/utils/defaultRouteUtil', () => {
   const Utility = require(`${serverRoot}/lib/Utility`);
 
-  const { validationException, serviceException, genericServerException, exceptionWithNoStatus, responseMock } = require(`${testRoot}/server/_fakes/mocks`);
+  const { validationException, serviceException, genericServerException, exceptionWithNoStatus, responseMock, viewDataMock } = require(`${testRoot}/server/_fakes/mocks`);
 
   const ModuleUnderTest = require(`${serverRoot}/routes/utils`);
 
@@ -23,22 +23,26 @@ describe('routes/utils/defaultRouteUtil', () => {
     });
 
     it('should return the error stack of a validation exception thrown by a route', () => {
-      expect(ModuleUnderTest.processException(validationException, responseMock)).to.eql(validationException.stack);
+      viewDataMock.this_errors = validationException;
+      expect(ModuleUnderTest.processException(validationException, viewDataMock, responseMock)).to.eql(undefined);
       expect(stubExceptionLogger).to.have.been.calledOnce;
       expect(stubExceptionLogger).to.have.been.calledWith(validationException);
     });
     it('should handle a service exception thrown by a route', () => {
-      expect(ModuleUnderTest.processException(serviceException, responseMock)).to.eql(true);
+      viewDataMock.this_errors = serviceException;
+      expect(ModuleUnderTest.processException(serviceException, viewDataMock, responseMock)).to.eql(undefined);
       expect(stubExceptionLogger).to.have.been.calledOnce;
       expect(stubExceptionLogger).to.have.been.calledWith(serviceException);
     });
     it('should handle a generic server exception thrown by a route', () => {
-      expect(ModuleUnderTest.processException(genericServerException, responseMock)).to.eql(true);
+      viewDataMock.this_errors = genericServerException;
+      expect(ModuleUnderTest.processException(genericServerException, viewDataMock, responseMock)).to.eql(undefined);
       expect(stubExceptionLogger).to.have.been.calledOnce;
       expect(stubExceptionLogger).to.have.been.calledWith(genericServerException);
     });
     it('should gracefully handle an exception with no status field thrown by a route', () => {
-      expect(ModuleUnderTest.processException(exceptionWithNoStatus, responseMock)).to.eql(true);
+      viewDataMock.this_errors = exceptionWithNoStatus;
+      expect(ModuleUnderTest.processException(exceptionWithNoStatus, viewDataMock, responseMock)).to.eql(undefined);
       expect(stubExceptionLogger).to.have.been.calledOnce;
       expect(stubExceptionLogger).to.have.been.calledWith(exceptionWithNoStatus);
     });

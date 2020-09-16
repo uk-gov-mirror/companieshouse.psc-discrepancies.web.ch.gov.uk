@@ -32,3 +32,10 @@ module.exports.responseMock = {
     return true;
   }
 };
+
+module.exports.viewDataMock = {
+  this_data: {},
+  this_errors: null,
+  path: 'somepath.njk',
+  title: 'Some title'
+}
