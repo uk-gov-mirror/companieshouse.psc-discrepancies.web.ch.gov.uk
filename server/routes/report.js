@@ -165,9 +165,12 @@ router.get('/report-a-discrepancy/company-number', (req, res) => {
 
 router.post('/report-a-discrepancy/company-number', (req, res) => {
   logger.info('POST request to save company number, with payload: ', req.body);
-  validator.isCompanyNumberFormatted(req.body.number)
-    .then(_ => {
-      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+  selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+  const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
+  api.companyProfile.getCompanyProfile(req.body.number.toUpperCase())
+    .then(profile => {
+      return validator.isCompanyNumberFormatted(req.body.number, profile.httpStatusCode);
+    }).then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {

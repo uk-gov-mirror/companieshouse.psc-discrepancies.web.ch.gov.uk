@@ -1,3 +1,4 @@
+const apiSdk = require('ch-sdk-node');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
@@ -375,19 +376,13 @@ describe('routes/report', () => {
       });
   });
 
-  it('should process the company number page payload and redirect to discrepancy details page', () => {
+  it('should process the company number page payload and redirect to PSC name page', () => {
     const slug = '/report-a-discrepancy/company-number';
     const stubValidator = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubPscServiceSaveCompanyNumber = sinon.stub(PscDiscrepancyService.prototype, 'saveCompanyNumber').returns(Promise.resolve(serviceData.companyNumberPost));
     const clientPayload = { number: '12345678' };
-    /* const servicePayload = {
-      company_number: clientPayload.number,
-      obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
-      obliged_entity_telephone_number: serviceData.reportDetailsGet.obliged_entity_telephone_number,
-      etag: sessionData.appData.initialServiceResponse.etag,
-      selfLink: sessionData.appData.initialServiceResponse.links.self
-    }; */
+
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -396,7 +391,7 @@ describe('routes/report', () => {
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubValidator).to.have.been.calledOnceWith(clientPayload.number);
         expect(validator.isCompanyNumberFormatted(clientPayload.number)).to.eventually.equal(true);
-        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledTwice;
         expect(stubPscServiceSaveCompanyNumber).to.have.been.calledOnce;
         expect(response).to.redirectTo(/\/report-a-discrepancy\/psc-name/g);
         expect(stubLogger).to.have.been.calledTwice;

@@ -57,6 +57,10 @@ let ErrorManifest = {
       incorrect: {
         summary: "Company number must be 8 characters",
         inline: "Company number must be 8 characters"
+      },
+      doesntExist: {
+        summary: "Company number does not exist",
+        inline: "Company number does not exist"
       }
     },
     pscName: {

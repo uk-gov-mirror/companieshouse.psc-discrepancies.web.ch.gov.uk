@@ -15,6 +15,9 @@ const envVars = {
     process.env.PSC_DISCREPANCY_REPORT_SERVICE_API_KEY = 'abc123';
     process.env.PSC_DISCREPANCY_REPORT_SERVICE_USERNAME = '';
     process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD = '';
+    process.env.CHS_API_KEY = 'abc';
+    process.env.API_URL = 'http://api.localhost:3010';
+
   }
 };
 
