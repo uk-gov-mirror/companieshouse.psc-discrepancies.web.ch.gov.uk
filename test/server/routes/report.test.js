@@ -506,6 +506,17 @@ describe('routes/report', () => {
       });
   });
 
+  it('should serve up the accessibility page with accessibility path', () => {
+    const slug = '/report-a-discrepancy/accessibility';
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookieStr)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
   it('should serve up the error page with incorrect paths not mapped elsewhere', () => {
     const slug = '/report-a-discrepancy/error';
     return request(app)
