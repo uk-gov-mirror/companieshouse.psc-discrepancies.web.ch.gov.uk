@@ -4,8 +4,6 @@
 
 const Utility = require(`${serverRoot}/lib/Utility`);
 
-const errorManifest = require(`${serverRoot}/lib/errors/error_manifest`).generic;
-
 const routeUtils = {
   processException: (err, viewData, res) => {
     Utility.logException(err);

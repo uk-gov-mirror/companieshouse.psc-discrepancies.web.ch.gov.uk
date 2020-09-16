@@ -104,12 +104,13 @@ describe('routes/report', () => {
       });
   });
 
-  it.only('should return the obliged entity type page with error message if obliged entity type is not selected', () => {
+  it('should return the obliged entity type page with error message if obliged entity type is not selected or incorrect', () => {
     const data = { obigedEntityType: 'incorrect type' };
     const slug = '/report-a-discrepancy/obliged-entity/type';
-    validationException.stack = errorManifest.obligedEntityType.blank;
-    const stub = sinon.stub(Validator.prototype, 'isValidObligedEntityType').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(undefined);
+    validationException.stack = {
+      obligedEntityType: errorManifest.obligedEntityType.blank
+    };
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidObligedEntityType').rejects(validationException);
 
     return request(app)
       .post(slug)
@@ -117,13 +118,12 @@ describe('routes/report', () => {
       .send(data)
       .then(response => {
         expect(stubLogger).to.have.been.calledOnce;
-        expect(stub).to.have.been.calledOnce;
-        expect(stub).to.have.been.calledWith(data, Object.keys(obligedEntityTypes));
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubValidator).to.have.been.calledWith(data, Object.keys(obligedEntityTypes));
         expect(validator.isValidObligedEntityType(data, Object.keys(obligedEntityTypes))).to.be.rejectedWith(validationException);
-        //expect(processException).to.have.been.calledOnce;
-        //expect(processException).to.have.been.calledWith(validationException, viewData, responseMock);
-        // expect(response.text).include('Select what type of obliged entity you are');
-        //expect(response).to.have.status(200);
+        expect(response.text).include('Select what type of obliged entity you are');
+        expect(response).to.have.status(200);
+
       });
   });
 
@@ -169,10 +169,11 @@ describe('routes/report', () => {
 
   it('should return the organisation name page with error message if organisation name is not populated', () => {
     const data = { organisationName: '' };
-    validationException.stack = errorManifest.organisationName.empty;
+    validationException.stack = {
+      organisationName: errorManifest.organisationName.empty
+    };
     const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
     const stub = sinon.stub(Validator.prototype, 'isValidOrganisationName').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
 
     return request(app)
       .post(slug)
@@ -183,8 +184,6 @@ describe('routes/report', () => {
         expect(stub).to.have.been.calledWith(data.organisationName);
         expect(validator.isValidOrganisationName(data.organisationName)).to.be.rejectedWith(validationException);
         expect(response.text).include(data.organisationName);
-        expect(processException).to.have.been.calledOnce;
-        expect(processException).to.have.been.calledWith(validationException);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
       });
@@ -192,10 +191,11 @@ describe('routes/report', () => {
 
   it('should return the organisation name page with error message if organisation name is not populated', () => {
     const data = { organisationName: '@Invalid%^Name' };
-    validationException.stack = errorManifest.organisationName.incorrect;
+    validationException.stack = {
+      organisationName: errorManifest.organisationName.incorrect
+    };
     const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
     const stub = sinon.stub(Validator.prototype, 'isValidOrganisationName').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
 
     return request(app)
       .post(slug)
@@ -206,8 +206,6 @@ describe('routes/report', () => {
         expect(stub).to.have.been.calledWith(data.organisationName);
         expect(validator.isValidOrganisationName(data.organisationName)).to.be.rejectedWith(validationException);
         expect(response.text).include(data.organisationName);
-        expect(processException).to.have.been.calledOnce;
-        expect(processException).to.have.been.calledWith(validationException);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
       });
@@ -256,9 +254,11 @@ describe('routes/report', () => {
   it('should return the contact name page with error message if contact name is not populated', () => {
     const data = { fullName: '' };
     validationException.stack = errorManifest.fullName.empty;
+    validationException.stack = {
+      fullName: errorManifest.fullName.empty
+    };
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     const stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
 
     return request(app)
       .post(slug)
@@ -269,8 +269,6 @@ describe('routes/report', () => {
         expect(stub).to.have.been.calledWith(data.fullName);
         expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationException);
         expect(response.text).include(data.fullName);
-        expect(processException).to.have.been.calledOnce;
-        expect(processException).to.have.been.calledWith(validationException);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
       });
@@ -278,10 +276,11 @@ describe('routes/report', () => {
 
   it('should return the contact name page with error message if contact name is incorrectly formatted', () => {
     const data = { fullName: 'incorrect/name' };
-    validationException.stack = errorManifest.fullName.incorrect;
+    validationException.stack = {
+      fullName: errorManifest.fullName.incorrect
+    }
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     const stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
     // const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
 
     return request(app)
@@ -293,8 +292,6 @@ describe('routes/report', () => {
         expect(stub).to.have.been.calledWith(data.fullName);
         expect(validator.isValidContactName(data.fullName)).to.be.rejectedWith(validationException);
         expect(response.text).include(data.fullName);
-        expect(processException).to.have.been.calledOnce;
-        expect(processException).to.have.been.calledWith(validationException);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
       });
@@ -344,9 +341,11 @@ describe('routes/report', () => {
   it('should return the obliged entity email page with error message if email is incorrectly formatted', () => {
     const data = { email: 'incorrect-email-format', phoneNumber: '07777777777' };
     validationException.stack = errorManifest.email.incorrect;
+    validationException.stack = {
+      email: errorManifest.email.incorrect
+    };
     const slug = '/report-a-discrepancy/obliged-entity/email';
     const stub = sinon.stub(Validator.prototype, 'isValidEmail').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
 
     return request(app)
       .post(slug)
@@ -357,8 +356,6 @@ describe('routes/report', () => {
         expect(stub).to.have.been.calledWith(data.email);
         expect(validator.isValidEmail(data.email)).to.be.rejectedWith(validationException);
         expect(response.text).include(data.email);
-        expect(processException).to.have.been.calledOnce;
-        expect(processException).to.have.been.calledWith(validationException);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
       });
@@ -405,10 +402,11 @@ describe('routes/report', () => {
 
   it('should return company number page with error message if number is incorrectly formatted', () => {
     const data = { number: '123456' };
-    validationException.stack = errorManifest.number.incorrect;
+    validationException.stack = {
+      number: errorManifest.number.incorrect
+    }
     const slug = '/report-a-discrepancy/company-number';
     const stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
 
     return request(app)
       .post(slug)
@@ -419,8 +417,6 @@ describe('routes/report', () => {
         expect(stub).to.have.been.calledWith(data.number);
         expect(validator.isCompanyNumberFormatted(data.number)).to.be.rejectedWith(validationException);
         expect(response.text).include(data.number);
-        expect(processException).to.have.been.calledOnce;
-        expect(processException).to.have.been.calledWith(validationException);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
       });
@@ -474,10 +470,11 @@ describe('routes/report', () => {
 
   it('should return the discrepancy details page with error message if details are not entered', () => {
     const data = { details: '' };
-    validationException.stack = errorManifest.details;
+    validationException.stack = {
+      details :errorManifest.details
+    }
     const slug = '/report-a-discrepancy/discrepancy-details';
     const stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').rejects(validationException);
-    const processException = sinon.stub(routeUtils, 'processException').returns(validationException.stack);
 
     return request(app)
       .post(slug)
@@ -488,8 +485,6 @@ describe('routes/report', () => {
         expect(stub).to.have.been.calledWith(data.details);
         expect(validator.isTextareaNotEmpty(data.details)).to.be.rejectedWith(validationException);
         expect(response.text).include(data.details);
-        expect(processException).to.have.been.calledOnce;
-        expect(processException).to.have.been.calledWith(validationException);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
       });
