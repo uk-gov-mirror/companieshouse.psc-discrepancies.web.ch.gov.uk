@@ -12,7 +12,7 @@
         {% include "_partials/error_summary.njk" %}
 
         <form action="/report-a-discrepancy/psc-name" method="post" enctype="application/json">
-          <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
+          <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.pscName is not undefined }}">
             <fieldset class="govuk-fieldset">
               <legend class="govuk-fieldset__legend govuk-label--xl">
                 <h1 class="govuk-fieldset__heading">Which PSC is incorrect for {{ this_data.organisationName | title }}?</h1>

@@ -54,10 +54,11 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
     }).catch(err => {
       const viewData = {
         this_data: obligedEntityTypes,
-        this_errors: routeUtils.processException(err, res),
+        this_errors: null,
+        path: `${routeViews}/oe_type.njk`,
         title: 'Obliged entity type'
       };
-      res.render(`${routeViews}/oe_type.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
@@ -85,10 +86,11 @@ router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res,
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err, res),
+        this_errors: null,
+        path: `${routeViews}/organisation_name.njk`,
         title: 'Your organisation name'
       };
-      res.render(`${routeViews}/organisation_name.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
@@ -117,10 +119,11 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err, res),
+        this_errors: null,
+        path: `${routeViews}/contact_name.njk`,
         title: 'Your contact name'
       };
-      res.render(`${routeViews}/contact_name.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
@@ -151,10 +154,11 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err, res),
+        this_errors: null,
+        path: `${routeViews}/oe_email.njk`,
         title: 'Your contact details'
       };
-      res.render(`${routeViews}/oe_email.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
@@ -189,10 +193,11 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err, res),
+        this_errors: null,
+        path: `${routeViews}/company_number.njk`,
         title: 'Your company number'
       };
-      res.render(`${routeViews}/company_number.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
@@ -201,7 +206,9 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   selfLink = res.locals.session.appData.initialServiceResponse.links.self;
   const viewData = {
     title: 'PSC information',
-    this_data: {}
+    this_data: {},
+    path: `${routeViews}/psc_name.njk`
+    // this_errors: null,
   };
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
   pscDiscrepancyService.getReport(selfLink)
@@ -233,10 +240,9 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
         return session.write(o);
       }
     }).then(_ => {
-      res.render(`${routeViews}/psc_name.njk`, viewData);
+      res.render(viewData.path, viewData);
     }).catch(err => {
-      viewData.this_errors = routeUtils.processException(err);
-      res.render(`${routeViews}/psc_name.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
@@ -246,6 +252,8 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
     this_data: {
       officers: res.locals.session.appData.pscOfficers
     },
+    this_errors: null,
+    path: `${routeViews}/psc_name.njk`,
     title: 'PSC information'
   };
   validator.isValidPscName(req.body)
@@ -258,8 +266,7 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/discrepancy-details');
     }).catch(err => {
-      viewData.this_errors = routeUtils.processException(err);
-      res.render(`${routeViews}/psc_name.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
@@ -300,10 +307,12 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).catch(err => {
       const viewData = {
         this_data: req.body,
-        this_errors: routeUtils.processException(err, res),
+        this_errors: null,
+        path: `${routeViews}/discrepancy_details.njk`,
         title: 'Discrepancy details'
       };
-      res.render(`${routeViews}/discrepancy_details.njk`, viewData);
+      routeUtils.processException(err, viewData, res);
+      // res.render(viewData);
     });
 });
 

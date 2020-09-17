@@ -1,6 +1,5 @@
 const { SessionStore } = require('ch-node-session-handler');
 const Utility = require(`${serverRoot}/lib/Utility`);
-const logger = require(`${serverRoot}/config/winston`);
 const ModuleUnderTest = require(`${serverRoot}/lib/Session`);
 
 describe('lib/Session', () => {
@@ -14,7 +13,6 @@ describe('lib/Session', () => {
     sinon.reset();
     sinon.restore();
     sinon.stub(Utility, 'logException').returns(undefined);
-    stubLogger = sinon.stub(logger, 'info').returns(true);
     done();
   });
 
