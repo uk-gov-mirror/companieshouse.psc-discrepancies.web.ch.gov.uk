@@ -88,7 +88,6 @@ class PscDiscrepancy {
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
-        obliged_entity_telephone_number: data.obliged_entity_telephone_number,
         status: 'INCOMPLETE',
         etag: data.etag
       }
@@ -106,7 +105,6 @@ class PscDiscrepancy {
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
-        obliged_entity_telephone_number: data.obliged_entity_telephone_number,
         company_number: data.company_number,
         status: 'INCOMPLETE',
         etag: data.etag
@@ -125,7 +123,6 @@ class PscDiscrepancy {
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
         obliged_entity_email: data.obliged_entity_email,
-        obliged_entity_telephone_number: data.obliged_entity_telephone_number,
         company_number: data.company_number,
         status: 'COMPLETE',
         etag: data.etag

@@ -312,10 +312,9 @@ describe('routes/report', () => {
     const stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubPscServiceSaveEmail = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
-    const clientPayload = { email: 'valid@valid.com', phoneNumber: '07777777777' };
+    const clientPayload = { email: 'valid@valid.com' };
     const servicePayload = {
       obliged_entity_email: clientPayload.email,
-      obliged_entity_telephone_number: clientPayload.phoneNumber,
       obliged_entity_contact_name: sessionData.appData.initialServiceResponse.obliged_entity_contact_name,
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
@@ -377,7 +376,6 @@ describe('routes/report', () => {
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubPscServiceSaveCompanyNumber = sinon.stub(PscDiscrepancyService.prototype, 'saveCompanyNumber').returns(Promise.resolve(serviceData.companyNumberPost));
     const clientPayload = { number: '12345678' };
-
     return request(app)
       .post(slug)
       .set('Cookie', cookieStr)
@@ -437,7 +435,6 @@ describe('routes/report', () => {
       details: clientPayload.details,
       selfLink: sessionData.appData.initialServiceResponse.links.self,
       obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
-      obliged_entity_telephone_number: serviceData.reportDetailsGet.obliged_entity_telephone_number,
       company_number: serviceData.reportDetailsGet.company_number,
       etag: serviceData.reportDetailsGet.etag
     };

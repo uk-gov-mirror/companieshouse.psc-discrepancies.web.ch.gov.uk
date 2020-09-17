@@ -7,48 +7,29 @@
 <div class="chs-psc-outer chs-psc-start">
 
   <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
-
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-
         {% include "_partials/error_summary.njk" %}
-        
-        <h1 class="govuk-heading-xl">What are your contact details?</h1>
-        <form action="/report-a-discrepancy/obliged-entity/email" method="post" enctype="application/json">
-
-          <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.email is not undefined }}">
-            <label class="govuk-label" for="email">
-              Email address
-            </label>
-            <span id="email-hint" class="govuk-hint">
-              We’ll only use this to contact you for more information
-            </span>
-            {% if this_errors.email is not undefined %}
-              <span id="err-elm-email" class="govuk-error-message">
+          <form action="/report-a-discrepancy/obliged-entity/email" method="post" enctype="application/json">
+            <div class="govuk-form-group">
+              <h1 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--xl" for="email">What is your email address?</label>
+                <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.email is not undefined }}">
+              </h1>
+              <span id="email-hint" class="govuk-hint">
+              We’ll only use this to contact you if we need more information.
+              </span>
+              {% if this_errors.email is not undefined %}
+                <span id="err-elm-email" class="govuk-error-message">
                   <span class="govuk-visually-hidden">Error:</span>
                   {{ this_errors.email.inline }}
-              </span>
-            {% endif %}
-            <input value="{{ this_data.email }}" class="govuk-input{{ ' govuk-input--error' if this_errors.email is not undefined }}" id="email" name="email" type="text" aria-describedby="email-hint" autocomplete="email" spellcheck="false" />
-          </div>
-
-          <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.phoneNumber is not undefined }}">
-            <label class="govuk-label" for="phoneNumber">
-              Phone number (optional)
-            </label>
-            {% if this_errors.phoneNumber is not undefined %}
-              <span id="err-elm-phoneNumber" class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span>
-                  {{ this_errors.phoneNumber.inline }}
-              </span>
-            {% endif %}
-            <input value="{{ this_data.phoneNumber }}" class="govuk-input{{ ' govuk-input--error' if this_errors.phoneNumber is not undefined }} govuk-input--width-20" id="phoneNumber" name="phoneNumber" type="tel" autocomplete="tel" />
-          </div>
-
+                </span>
+              {% endif %}
+              <input value="{{ this_data.email }}" class="govuk-input govuk-!-width-two-thirds{{ ' govuk-input--error' if this_errors.email is not undefined }}" id="email" name="email" type="text" aria-describedby="email-hint" autocomplete="email" spellcheck="false" />
+            </div>
           <button class="govuk-button" data-module="govuk-button">
             Continue
           </button>
-
         </form>
       </div>
     </div>
