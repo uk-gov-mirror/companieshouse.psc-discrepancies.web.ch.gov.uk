@@ -11,10 +11,9 @@
       <div class="govuk-grid-column-two-thirds">
         {% include "_partials/error_summary.njk" %}
           <form action="/report-a-discrepancy/obliged-entity/email" method="post" enctype="application/json">
-            <div class="govuk-form-group">
+            <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.email is not undefined }}">
               <h1 class="govuk-label-wrapper">
                 <label class="govuk-label govuk-label--xl" for="email">What is your email address?</label>
-                <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.email is not undefined }}">
               </h1>
               <span id="email-hint" class="govuk-hint">
               We’ll only use this to contact you if we need more information.
