@@ -8,7 +8,6 @@ const serviceData = {
     obliged_entity_type: 'Financial institution',
     obliged_entity_contact_name: 'matt le-matt',
     obliged_entity_email: 'm@m.com',
-    obliged_entity_telephone_number: '0777777777',
     company_number: '12345678',
     status: 'COMPLETE'
   },
@@ -56,8 +55,7 @@ const serviceData = {
     obliged_entity_type: 'Financial institution',
     obliged_entity_organisation_name: 'OrgName',
     obliged_entity_contact_name: 'matt le-matt',
-    obliged_entity_email: 'm@m.com',
-    obliged_entity_telephone_number: '0777777777'
+    obliged_entity_email: 'm@m.com'
   },
   companyNumberPost: {
     links: {
@@ -71,7 +69,6 @@ const serviceData = {
     obliged_entity_organisation_name: 'OrgName',
     obliged_entity_contact_name: 'matt le-matt',
     obliged_entity_email: 'm@m.com',
-    obliged_entity_telephone_number: '0777777777',
     company_number: '12345678'
   },
   reportStatusPost: {
@@ -86,7 +83,6 @@ const serviceData = {
     obliged_entity_organisation_name: 'OrgName',
     obliged_entity_contact_name: 'matt le-matt',
     obliged_entity_email: 'm@m.com',
-    obliged_entity_telephone_number: '0777777777',
     company_number: '12345678',
     status: 'COMPLETE'
   },
