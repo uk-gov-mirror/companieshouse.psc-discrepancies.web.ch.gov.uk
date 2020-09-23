@@ -215,7 +215,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
       viewData.this_data.organisationName = report.obliged_entity_organisation_name;
       return api.companyPsc.getCompanyPsc(report.company_number.toUpperCase());
     }).then(result => {
-      let pscs = {};
+      const pscs = {};
       if (typeof result.resource !== 'undefined' && typeof result.resource.items !== 'undefined') {
         const months = Utility.getMonthsOfYear();
         let psc;
@@ -228,7 +228,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
             psc.dob = `${o.dateOfBirth.month.toString().padStart(2, '0')}/${o.dateOfBirth.year}`;
             psc.dobView = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
           }
-          pscs[`psc_${i}${Utility.getRandomString(5,7)}`] = psc;
+          pscs[`psc_${i}${Utility.getRandomString(5, 7)}`] = psc;
         }
       }
       viewData.this_data.pscs = pscs;
@@ -245,12 +245,12 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info('POST request to save PSC name, with payload: ', req.body);
-  let pscs = res.locals.session.appData.pscs;
+  const pscs = res.locals.session.appData.pscs;
   validator.isValidPscName(req.body, pscs)
     .then(r => {
       const pscName = req.body.pscName;
       let pscDetails = {};
-      if(pscName !== 'PSC missing') {
+      if (pscName !== 'PSC missing') {
         pscDetails = pscs[pscName];
       } else {
         pscDetails.name = pscName;
