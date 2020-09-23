@@ -71,6 +71,22 @@ module.exports.sessionData = {
       etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
       kind: 'psc_discrepancy_report#psc_discrepancy_report',
       obliged_entity_type: 'Financial institution'
+    },
+    pscs: {
+      psc_0werf: {
+        name: 'Matte Le-Matt',
+        dob: '11/1956',
+        dobView: 'Born November 1956'
+      },
+      psc_1wGGrf: {
+        name: 'Matte Le-Matt',
+        dob: '09/1990',
+        dobView: 'Born November 1956'
+      }
+    },
+    selectedPscDetails: {
+      name: 'PSC missing',
+      dob: ''
     }
   },
   accountData: {}

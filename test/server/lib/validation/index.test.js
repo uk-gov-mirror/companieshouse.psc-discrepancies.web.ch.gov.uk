@@ -134,8 +134,21 @@ describe('server/lib/validation/index', () => {
   });
 
   it('should validate a correct PSC name selection', () => {
-    const data = { pscName: 'Some name' };
-    expect(validator.isValidPscName(data)).to.eventually.equal(true);
+    const data = { pscName: 'psc_hash_key' };
+    const pscs = {
+      psc_hash_key: {
+        name: 'Matt le-Matt',
+        dob: '07/1956'
+      }
+    };
+    expect(validator.isValidPscName(data, pscs)).to.eventually.equal(true);
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
+  it('should validate a correct "PSC missing" selection', () => {
+    const data = { pscName: 'PSC missing' };
+    const pscs = {};
+    expect(validator.isValidPscName(data, pscs)).to.eventually.equal(true);
     expect(stubLogger).to.have.been.calledOnce;
   });
 
@@ -144,6 +157,18 @@ describe('server/lib/validation/index', () => {
     errors.pscName = errorManifest.pscName.empty;
     const data = {};
     expect(validator.isValidPscName(data)).to.be.rejectedWith(errors);
+    expect(stubLogger).to.have.been.calledOnce;
+  });
+
+  it('should validate that a wrong PSC name key was sent with the payload', () => {
+    const data = { pscName: 'psc_hash_key_wrong' };
+    const pscs = {
+      psc_hash_key: {
+        name: 'Test le-Test',
+        dob: '11/1970'
+      }
+    };
+    expect(validator.isValidPscName(data, pscs)).to.be.rejected;
     expect(stubLogger).to.have.been.calledOnce;
   });
 });
