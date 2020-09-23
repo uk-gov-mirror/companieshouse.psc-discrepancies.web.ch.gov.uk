@@ -208,37 +208,34 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
     title: 'PSC information',
     this_data: {},
     path: `${routeViews}/psc_name.njk`
-    // this_errors: null,
   };
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
       viewData.this_data.organisationName = report.obliged_entity_organisation_name;
-      return api.companyOfficers.getCompanyOfficers(report.company_number.toUpperCase());
-    }).then(officers => {
-      const pscOfficers = [];
-      let pscOfficer;
-      const months = Utility.getMonthsOfYear();
-      if (typeof officers.resource === 'undefined' || typeof officers.resource.items === 'undefined') {
-        viewData.this_data.officers = [];
-      } else {
-        for (const o of officers.resource.items) { // eslint-disable-line no-unused-vars
-          if (typeof o.resignedOn === 'undefined') {
-            pscOfficer = o;
-            if (typeof o.dateOfBirth === 'undefined') {
-              pscOfficer.dobFormatted = 'DoB not available';
-            } else {
-              pscOfficer.dobFormatted = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
-            }
-            pscOfficers.push(pscOfficer);
+      return api.companyPsc.getCompanyPsc(report.company_number.toUpperCase());
+    }).then(result => {
+      const pscs = {};
+      if (typeof result.resource !== 'undefined' && typeof result.resource.items !== 'undefined') {
+        const months = Utility.getMonthsOfYear();
+        let psc;
+        for (const [i, o] of result.resource.items.entries()) { // eslint-disable-line no-unused-vars
+          psc = o;
+          if (typeof o.dateOfBirth === 'undefined') {
+            psc.dob = '';
+            psc.dobView = 'DoB not available';
+          } else {
+            psc.dob = `${o.dateOfBirth.month.toString().padStart(2, '0')}/${o.dateOfBirth.year}`;
+            psc.dobView = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
           }
+          pscs[`psc_${i}${Utility.getRandomString(5, 7)}`] = psc;
         }
-        viewData.this_data.officers = pscOfficers;
-        const o = res.locals.session;
-        o.appData.pscOfficers = pscOfficers;
-        res.locals.session = o;
-        return session.write(o);
       }
+      viewData.this_data.pscs = pscs;
+      const o = res.locals.session;
+      o.appData.pscs = pscs;
+      res.locals.session = o;
+      return session.write(o);
     }).then(_ => {
       res.render(viewData.path, viewData);
     }).catch(err => {
@@ -248,24 +245,31 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info('POST request to save PSC name, with payload: ', req.body);
-  const viewData = {
-    this_data: {
-      officers: res.locals.session.appData.pscOfficers
-    },
-    this_errors: null,
-    path: `${routeViews}/psc_name.njk`,
-    title: 'PSC information'
-  };
-  validator.isValidPscName(req.body)
+  const pscs = res.locals.session.appData.pscs;
+  validator.isValidPscName(req.body, pscs)
     .then(r => {
+      const pscName = req.body.pscName;
+      let pscDetails = {};
+      if (pscName !== 'PSC missing') {
+        pscDetails = pscs[pscName];
+      } else {
+        pscDetails.name = pscName;
+        pscDetails.dob = '';
+      }
       const o = res.locals.session;
-      o.appData.pscName = req.body.pscName;
-      delete o.appData.pscOfficers;
+      o.appData.selectedPscDetails = pscDetails;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/discrepancy-details');
     }).catch(err => {
+      const viewData = {
+        this_data: {
+          pscs: pscs
+        },
+        path: `${routeViews}/psc_name.njk`,
+        title: 'PSC information'
+      };
       routeUtils.processException(err, viewData, res);
     });
 });
@@ -280,8 +284,13 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
   let data = {}; // eslint-disable-line prefer-const
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
+      console.log('tttttt');
+      console.log('tttttt');
       selfLink = res.locals.session.appData.initialServiceResponse.links.self;
-      data.psc_name = res.locals.session.appData.pscName;
+      const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
+      console.log(selectedPscDetails);
+      data.psc_name = selectedPscDetails.name;
+      data.psc_date_of_birth = selectedPscDetails.dob;
       data.details = req.body.details;
       data.selfLink = selfLink;
       return pscDiscrepancyService.saveDiscrepancyDetails(data);
@@ -299,7 +308,8 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(_ => {
       const o = res.locals.session;
       o.appData.initialServiceResponse = {};
-      delete o.appData.pscName;
+      delete o.appData.selectedPscDetails;
+      delete o.appData.pscs;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
@@ -312,7 +322,6 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
         title: 'Discrepancy details'
       };
       routeUtils.processException(err, viewData, res);
-      // res.render(viewData);
     });
 });
 
