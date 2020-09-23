@@ -144,7 +144,6 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
         obliged_entity_organisation_name: report.obliged_entity_organisation_name,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: req.body.email,
-        obliged_entity_telephone_number: req.body.phoneNumber.trim(),
         etag: report.etag,
         selfLink: selfLink
       };
