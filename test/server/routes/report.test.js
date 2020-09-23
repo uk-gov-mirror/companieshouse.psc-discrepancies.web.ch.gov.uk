@@ -313,7 +313,7 @@ describe('routes/report', () => {
     const stubValidator = sinon.stub(Validator.prototype, 'isValidEmail').returns(Promise.resolve(true));
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubPscServiceSaveEmail = sinon.stub(PscDiscrepancyService.prototype, 'saveEmail').returns(Promise.resolve(serviceData.obligedEntityEmailPost));
-    const clientPayload = { email: 'valid@valid.com' };
+    const clientPayload = { email: 'valid@valid.com', phoneNumber: '07777777777' };
     const servicePayload = {
       obliged_entity_email: clientPayload.email,
       obliged_entity_contact_name: sessionData.appData.initialServiceResponse.obliged_entity_contact_name,
