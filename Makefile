@@ -24,7 +24,7 @@ sonar:
 
 .PHONY: test
 test:
-	npm run coverage
+	npm run test:coverage
 
 .PHONY: test-unit
 test-unit:
