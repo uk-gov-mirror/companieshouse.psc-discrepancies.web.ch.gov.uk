@@ -144,6 +144,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
         obliged_entity_organisation_name: report.obliged_entity_organisation_name,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: req.body.email,
+        obliged_entity_telephone_number: req.body.phoneNumber.trim(),
         etag: report.etag,
         selfLink: selfLink
       };
@@ -181,6 +182,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
         obliged_entity_organisation_name: report.obliged_entity_organisation_name,
         obliged_entity_contact_name: report.obliged_entity_contact_name,
         obliged_entity_email: report.obliged_entity_email,
+        obliged_entity_telephone_number: report.obliged_entity_telephone_number,
         company_number: req.body.number,
         etag: report.etag,
         selfLink: selfLink
@@ -213,7 +215,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
       viewData.this_data.organisationName = report.obliged_entity_organisation_name;
       return api.companyPsc.getCompanyPsc(report.company_number.toUpperCase());
     }).then(result => {
-      const pscs = {};
+      let pscs = {};
       if (typeof result.resource !== 'undefined' && typeof result.resource.items !== 'undefined') {
         const months = Utility.getMonthsOfYear();
         let psc;
@@ -226,7 +228,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
             psc.dob = `${o.dateOfBirth.month.toString().padStart(2, '0')}/${o.dateOfBirth.year}`;
             psc.dobView = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
           }
-          pscs[`psc_${i}${Utility.getRandomString(5, 7)}`] = psc;
+          pscs[`psc_${i}${Utility.getRandomString(5,7)}`] = psc;
         }
       }
       viewData.this_data.pscs = pscs;
@@ -243,12 +245,12 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info('POST request to save PSC name, with payload: ', req.body);
-  const pscs = res.locals.session.appData.pscs;
+  let pscs = res.locals.session.appData.pscs;
   validator.isValidPscName(req.body, pscs)
     .then(r => {
       const pscName = req.body.pscName;
       let pscDetails = {};
-      if (pscName !== 'PSC missing') {
+      if(pscName !== 'PSC missing') {
         pscDetails = pscs[pscName];
       } else {
         pscDetails.name = pscName;
@@ -282,11 +284,8 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
   let data = {}; // eslint-disable-line prefer-const
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
-      console.log('tttttt');
-      console.log('tttttt');
       selfLink = res.locals.session.appData.initialServiceResponse.links.self;
       const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
-      console.log(selectedPscDetails);
       data.psc_name = selectedPscDetails.name;
       data.psc_date_of_birth = selectedPscDetails.dob;
       data.details = req.body.details;
@@ -299,6 +298,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
       data.obliged_entity_organisation_name = report.obliged_entity_organisation_name;
       data.obliged_entity_contact_name = report.obliged_entity_contact_name;
       data.obliged_entity_email = report.obliged_entity_email;
+      data.obliged_entity_telephone_number = report.obliged_entity_telephone_number;
       data.company_number = report.company_number;
       data.etag = report.etag;
       return pscDiscrepancyService.saveStatus(data);
