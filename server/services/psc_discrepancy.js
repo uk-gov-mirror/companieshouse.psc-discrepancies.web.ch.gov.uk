@@ -141,7 +141,8 @@ class PscDiscrepancy {
       uri: `${this.server.baseUrl}${data.selfLink}/discrepancies`,
       body: {
         details: data.details,
-        psc_name: data.psc_name
+        psc_name: data.psc_name,
+        psc_date_of_birth: data.psc_date_of_birth
       }
     });
     logger.info('Service request to save discrepancy details, with payload: ', options);
