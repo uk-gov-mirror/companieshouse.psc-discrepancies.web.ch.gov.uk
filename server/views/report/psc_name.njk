@@ -24,18 +24,18 @@
                 </span>
               {% endif %}
               <div class="govuk-radios">
-                {% set officerCount = 1 %}
-                {% for officer in this_data.officers %}
+                {% set pscCount = 1 %}
+                {% for pscKey,psc in this_data.pscs %}
                   <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="pscName-{{ officerCount }}" name="pscName" type="radio" value="{{ officer.name }}" aria-describedby="psc-item-hint" />
-                    <label class="govuk-label govuk-radios__label" for="pscName-{{ officerCount }}">
-                      {{ officer.name }}
+                    <input class="govuk-radios__input" id="pscName-{{ pscCount }}" name="pscName" type="radio" value="{{ pscKey }}" aria-describedby="psc-item-hint" />
+                    <label class="govuk-label govuk-radios__label" for="pscName-{{ pscCount }}">
+                      {{ psc.name }}
                     </label>
-                    <div id="psc-item-hint" class="govuk-hint govuk-radios__hint">{{ officer.dobFormatted }}</div>
+                    <div id="psc-item-hint" class="govuk-hint govuk-radios__hint">{{ psc.dobView }}</div>
                   </div>
-                  {% set officerCount = officerCount + 1 %}
+                  {% set pscCount = pscCount + 1 %}
                 {% endfor %}
-                {% if this_data.officers.length %}
+                {% if this_data.pscs.length %}
                   <div class="govuk-radios__divider">or</div>
                 {% endif %}
                 <div class="govuk-radios__item">

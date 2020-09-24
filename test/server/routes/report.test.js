@@ -14,6 +14,7 @@ const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
 
 const serviceData = require(`${testRoot}/server/_fakes/data/services/psc_discrepancy`);
+const sdkData = require(`${testRoot}/server/_fakes/data/services/ch_sdk_node`);
 const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
 const { validationException } = require(`${testRoot}/server/_fakes/mocks`);
 
@@ -410,6 +411,43 @@ describe('routes/report', () => {
         expect(response.text).include(data.number);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
+  it('should serve up the PSC name', () => {
+    const slug = '/report-a-discrepancy/psc-name';
+    const stubSdk = sinon.stub(apiSdk, 'createApiClient').returns({
+      companyPsc: {
+        getCompanyPsc: companyNumber => {
+          return sdkData.getCompanyPsc;
+        }
+      }
+    });
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookieStr)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+        expect(stubSdk).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+      });
+  });
+
+  it('should process the PSC name page payload and redirect to the details page', () => {
+    const slug = '/report-a-discrepancy/psc-name';
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
+    const clientPayload = { pscName: 'PSC missing' };
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(clientPayload)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
       });
   });
 

@@ -114,15 +114,23 @@ class Validator {
     });
   }
 
-  isValidPscName (payload) {
-    logger.info(`Request to validate PSC name: ${payload.pscName}`);
+  isValidPscName (payload, pscs) {
+    logger.info(`Request to validate PSC name with hash key: ${payload.pscName}`);
     let errors = this._getErrorSignature();
+    errors.stack.pscName = errorManifest.pscName.empty;
     return new Promise((resolve, reject) => {
-      if(typeof payload.pscName === 'undefined' || payload.pscName === null || payload.pscName.length === 0) {
-        errors.stack.pscName = errorManifest.pscName.empty;
-        reject(errors);
-      } else {
-        resolve(true);
+      try {
+        if(typeof payload.pscName === 'undefined') {
+          reject(errors);
+        } else if(payload.pscName === 'PSC missing') {
+          resolve(true);
+        } else if(typeof pscs[payload.pscName] === 'undefined') {
+          reject(errors);
+        } else {
+          resolve(true);
+        }
+      } catch (err) {
+        reject(err);
       }
     });
   }
