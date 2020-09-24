@@ -35,7 +35,8 @@
                   </div>
                   {% set pscCount = pscCount + 1 %}
                 {% endfor %}
-                {% if this_data.pscs.length %}
+
+                {% if this_data.pscs | length %}
                   <div class="govuk-radios__divider">or</div>
                 {% endif %}
                 <div class="govuk-radios__item">
