@@ -23,13 +23,13 @@ let selfLink; // eslint-disable-line no-unused-vars
 router.use((req, res, next) => {
   try {
     session = new Session(req, res);
-    if(typeof res.locals.session.appData.initialServiceResponse === 'undefined') {
+    if (typeof res.locals.session.appData.initialServiceResponse === 'undefined') {
       selfLink = '';
     } else {
       selfLink = res.locals.session.appData.initialServiceResponse.links.self;
     }
     next();
-  } catch(err) {
+  } catch (err) {
     routeUtils.processException(err, null, res);
   }
 });
