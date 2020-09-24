@@ -227,7 +227,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
             psc.dob = `${o.dateOfBirth.month.toString().padStart(2, '0')}/${o.dateOfBirth.year}`;
             psc.dobView = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
           }
-          pscs[`psc_${i}${Utility.getRandomString(5, 7)}`] = psc;
+          pscs[`psc_${i}`] = psc;
         }
       }
       viewData.this_data.pscs = pscs;
@@ -245,8 +245,18 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
 router.post('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info('POST request to save PSC name, with payload: ', req.body);
   const pscs = res.locals.session.appData.pscs;
-  validator.isValidPscName(req.body, pscs)
-    .then(r => {
+  const viewData = {
+    this_data: {
+      pscs: pscs
+    },
+    path: `${routeViews}/psc_name.njk`,
+    title: 'PSC information'
+  };
+  pscDiscrepancyService.getReport(selfLink)
+    .then(report => {
+      viewData.this_data.organisationName = report.obliged_entity_organisation_name;
+      return validator.isValidPscName(req.body, pscs)
+    }).then(_ => {
       const pscName = req.body.pscName;
       let pscDetails = {};
       if (pscName !== 'PSC missing') {
@@ -262,13 +272,6 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/discrepancy-details');
     }).catch(err => {
-      const viewData = {
-        this_data: {
-          pscs: pscs
-        },
-        path: `${routeViews}/psc_name.njk`,
-        title: 'PSC information'
-      };
       routeUtils.processException(err, viewData, res);
     });
 });
