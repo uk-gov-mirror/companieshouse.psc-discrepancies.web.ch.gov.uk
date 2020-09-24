@@ -128,7 +128,7 @@ class PscDiscrepancy {
         etag: data.etag
       }
     });
-    logger.info('Service request to save email, with payload: ', options);
+    logger.info('Service request to save status, with payload: ', options);
     return this.request(options);
   }
 

@@ -21,8 +21,17 @@ const routeViews = 'report';
 let selfLink; // eslint-disable-line no-unused-vars
 
 router.use((req, res, next) => {
-  session = new Session(req, res);
-  next();
+  try {
+    session = new Session(req, res);
+    if (typeof res.locals.session.appData.initialServiceResponse === 'undefined') {
+      selfLink = '';
+    } else {
+      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+    }
+    next();
+  } catch (err) {
+    routeUtils.processException(err, null, res);
+  }
 });
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
@@ -71,7 +80,6 @@ router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res,
   logger.info('POST request to save obliged entity organisation name, with payload: ', req.body);
   validator.isValidOrganisationName(req.body.organisationName)
     .then(r => {
-      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
@@ -103,7 +111,6 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
   logger.info('POST request to save obliged entity contact name, with payload: ', req.body);
   validator.isValidContactName(req.body.fullName)
     .then(r => {
-      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
@@ -136,7 +143,6 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   logger.info('POST request to save obliged entity email, with payload: ', req.body);
   validator.isValidEmail(req.body.email)
     .then(_ => {
-      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
@@ -168,7 +174,6 @@ router.get('/report-a-discrepancy/company-number', (req, res) => {
 
 router.post('/report-a-discrepancy/company-number', (req, res) => {
   logger.info('POST request to save company number, with payload: ', req.body);
-  selfLink = res.locals.session.appData.initialServiceResponse.links.self;
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
   api.companyProfile.getCompanyProfile(req.body.number.toUpperCase())
     .then(profile => {
@@ -202,7 +207,6 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
 
 router.get('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info(`GET request to serve PSC name page: ${req.path}`);
-  selfLink = res.locals.session.appData.initialServiceResponse.links.self;
   const viewData = {
     title: 'PSC information',
     this_data: {},
@@ -255,7 +259,7 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
       viewData.this_data.organisationName = report.obliged_entity_organisation_name;
-      return validator.isValidPscName(req.body, pscs)
+      return validator.isValidPscName(req.body, pscs);
     }).then(_ => {
       const pscName = req.body.pscName;
       let pscDetails = {};
@@ -286,7 +290,6 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
   let data = {}; // eslint-disable-line prefer-const
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
-      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
       const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
       data.psc_name = selectedPscDetails.name;
       data.psc_date_of_birth = selectedPscDetails.dob;
@@ -305,13 +308,6 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
       data.etag = report.etag;
       return pscDiscrepancyService.saveStatus(data);
     }).then(_ => {
-      const o = res.locals.session;
-      o.appData.initialServiceResponse = {};
-      delete o.appData.selectedPscDetails;
-      delete o.appData.pscs;
-      res.locals.session = o;
-      return session.write(o);
-    }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
     }).catch(err => {
       const viewData = {
@@ -326,7 +322,17 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
 
 router.get('/report-a-discrepancy/confirmation', (req, res) => {
   logger.info(`GET request to serve confirmation page: ${req.path}`);
-  res.render(`${routeViews}/confirmation.njk`, { title: 'PSC discrepancy submitted' });
+  const o = res.locals.session;
+  delete o.appData.initialServiceResponse;
+  delete o.appData.selectedPscDetails;
+  delete o.appData.pscs;
+  res.locals.session = o;
+  session.write(o)
+    .then(_ => {
+      res.render(`${routeViews}/confirmation.njk`, { title: 'PSC discrepancy submitted' });
+    }).catch(err => {
+      routeUtils.processException(err, null, res);
+    });
 });
 
 router.get('/report-a-discrepancy/accessibility', (req, res) => {
