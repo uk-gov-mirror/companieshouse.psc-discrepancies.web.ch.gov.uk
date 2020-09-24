@@ -227,7 +227,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
             psc.dob = `${o.dateOfBirth.month.toString().padStart(2, '0')}/${o.dateOfBirth.year}`;
             psc.dobView = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
           }
-          pscs[`psc_${i}`] = psc;
+          pscs[`psc_${i}${Utility.getRandomString(5, 7)}`] = psc;
         }
       }
       viewData.this_data.pscs = pscs;
