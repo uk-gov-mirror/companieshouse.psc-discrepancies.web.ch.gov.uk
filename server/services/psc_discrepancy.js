@@ -1,4 +1,4 @@
-const rp = require('request-promise-native');
+const axios = require('axios');
 const logger = require(`${serverRoot}/config/winston`);
 
 /**
@@ -14,23 +14,25 @@ class PscDiscrepancy {
         password: process.env.PSC_DISCREPANCY_REPORT_SERVICE_PASSWORD
       }
     };
-    this.request = rp;
+    this.request = axios;
   }
 
   _getBaseOptions () {
     return {
       headers: {
-        authorization: this.server.apiKey
+        authorization: this.server.apiKey,
+        'content-type': 'application/json',
+        accept: 'application/json'
       },
-      uri: `${this.server.baseUrl}/psc-discrepancy-reports`,
-      json: true
+      url: `${this.server.baseUrl}/psc-discrepancy-reports`,
+      responseType: 'json'
     };
   }
 
   getReport (selfLink) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'GET',
-      uri: `${this.server.baseUrl}${selfLink}`
+      url: `${this.server.baseUrl}${selfLink}`
     });
     logger.info('Service request to fetch report, with payload: ', options);
     return this.request(options);
@@ -39,7 +41,7 @@ class PscDiscrepancy {
   saveObligedEntityType (obligedEntityTypeId) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
-      body: {
+      data: {
         obliged_entity_type: obligedEntityTypeId,
         status: 'INCOMPLETE'
       }
@@ -51,8 +53,8 @@ class PscDiscrepancy {
   saveOrganisationName (data) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'PUT',
-      uri: `${this.server.baseUrl}${data.selfLink}`,
-      body: {
+      url: `${this.server.baseUrl}${data.selfLink}`,
+      data: {
         obliged_entity_type: data.obliged_entity_type,
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         status: 'INCOMPLETE',
@@ -66,8 +68,8 @@ class PscDiscrepancy {
   saveContactName (data) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'PUT',
-      uri: `${this.server.baseUrl}${data.selfLink}`,
-      body: {
+      url: `${this.server.baseUrl}${data.selfLink}`,
+      data: {
         obliged_entity_type: data.obliged_entity_type,
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
@@ -82,8 +84,8 @@ class PscDiscrepancy {
   saveEmail (data) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'PUT',
-      uri: `${this.server.baseUrl}${data.selfLink}`,
-      body: {
+      url: `${this.server.baseUrl}${data.selfLink}`,
+      data: {
         obliged_entity_type: data.obliged_entity_type,
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
@@ -99,8 +101,8 @@ class PscDiscrepancy {
   saveCompanyNumber (data) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'PUT',
-      uri: `${this.server.baseUrl}${data.selfLink}`,
-      body: {
+      url: `${this.server.baseUrl}${data.selfLink}`,
+      data: {
         obliged_entity_type: data.obliged_entity_type,
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
@@ -117,8 +119,8 @@ class PscDiscrepancy {
   saveStatus (data) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'PUT',
-      uri: `${this.server.baseUrl}${data.selfLink}`,
-      body: {
+      url: `${this.server.baseUrl}${data.selfLink}`,
+      data: {
         obliged_entity_type: data.obliged_entity_type,
         obliged_entity_organisation_name: data.obliged_entity_organisation_name,
         obliged_entity_contact_name: data.obliged_entity_contact_name,
@@ -135,8 +137,8 @@ class PscDiscrepancy {
   saveDiscrepancyDetails (data) {
     const options = Object.assign(this._getBaseOptions(), {
       method: 'POST',
-      uri: `${this.server.baseUrl}${data.selfLink}/discrepancies`,
-      body: {
+      url: `${this.server.baseUrl}${data.selfLink}/discrepancies`,
+      data: {
         details: data.details,
         psc_name: data.psc_name,
         psc_date_of_birth: data.psc_date_of_birth

@@ -55,7 +55,7 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
       return pscDiscrepancyService.saveObligedEntityType(req.body.obligedEntityType);
     }).then(r => {
       const o = res.locals.session;
-      o.appData.initialServiceResponse = r;
+      o.appData.initialServiceResponse = r.data;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
@@ -79,13 +79,13 @@ router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, 
 router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
   logger.info('POST request to save obliged entity organisation name, with payload: ', req.body);
   validator.isValidOrganisationName(req.body.organisationName)
-    .then(r => {
+    .then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
-        obliged_entity_type: report.obliged_entity_type,
+        obliged_entity_type: report.data.obliged_entity_type,
         obliged_entity_organisation_name: req.body.organisationName,
-        etag: report.etag,
+        etag: report.data.etag,
         selfLink: selfLink
       };
       return pscDiscrepancyService.saveOrganisationName(data);
@@ -110,14 +110,14 @@ router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next)
 router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
   logger.info('POST request to save obliged entity contact name, with payload: ', req.body);
   validator.isValidContactName(req.body.fullName)
-    .then(r => {
+    .then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
-        obliged_entity_type: report.obliged_entity_type,
-        obliged_entity_organisation_name: report.obliged_entity_organisation_name,
+        obliged_entity_type: report.data.obliged_entity_type,
+        obliged_entity_organisation_name: report.data.obliged_entity_organisation_name,
         obliged_entity_contact_name: req.body.fullName,
-        etag: report.etag,
+        etag: report.data.etag,
         selfLink: selfLink
       };
       return pscDiscrepancyService.saveContactName(data);
@@ -146,11 +146,11 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
-        obliged_entity_type: report.obliged_entity_type,
-        obliged_entity_organisation_name: report.obliged_entity_organisation_name,
-        obliged_entity_contact_name: report.obliged_entity_contact_name,
+        obliged_entity_type: report.data.obliged_entity_type,
+        obliged_entity_organisation_name: report.data.obliged_entity_organisation_name,
+        obliged_entity_contact_name: report.data.obliged_entity_contact_name,
         obliged_entity_email: req.body.email,
-        etag: report.etag,
+        etag: report.data.etag,
         selfLink: selfLink
       };
       return pscDiscrepancyService.saveEmail(data);
@@ -182,13 +182,13 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
       const data = {
-        obliged_entity_type: report.obliged_entity_type,
-        obliged_entity_organisation_name: report.obliged_entity_organisation_name,
-        obliged_entity_contact_name: report.obliged_entity_contact_name,
-        obliged_entity_email: report.obliged_entity_email,
-        obliged_entity_telephone_number: report.obliged_entity_telephone_number,
+        obliged_entity_type: report.data.obliged_entity_type,
+        obliged_entity_organisation_name: report.data.obliged_entity_organisation_name,
+        obliged_entity_contact_name: report.data.obliged_entity_contact_name,
+        obliged_entity_email: report.data.obliged_entity_email,
+        obliged_entity_telephone_number: report.data.obliged_entity_telephone_number,
         company_number: req.body.number,
-        etag: report.etag,
+        etag: report.data.etag,
         selfLink: selfLink
       };
       return pscDiscrepancyService.saveCompanyNumber(data);
@@ -216,7 +216,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
       viewData.this_data.organisationName = report.obliged_entity_organisation_name;
-      return api.companyPsc.getCompanyPsc(report.company_number.toUpperCase());
+      return api.companyPsc.getCompanyPsc(report.data.company_number.toUpperCase());
     }).then(result => {
       const pscs = {};
       if (typeof result.resource !== 'undefined' && typeof result.resource.items !== 'undefined') {
@@ -258,7 +258,7 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
   };
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
-      viewData.this_data.organisationName = report.obliged_entity_organisation_name;
+      viewData.this_data.organisationName = report.data.obliged_entity_organisation_name;
       return validator.isValidPscName(req.body, pscs);
     }).then(_ => {
       const pscName = req.body.pscName;
@@ -299,13 +299,13 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     }).then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
-      data.obliged_entity_type = report.obliged_entity_type;
-      data.obliged_entity_organisation_name = report.obliged_entity_organisation_name;
-      data.obliged_entity_contact_name = report.obliged_entity_contact_name;
-      data.obliged_entity_email = report.obliged_entity_email;
-      data.obliged_entity_telephone_number = report.obliged_entity_telephone_number;
-      data.company_number = report.company_number;
-      data.etag = report.etag;
+      data.obliged_entity_type = report.data.obliged_entity_type;
+      data.obliged_entity_organisation_name = report.data.obliged_entity_organisation_name;
+      data.obliged_entity_contact_name = report.data.obliged_entity_contact_name;
+      data.obliged_entity_email = report.data.obliged_entity_email;
+      data.obliged_entity_telephone_number = report.data.obliged_entity_telephone_number;
+      data.company_number = report.data.company_number;
+      data.etag = report.data.etag;
       return pscDiscrepancyService.saveStatus(data);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/confirmation');
