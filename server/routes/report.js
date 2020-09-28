@@ -323,9 +323,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
 router.get('/report-a-discrepancy/confirmation', (req, res) => {
   logger.info(`GET request to serve confirmation page: ${req.path}`);
   const o = res.locals.session;
-  delete o.appData.initialServiceResponse;
-  delete o.appData.selectedPscDetails;
-  delete o.appData.pscs;
+  o.appData = {};
   res.locals.session = o;
   session.write(o)
     .then(_ => {
