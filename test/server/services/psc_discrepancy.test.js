@@ -32,8 +32,8 @@ describe('services/pscDiscrepancy', () => {
 
   it('should correctly get the base options for the PSC Discrepancy Service', () => {
     expect(service._getBaseOptions()).to.have.own.property('headers');
-    expect(service._getBaseOptions()).to.have.own.property('uri');
-    expect(service._getBaseOptions()).to.have.own.property('json').that.is.a('boolean');
+    expect(service._getBaseOptions()).to.have.own.property('url');
+    expect(service._getBaseOptions()).to.have.own.property('responseType').to.equal('json');
     expect(service._getBaseOptions()).to.have.nested.property('headers.authorization');
   });
 
