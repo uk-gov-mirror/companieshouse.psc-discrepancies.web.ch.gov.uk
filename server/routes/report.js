@@ -215,7 +215,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
-      viewData.this_data.organisationName = report.obliged_entity_organisation_name;
+      viewData.this_data.organisationName = report.data.obliged_entity_organisation_name;
       return api.companyPsc.getCompanyPsc(report.data.company_number.toUpperCase());
     }).then(result => {
       const pscs = {};
