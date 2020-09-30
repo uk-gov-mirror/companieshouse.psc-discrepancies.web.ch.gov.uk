@@ -226,7 +226,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
           psc = o;
           if (typeof o.dateOfBirth === 'undefined') {
             psc.dob = '';
-            psc.dobView = 'DoB not available';
+            psc.dobView = 'Date of birth not available';
           } else {
             psc.dob = `${o.dateOfBirth.month.toString().padStart(2, '0')}/${o.dateOfBirth.year}`;
             psc.dobView = `Born ${months[o.dateOfBirth.month]} ${o.dateOfBirth.year}`;
