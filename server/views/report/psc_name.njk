@@ -27,11 +27,11 @@
                 {% set pscCount = 1 %}
                 {% for pscKey,psc in this_data.pscs %}
                   <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="pscName-{{ pscCount }}" name="pscName" type="radio" value="{{ pscKey }}" aria-describedby="psc-item-hint" />
+                    <input class="govuk-radios__input" id="pscName-{{ pscCount }}" name="pscName" type="radio" value="{{ pscKey }}" aria-describedby="psc-item-hint-{{ pscCount }}" />
                     <label class="govuk-label govuk-radios__label" for="pscName-{{ pscCount }}">
                       {{ psc.name }}
                     </label>
-                    <div id="psc-item-hint" class="govuk-hint govuk-radios__hint">{{ psc.dobView }}</div>
+                    <div id="psc-item-hint-{{ pscCount }}" class="govuk-hint govuk-radios__hint">{{ psc.dobView }}</div>
                   </div>
                   {% set pscCount = pscCount + 1 %}
                 {% endfor %}
