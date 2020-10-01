@@ -24,13 +24,13 @@
                           the date when the discrepancy was first noticed
                         </li>
                       </ul>
+                      <label class="govuk-label" for="details">
+                        Incorrect PSC information
+                      </label>
                       <span id="err-elm-details" class="govuk-error-message">
                           <span class="govuk-visually-hidden">Error:</span>
                           {{ this_errors.details.inline }}
                       </span>
-                      <label class="govuk-label" for="details">
-                        Incorrect PSC information
-                      </label>
                       <textarea class="govuk-textarea{{ ' govuk-textarea--error' if this_errors is not undefined }}" id="details" name="details" rows="5" maxLength="5000">{{ this_data.details }}</textarea>
                   </div>
                   <h2 class="govuk-heading-m">Now submit your report</h2>
