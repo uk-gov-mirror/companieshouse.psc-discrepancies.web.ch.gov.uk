@@ -12,7 +12,7 @@
         <div class="govuk-grid-column-two-thirds">
 
             {% include "_partials/error_summary.njk" %}
-            
+
             <form action="/report-a-discrepancy/company-number" method="post" enctype="application/json">
 
               <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
@@ -23,7 +23,7 @@
                 </h1>
 
                 <span id="number-hint" class="govuk-hint">
-                  This is the 8 character reference issued by Companies House when the company was set up.
+                  This is the 8-character reference issued by Companies House when the company was set up.
                 </span>
                 <span id="err-elm-number" class="govuk-error-message">
                   <span class="govuk-visually-hidden">Error:</span>{{ this_errors.number.inline }}
@@ -35,13 +35,13 @@
               <details class="govuk-details" data-module="govuk-details">
                 <summary class="govuk-details__summary">
                   <span class="govuk-details__summary-text">
-                    Help with company number
+                    How do I find the company number?
                   </span>
                 </summary>
                 <div class="govuk-details__text">
                   <p>Use the
                     <a target="blank" href="https://beta.companieshouse.gov.uk/">Companies House service</a>
-                    to find it.
+                    to find company details (opens in a new tab)
                     </p>
                 </div>
               </details>
