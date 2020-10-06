@@ -36,7 +36,7 @@ router.use((req, res, next) => {
 
 router.get('(/report-a-discrepancy)?', (req, res, next) => {
   logger.info(`GET request to serve index page: ${req.path}`);
-  res.render(`${routeViews}/index.njk`, { title: 'Report a discrepancy about a beneficial owner on the PSC register by an obliged entity' });
+  res.render(`${routeViews}/index.njk`, { title: 'Report a discrepancy about a beneficial owner on the PSC register' });
 });
 
 router.get('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
