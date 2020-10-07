@@ -136,7 +136,7 @@ router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
 
 router.get('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
   logger.info(`GET request to serve obliged entity email page: ${req.path}`);
-  res.render(`${routeViews}/oe_email.njk`, { title: 'Your contact details' });
+  res.render(`${routeViews}/oe_email.njk`, { title: 'What is your email address?' });
 });
 
 router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
