@@ -43,7 +43,7 @@ router.get('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
   logger.info(`GET request to render obliged entity type page: ${req.path}`);
   const viewData = {
     this_data: obligedEntityTypes,
-    title: 'Obliged entity type'
+    title: 'What type of obliged entity are you?'
   };
   res.render(`${routeViews}/oe_type.njk`, viewData);
 });
