@@ -73,7 +73,7 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
 
 router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
-  res.render(`${routeViews}/organisation_name.njk`, { title: 'Your organisation name' });
+  res.render(`${routeViews}/organisation_name.njk`, { title: 'What is the name of your organisation?' });
 });
 
 router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
