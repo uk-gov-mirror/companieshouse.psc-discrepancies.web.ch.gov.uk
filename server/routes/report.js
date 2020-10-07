@@ -169,7 +169,7 @@ router.post('/report-a-discrepancy/obliged-entity/email', (req, res, next) => {
 
 router.get('/report-a-discrepancy/company-number', (req, res) => {
   logger.info(`GET request to serve company number page: ${req.path}`);
-  res.render(`${routeViews}/company_number.njk`, { title: 'Your company number' });
+  res.render(`${routeViews}/company_number.njk`, { title: 'What is the company number for the PSC with the discrepancy?' });
 });
 
 router.post('/report-a-discrepancy/company-number', (req, res) => {
