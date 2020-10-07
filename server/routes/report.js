@@ -282,7 +282,7 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
 
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
   logger.info(`GET request to serve discrepancy details page: ${req.path}`);
-  res.render(`${routeViews}/discrepancy_details.njk`, { title: 'Discrepancy details' });
+  res.render(`${routeViews}/discrepancy_details.njk`, { title: 'What information is incorrect for the PSC?' });
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
