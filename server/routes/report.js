@@ -327,7 +327,7 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
   res.locals.session = o;
   session.write(o)
     .then(_ => {
-      res.render(`${routeViews}/confirmation.njk`, { title: 'PSC discrepancy submitted' });
+      res.render(`${routeViews}/confirmation.njk`, { title: 'Confirmation page' });
     }).catch(err => {
       routeUtils.processException(err, null, res);
     });
