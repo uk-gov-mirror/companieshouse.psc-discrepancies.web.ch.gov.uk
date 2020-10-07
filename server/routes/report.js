@@ -104,7 +104,7 @@ router.post('/report-a-discrepancy/obliged-entity/organisation-name', (req, res,
 
 router.get('/report-a-discrepancy/obliged-entity/contact-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity contact name page: ${req.path}`);
-  res.render(`${routeViews}/contact_name.njk`, { title: 'Your contact name' });
+  res.render(`${routeViews}/contact_name.njk`, { title: 'What is your name?' });
 });
 
 router.post('/report-a-discrepancy/obliged-entity/contact-name', (req, res) => {
