@@ -208,7 +208,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
 router.get('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info(`GET request to serve PSC name page: ${req.path}`);
   const viewData = {
-    title: 'PSC information',
+    title: {},
     this_data: {},
     path: `${routeViews}/psc_name.njk`
   };
@@ -216,6 +216,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
       viewData.this_data.organisationName = report.data.obliged_entity_organisation_name;
+      viewData.title = 'Which PSC is incorrect for ' + report.data.company_number + "?";
       return api.companyPsc.getCompanyPsc(report.data.company_number.toUpperCase());
     }).then(result => {
       const pscs = {};
