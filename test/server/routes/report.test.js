@@ -429,7 +429,6 @@ describe('routes/report', () => {
         }
       }
     });
-
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     return request(app)
       .get(slug)
@@ -439,7 +438,6 @@ describe('routes/report', () => {
         expect(stubLogger).to.have.been.calledOnce;
         expect(stubSdk).to.have.been.calledOnce;
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
-
       });
   });
 
