@@ -1,4 +1,5 @@
 const apiSdk = require('ch-sdk-node');
+const { expect } = require('chai');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
@@ -421,8 +422,14 @@ describe('routes/report', () => {
         getCompanyPsc: companyNumber => {
           return sdkData.getCompanyPsc;
         }
+      },
+      companyProfile: {
+        getCompanyProfile: companyNumber => {
+          return sdkData.getCompanyProfile;
+        }
       }
     });
+
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     return request(app)
       .get(slug)
@@ -432,6 +439,7 @@ describe('routes/report', () => {
         expect(stubLogger).to.have.been.calledOnce;
         expect(stubSdk).to.have.been.calledOnce;
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
+
       });
   });
 
