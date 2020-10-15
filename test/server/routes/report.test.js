@@ -1,4 +1,5 @@
 const apiSdk = require('ch-sdk-node');
+const { expect } = require('chai');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
@@ -420,6 +421,11 @@ describe('routes/report', () => {
       companyPsc: {
         getCompanyPsc: companyNumber => {
           return sdkData.getCompanyPsc;
+        }
+      },
+      companyProfile: {
+        getCompanyProfile: companyNumber => {
+          return sdkData.getCompanyProfile;
         }
       }
     });

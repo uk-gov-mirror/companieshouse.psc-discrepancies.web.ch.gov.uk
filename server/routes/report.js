@@ -215,10 +215,14 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
-      viewData.this_data.organisationName = report.data.obliged_entity_organisation_name;
-      viewData.title = 'Which PSC is incorrect for ' + report.data.company_number + "?";
-      return api.companyPsc.getCompanyPsc(report.data.company_number.toUpperCase());
-    }).then(result => {
+      return api.companyProfile.getCompanyProfile(report.data.company_number.toUpperCase());
+      })
+      .then(profile => {
+        viewData.this_data.organisationName = profile.resource.companyName;
+        viewData.title = 'Which PSC is incorrect for ' + profile.resource.companyName + '?';
+        return api.companyPsc.getCompanyPsc(profile.resource.companyNumber.toUpperCase());
+      })
+  .then(result => {
       const pscs = {};
       if (typeof result.resource !== 'undefined' && typeof result.resource.items !== 'undefined') {
         const months = Utility.getMonthsOfYear();
