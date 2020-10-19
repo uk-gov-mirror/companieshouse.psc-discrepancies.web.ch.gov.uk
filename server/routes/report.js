@@ -327,14 +327,25 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
 
 router.get('/report-a-discrepancy/confirmation', (req, res) => {
   logger.info(`GET request to serve confirmation page: ${req.path}`);
-  const o = res.locals.session;
-  o.appData = {};
-  res.locals.session = o;
-  session.write(o)
+  const viewData = {
+    title: 'Confirmation page',
+    this_data: {},
+    path: `${routeViews}/confirmation.njk`
+  }
+  pscDiscrepancyService.getReport(selfLink)
+    .then(report => {
+      viewData.this_data.submissionReference = report.data.submission_reference;
+    })
     .then(_ => {
-      res.render(`${routeViews}/confirmation.njk`, { title: 'Confirmation page' });
+      const o = res.locals.session;
+      o.appData = {};
+      res.locals.session = o;
+      return session.write(o)
+    })
+    .then(_ => {
+      res.render(viewData.path, viewData);
     }).catch(err => {
-      routeUtils.processException(err, null, res);
+      routeUtils.processException(err, viewData, res);
     });
 });
 
