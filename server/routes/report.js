@@ -222,7 +222,6 @@ router.get('/report-a-discrepancy/confirm-company', (req, res) => {
       viewData.this_data.company_number = report.data.company_number.toUpperCase();
       return api.companyProfile.getCompanyProfile(report.data.company_number.toUpperCase());
     }).then(profile => {
-      console.log('Company profile: ' + profile.httpStatusCode);
       viewData.this_data.company_name = profile.resource.companyName;
       viewData.this_data.company_status = profile.resource.companyStatus.charAt(0).toUpperCase() + profile.resource.companyStatus.slice(1);
       viewData.this_data.company_type = profile.resource.type.charAt(0).toUpperCase() + profile.resource.type.slice(1);
