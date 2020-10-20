@@ -1,0 +1,64 @@
+{% extends "_layouts/default.njk" %}
+
+{% block main_content %}
+
+    {% from "govuk/components/details/macro.njk" import govukDetails %}
+
+  <div class="govuk-width-container ">
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+      <div class="govuk-grid-row">
+
+        <div class="govuk-grid-column-two-thirds">
+
+            <form action="/report-a-discrepancy/confirm-company" method="post">
+
+                    <h1 class="govuk-heading-l">Confirm this is the correct company</h1>
+
+                    <table class="govuk-table align-top">
+
+                        <tbody class="govuk-table__body">
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Company name</th>
+                                <td class="govuk-table__cell">{{this_data.company_name}}</td>
+                            </tr>
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Company number</th>
+                                <td class="govuk-table__cell">{{this_data.company_number}}</td>
+                            </tr>
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Status</th>
+                                <td class="govuk-table__cell">{{this_data.company_status}}</td>
+                            </tr>
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Incorporation date</th>
+                                <td class="govuk-table__cell">{{this_data.incorporation_date}}</td>
+                            </tr>
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Company type</th>
+                                <td class="govuk-table__cell">{{this_data.company_type}}</td>
+                            </tr>
+
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Registered office address</th>
+                                <td class="govuk-table__cell">{{this_data.address_line_1}}<br>{{this_data.postal_code}}<br></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                <button class="govuk-button" data-module="govuk-button">
+                    Confirm and continue
+                </button>
+
+            </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+{% endblock %}
