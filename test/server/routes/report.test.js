@@ -387,7 +387,7 @@ describe('routes/report', () => {
         expect(validator.isCompanyNumberFormatted(clientPayload.number)).to.eventually.equal(true);
         expect(stubPscServiceGetReport).to.have.been.calledTwice;
         expect(stubPscServiceSaveCompanyNumber).to.have.been.calledOnce;
-        expect(response).to.redirectTo(/\/report-a-discrepancy\/psc-name/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/confirm-company/g);
         expect(stubLogger).to.have.been.calledTwice;
       });
   });
@@ -411,6 +411,31 @@ describe('routes/report', () => {
         expect(response.text).include(data.number);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
+  it('should serve up the company confirmation page with company confirmation path', () => {
+    const slug = '/report-a-discrepancy/confirm-company';
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookieStr)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+      });
+  });
+
+  it('should process the company confirmation page after company has been confirmed', () => {
+    const slug = '/report-a-discrepancy/confirm-company';
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .then(response => {
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/psc-name/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledThrice;
       });
   });
 

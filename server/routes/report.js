@@ -18,6 +18,10 @@ let session; // eslint-disable-line no-unused-vars
 const routeUtils = require(`${serverRoot}/routes/utils`);
 const routeViews = 'report';
 
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 let selfLink; // eslint-disable-line no-unused-vars
 
 router.use((req, res, next) => {
@@ -193,7 +197,7 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       };
       return pscDiscrepancyService.saveCompanyNumber(data);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/psc-name');
+      res.redirect(302, '/report-a-discrepancy/confirm-company');
     }).catch(err => {
       const viewData = {
         this_data: req.body,
@@ -203,6 +207,42 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       };
       routeUtils.processException(err, viewData, res);
     });
+});
+
+router.get('/report-a-discrepancy/confirm-company', (req, res) => {
+  logger.info(`GET request to serve company confirmation page: ${req.path}`);
+  const viewData = {
+    title: 'Confirm this is the correct company',
+    this_data: {},
+    path: `${routeViews}/company_confirmation.njk`
+  };
+  const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
+  pscDiscrepancyService.getReport(selfLink)
+    .then(report => {
+      viewData.this_data.company_number = report.data.company_number.toUpperCase();
+      return api.companyProfile.getCompanyProfile(report.data.company_number.toUpperCase());
+    }).then(profile => {
+      console.log('Company profile: ' + profile.httpStatusCode);
+      viewData.this_data.company_name = profile.resource.companyName;
+      viewData.this_data.company_status = profile.resource.companyStatus.charAt(0).toUpperCase() + profile.resource.companyStatus.slice(1);
+      viewData.this_data.company_type = profile.resource.type.charAt(0).toUpperCase() + profile.resource.type.slice(1);
+      // Format date of incorporation
+      const dayOfIncorporation = profile.resource.dateOfCreation.slice(-2);
+      const monthOfIncorporation = profile.resource.dateOfCreation.slice(5, 7);
+      const yearOfIncorporation = profile.resource.dateOfCreation.slice(0, 4);
+      viewData.this_data.incorporation_date = dayOfIncorporation + ' ' + monthNames[parseInt(monthOfIncorporation)] + ' ' + yearOfIncorporation;
+      viewData.this_data.address_line_1 = profile.resource.registeredOfficeAddress.addressLineOne;
+      viewData.this_data.postal_code = profile.resource.registeredOfficeAddress.postalCode;
+    }).then(_ => {
+      res.render(viewData.path, viewData);
+    }).catch(err => {
+      routeUtils.processException(err, viewData, res);
+    });
+});
+
+router.post('/report-a-discrepancy/confirm-company', (req, res) => {
+  logger.info('POST request to confirm company number is correct: ', req.body);
+  res.redirect(302, '/report-a-discrepancy/psc-name');
 });
 
 router.get('/report-a-discrepancy/psc-name', (req, res) => {
