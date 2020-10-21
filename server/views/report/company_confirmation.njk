@@ -15,41 +15,38 @@
 
                     <h1 class="govuk-heading-l">Confirm this is the correct company</h1>
 
-                    <table class="govuk-table align-top">
+                    <dl class="govuk-summary-list">
 
-                        <tbody class="govuk-table__body">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Company name</dt>
+                            <dd class="govuk-summary-list__value">{{this_data.company_name}}</dd>
+                        </div>
 
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Company name</th>
-                                <td class="govuk-table__cell">{{this_data.company_name}}</td>
-                            </tr>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Company number</dt>
+                            <dd class="govuk-summary-list__value">{{this_data.company_number}}</dd>
+                        </div>
 
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Company number</th>
-                                <td class="govuk-table__cell">{{this_data.company_number}}</td>
-                            </tr>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Status</dt>
+                            <dd class="govuk-summary-list__value">{{this_data.company_status}}</dd>
+                        </div>
 
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Status</th>
-                                <td class="govuk-table__cell">{{this_data.company_status}}</td>
-                            </tr>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Incorporation date</dt>
+                            <dd class="govuk-summary-list__value">{{this_data.incorporation_date}}</dd>
+                        </div>
 
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Incorporation date</th>
-                                <td class="govuk-table__cell">{{this_data.incorporation_date}}</td>
-                            </tr>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Company type</dt>
+                            <dd class="govuk-summary-list__value">{{this_data.company_type}}</dd>
+                        </div>
 
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Company type</th>
-                                <td class="govuk-table__cell">{{this_data.company_type}}</td>
-                            </tr>
-
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">Registered office address</th>
-                                <td class="govuk-table__cell">{{this_data.address_line_1}}<br>{{this_data.postal_code}}<br></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Registered office address</dt>
+                            <dd class="govuk-summary-list__value">{{this_data.address_line_1}}<br>{{this_data.postal_code}}</dd>
+                        </div>
+                    </dl>
 
                 <button class="govuk-button" data-module="govuk-button">
                     Confirm and continue
