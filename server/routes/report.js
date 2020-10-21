@@ -18,10 +18,6 @@ let session; // eslint-disable-line no-unused-vars
 const routeUtils = require(`${serverRoot}/routes/utils`);
 const routeViews = 'report';
 
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
-
 let selfLink; // eslint-disable-line no-unused-vars
 
 router.use((req, res, next) => {
@@ -229,7 +225,8 @@ router.get('/report-a-discrepancy/confirm-company', (req, res) => {
       const dayOfIncorporation = profile.resource.dateOfCreation.slice(-2);
       const monthOfIncorporation = profile.resource.dateOfCreation.slice(5, 7);
       const yearOfIncorporation = profile.resource.dateOfCreation.slice(0, 4);
-      viewData.this_data.incorporation_date = dayOfIncorporation + ' ' + monthNames[parseInt(monthOfIncorporation)] + ' ' + yearOfIncorporation;
+      const months = Utility.getMonthsOfYear();
+      viewData.this_data.incorporation_date = dayOfIncorporation + ' ' + months[parseInt(monthOfIncorporation)] + ' ' + yearOfIncorporation;
       viewData.this_data.address_line_1 = profile.resource.registeredOfficeAddress.addressLineOne;
       viewData.this_data.postal_code = profile.resource.registeredOfficeAddress.postalCode;
     }).then(_ => {
