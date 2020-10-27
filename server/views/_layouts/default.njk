@@ -29,4 +29,19 @@
     {% include "_partials/__footer.njk" %}
 
   </body>
+
+  {% block bodyEnd %}
+    {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
+    <script src="{{ cdnHost }}/javascripts/app/piwik-enable.js"></script>
+    <script type="application/javascript">
+      (function() {
+        bindPiwikListener('5mld', '{{ piwikUrl }}', {{ piwikSiteId }});
+      }());
+    </script>
+    <noscript>
+      <p>
+        <img src="{{ piwikUrl }}/piwik.php?idsite={{ piwikSiteId }}" style="border:0;" alt="" />
+      </p>
+    </noscript>
+  {% endblock %}
 </html>
