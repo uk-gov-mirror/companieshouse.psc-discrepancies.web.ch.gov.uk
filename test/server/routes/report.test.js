@@ -1,4 +1,5 @@
 const apiSdk = require('@companieshouse/api-sdk-node');
+const { expect } = require('chai');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
@@ -403,6 +404,11 @@ describe('routes/report', () => {
         getCompanyPsc: companyNumber => {
           return sdkData.getCompanyPsc;
         }
+      },
+      companyProfile: {
+        getCompanyProfile: companyNumber => {
+          return sdkData.getCompanyProfile;
+        }
       }
     });
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
@@ -469,7 +475,7 @@ describe('routes/report', () => {
         expect(stubValidator).to.have.been.calledWith(clientPayload.details);
         expect(validator.isTextareaNotEmpty(clientPayload.details)).to.eventually.equal(true);
         expect(stubPscServiceSaveDetails).to.have.been.calledOnce;
-        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledTwice;
         expect(stubPscServiceSaveStatus).to.have.been.calledOnce;
         expect(pscDiscrepancyService.saveDiscrepancyDetails(servicePayload)).to.eventually.eql(serviceData.discrepancyDetailsPost);
         expect(pscDiscrepancyService.getReport(servicePayload.selfLink)).to.eventually.eql(serviceData.reportDetailsGet);
@@ -504,12 +510,14 @@ describe('routes/report', () => {
 
   it('should serve up the confirmation page with confirmation path', () => {
     const slug = '/report-a-discrepancy/confirmation';
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     return request(app)
       .get(slug)
       .set('Cookie', cookieStr)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
       });
   });
 

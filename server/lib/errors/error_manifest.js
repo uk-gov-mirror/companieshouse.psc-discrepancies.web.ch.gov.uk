@@ -18,7 +18,7 @@ let ErrorManifest = {
     fullName: {
       empty: {
         summary: "Enter your full name",
-        inline: "Enter your full name"
+        inline: "Enter your name"
       },
       incorrect: {
         summary: "Full name must only include letters upper and lower case letters, hyphens, spaces and apostrophes",

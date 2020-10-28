@@ -40,6 +40,10 @@ const sdkData = {
         }
       ]
     }
+  },
+  getCompanyProfile: {
+    company_number: '12345678',
+    company_name: 'Test Company 1'
   }
 };
 
