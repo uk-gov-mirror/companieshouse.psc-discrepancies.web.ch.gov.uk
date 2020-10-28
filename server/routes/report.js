@@ -2,7 +2,7 @@ const router = require('express').Router();
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 
-const apiSdk = require('ch-sdk-node');
+const apiSdk = require('@companieshouse/api-sdk-node');
 
 const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
 
@@ -175,25 +175,32 @@ router.get('/report-a-discrepancy/company-number', (req, res) => {
 router.post('/report-a-discrepancy/company-number', (req, res) => {
   logger.info('POST request to save company number, with payload: ', req.body);
   const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
+  let secureFlag;
   api.companyProfile.getCompanyProfile(req.body.number.toUpperCase())
     .then(profile => {
+      secureFlag = !(typeof profile.resource.hasSuperSecurePscs === 'undefined' || profile.resource.hasSuperSecurePscs === false);
       return validator.isCompanyNumberFormatted(req.body.number, profile.httpStatusCode);
     }).then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
     }).then(report => {
-      const data = {
-        obliged_entity_type: report.data.obliged_entity_type,
-        obliged_entity_organisation_name: report.data.obliged_entity_organisation_name,
-        obliged_entity_contact_name: report.data.obliged_entity_contact_name,
-        obliged_entity_email: report.data.obliged_entity_email,
-        obliged_entity_telephone_number: report.data.obliged_entity_telephone_number,
-        company_number: req.body.number,
-        etag: report.data.etag,
-        selfLink: selfLink
-      };
-      return pscDiscrepancyService.saveCompanyNumber(data);
+      if (secureFlag === false) {
+        const data = {
+          obliged_entity_type: report.data.obliged_entity_type,
+          obliged_entity_organisation_name: report.data.obliged_entity_organisation_name,
+          obliged_entity_contact_name: report.data.obliged_entity_contact_name,
+          obliged_entity_email: report.data.obliged_entity_email,
+          obliged_entity_telephone_number: report.data.obliged_entity_telephone_number,
+          company_number: req.body.number,
+          etag: report.data.etag,
+          selfLink: selfLink
+        };
+        return pscDiscrepancyService.saveCompanyNumber(data);
+      }
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/confirm-company');
+      if (secureFlag === true) {
+        return res.redirect(302, '/report-a-discrepancy/secure-psc');
+      }
+      return res.redirect(302, '/report-a-discrepancy/confirm-company');
     }).catch(err => {
       const viewData = {
         this_data: req.body,
@@ -203,6 +210,11 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
       };
       routeUtils.processException(err, viewData, res);
     });
+});
+
+router.get('/report-a-discrepancy/secure-psc', (req, res) => {
+  logger.info(`GET request to serve secure psc found page: ${req.path}`);
+  res.render(`${routeViews}/secure_psc.njk`, { title: 'A PSC for this company has details protected' });
 });
 
 router.get('/report-a-discrepancy/confirm-company', (req, res) => {
