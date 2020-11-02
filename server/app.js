@@ -51,6 +51,7 @@ njk.addGlobal('cdnUrlJs', process.env.CDN_URL_JS);
 njk.addGlobal('cdnHost', process.env.CDN_HOST);
 njk.addGlobal('piwikUrl', process.env.PIWIK_URL);
 njk.addGlobal('piwikSiteId', process.env.PIWIK_SITE_ID);
+njk.addGlobal('discrepancyGoalId', process.env.DISCREPANCIES_PIWIK_START_GOAL_ID);
 
 // load the session data into res.locals
 app.use((req, res, next) => {
