@@ -1,4 +1,4 @@
-const apiSdk = require('ch-sdk-node');
+const apiSdk = require('@companieshouse/api-sdk-node');
 const { expect } = require('chai');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
@@ -372,49 +372,6 @@ describe('routes/report', () => {
       });
   });
 
-  it('should process the company number page payload and redirect to PSC name page', () => {
-    const slug = '/report-a-discrepancy/company-number';
-    const stubValidator = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').returns(Promise.resolve(true));
-    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
-    const stubPscServiceSaveCompanyNumber = sinon.stub(PscDiscrepancyService.prototype, 'saveCompanyNumber').returns(Promise.resolve(serviceData.companyNumberPost));
-    const clientPayload = { number: '12345678' };
-    return request(app)
-      .post(slug)
-      .set('Cookie', cookieStr)
-      .send(clientPayload)
-      .then(response => {
-        expect(stubValidator).to.have.been.calledOnce;
-        expect(stubValidator).to.have.been.calledOnceWith(clientPayload.number);
-        expect(validator.isCompanyNumberFormatted(clientPayload.number)).to.eventually.equal(true);
-        expect(stubPscServiceGetReport).to.have.been.calledTwice;
-        expect(stubPscServiceSaveCompanyNumber).to.have.been.calledOnce;
-        expect(response).to.redirectTo(/\/report-a-discrepancy\/confirm-company/g);
-        expect(stubLogger).to.have.been.calledTwice;
-      });
-  });
-
-  it('should return company number page with error message if number is incorrectly formatted', () => {
-    const data = { number: '123456' };
-    validationException.stack = {
-      number: errorManifest.number.incorrect
-    };
-    const slug = '/report-a-discrepancy/company-number';
-    const stub = sinon.stub(Validator.prototype, 'isCompanyNumberFormatted').rejects(validationException);
-
-    return request(app)
-      .post(slug)
-      .set('Cookie', cookieStr)
-      .send(data)
-      .then(response => {
-        expect(stub).to.have.been.calledOnce;
-        expect(stub).to.have.been.calledWith(data.number);
-        expect(validator.isCompanyNumberFormatted(data.number)).to.be.rejectedWith(validationException);
-        expect(response.text).include(data.number);
-        expect(response).to.have.status(200);
-        expect(stubLogger).to.have.been.calledOnce;
-      });
-  });
-
   it('should serve up the company confirmation page with company confirmation path', () => {
     const slug = '/report-a-discrepancy/confirm-company';
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
@@ -494,8 +451,6 @@ describe('routes/report', () => {
         expect(stubLogger).to.have.been.calledOnce;
       });
   });
-
-
 
   it('should process the discrepancy details page payload and redirect to the confirmation page', () => {
     const slug = '/report-a-discrepancy/discrepancy-details';

@@ -1,0 +1,23 @@
+{% extends "_layouts/default.njk" %}
+
+{% block main_content %}
+
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+  <div class="chs-psc-outer chs-psc-start">
+
+      <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel" style="background: #D8D8D8; color: #0b0c0c;">
+                <h1>A PSC for this company has details protected</h1>
+            </div>
+          <p>One or more person of significant control (PSC) for this company has their details protected. This means you cannot use this service to report a discrepancy.</p>
+          <p>If you need to report a discrepancy about a beneficial owner on the PSC register for this company, you must contact the PSC discrepancy team directly at <a href="mailto:pscdiscrepancies@companieshouse.gov.uk">pscdiscrepancies@companieshouse.gov.uk</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+{% endblock %}
