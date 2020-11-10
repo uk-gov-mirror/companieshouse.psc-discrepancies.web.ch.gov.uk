@@ -85,7 +85,7 @@ class Validator {
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let validNameRegex = new RegExp(/^[AÀÁÂÃÄÅĀĂĄǺaàáâãäåāăąǻÆǼæǽBbCcçćĉċčDÞĎĐdþďđEÈÉÊËĒĔĖĘĚeèéêëēĕėęěFfGĜĞĠĢgĝğġģHĤĦhĥħIÌÍÎÏĨĪĬĮİiìíîïĩīĭįJĴjĵKĶkķLĹĻĽĿŁlĺļľŀłMmNÑŃŅŇŊnñńņňŋOÒÓÔÕÖØŌŎŐǾoòóôõöøōŏőǿŒœPpQqRŔŖŘrŕŗřSŚŜŞŠsśŝşšTŢŤŦtţťŧUÙÚÛÜŨŪŬŮŰŲuùúûüũūŭůűųVvWŴẀẂẄwŵẁẃẅXxYỲÝŶŸyỳýŷÿZŹŻŽzźżž&@£$€¥*=#%+‘ʼ'()\/\[\]{}<>!«»?“ˮ\"0123456789.,:;\–\-  \\r\\n]*$/);
-      if(typeof contactName === 'undefined' || contactName === null || contactName.length === 0) {
+      if(typeof contactName === 'undefined' || contactName === null || contactName.trim().length === 0) {
         errors.stack.fullName = errorManifest.fullName.empty;
         reject(errors);
       } else if(!validNameRegex.test(contactName)) {
@@ -102,7 +102,7 @@ class Validator {
     let errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       let validNameRegex = new RegExp(/^[AÀÁÂÃÄÅĀĂĄǺaàáâãäåāăąǻÆǼæǽBbCcçćĉċčDÞĎĐdþďđEÈÉÊËĒĔĖĘĚeèéêëēĕėęěFfGĜĞĠĢgĝğġģHĤĦhĥħIÌÍÎÏĨĪĬĮİiìíîïĩīĭįJĴjĵKĶkķLĹĻĽĿŁlĺļľŀłMmNÑŃŅŇŊnñńņňŋOÒÓÔÕÖØŌŎŐǾoòóôõöøōŏőǿŒœPpQqRŔŖŘrŕŗřSŚŜŞŠsśŝşšTŢŤŦtţťŧUÙÚÛÜŨŪŬŮŰŲuùúûüũūŭůűųVvWŴẀẂẄwŵẁẃẅXxYỲÝŶŸyỳýŷÿZŹŻŽzźżž&@£$€¥*=#%+'ʼ'()\/\[\]{}<>!«»?"ˮ\"0123456789.,:;\–\-  \\r\\n]{1,160}$/);
-      if(typeof organisationName === 'undefined' || organisationName === null || organisationName.length === 0) {
+      if(typeof organisationName === 'undefined' || organisationName === null || organisationName.trim().length === 0) {
         errors.stack.organisationName = errorManifest.organisationName.empty;
         reject(errors);
       } else if(!validNameRegex.test(organisationName)) {
