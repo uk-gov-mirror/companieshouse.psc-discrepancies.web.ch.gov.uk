@@ -44,8 +44,18 @@ describe('server/lib/validation/index', () => {
   it('should validate and return an error if contact name is not correctly formatted', () => {
     const errors = {};
     errors.fullName = errorManifest.fullName.incorrect;
-    expect(validator.isValidContactName('Invalid$£@^OrgName')).to.be.rejectedWith(errors);
+    expect(validator.isValidOrganisationName('Invalid$£@^OrgName')).to.be.rejectedWith(errors);
     expect(stubLogger).to.have.been.calledOnce;
+  });
+
+  it('should validate and return an error for blank contact name', () => {
+    const errors = {};
+    errors.fullName = errorManifest.fullName.blank;
+    expect(validator.isValidOrganisationName('')).to.be.rejectedWith(errors);
+    expect(validator.isValidOrganisationName(undefined)).to.be.rejectedWith(errors);
+    expect(validator.isValidOrganisationName('   ')).to.be.rejectedWith(errors);
+    expect(validator.isValidOrganisationName(null)).to.be.rejectedWith(errors);
+    expect(stubLogger).to.have.callCount(4);
   });
 
   it('should validate a correctly formatted contact name', () => {
@@ -67,8 +77,9 @@ describe('server/lib/validation/index', () => {
     errors.fullName = errorManifest.fullName.blank;
     expect(validator.isValidContactName('')).to.be.rejectedWith(errors);
     expect(validator.isValidContactName(undefined)).to.be.rejectedWith(errors);
+    expect(validator.isValidContactName('   ')).to.be.rejectedWith(errors);
     expect(validator.isValidContactName(null)).to.be.rejectedWith(errors);
-    expect(stubLogger).to.have.been.calledThrice;
+    expect(stubLogger).to.have.callCount(4);
   });
 
   it('should validate a correctly formatted email', () => {
