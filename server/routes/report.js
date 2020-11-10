@@ -264,13 +264,13 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
       return api.companyProfile.getCompanyProfile(report.data.company_number.toUpperCase());
-      })
-      .then(profile => {
-        viewData.this_data.organisationName = profile.resource.companyName;
-        viewData.title = 'Which PSC is incorrect for ' + profile.resource.companyName + '?';
-        return api.companyPsc.getCompanyPsc(profile.resource.companyNumber.toUpperCase());
-      })
-  .then(result => {
+    })
+    .then(profile => {
+      viewData.this_data.organisationName = profile.resource.companyName;
+      viewData.title = 'Which PSC is incorrect for ' + profile.resource.companyName + '?';
+      return api.companyPsc.getCompanyPsc(profile.resource.companyNumber.toUpperCase());
+    })
+    .then(result => {
       const pscs = {};
       if (typeof result.resource !== 'undefined' && typeof result.resource.items !== 'undefined') {
         const months = Utility.getMonthsOfYear();
@@ -379,7 +379,7 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
     title: 'Confirmation page',
     this_data: {},
     path: `${routeViews}/confirmation.njk`
-  }
+  };
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
       viewData.this_data.submissionReference = report.data.submission_reference;
@@ -388,7 +388,7 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
       const o = res.locals.session;
       o.appData = {};
       res.locals.session = o;
-      return session.write(o)
+      return session.write(o);
     })
     .then(_ => {
       res.render(viewData.path, viewData);
