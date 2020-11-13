@@ -178,7 +178,9 @@ router.post('/report-a-discrepancy/company-number', (req, res) => {
   let secureFlag;
   api.companyProfile.getCompanyProfile(req.body.number.toUpperCase())
     .then(profile => {
-      secureFlag = !(typeof profile.resource.hasSuperSecurePscs === 'undefined' || profile.resource.hasSuperSecurePscs === false);
+      if (profile.httpStatusCode !== 404) {
+        secureFlag = !(typeof profile.resource.hasSuperSecurePscs === 'undefined' || profile.resource.hasSuperSecurePscs === false);
+      }
       return validator.isCompanyNumberFormatted(req.body.number, profile.httpStatusCode);
     }).then(_ => {
       return pscDiscrepancyService.getReport(selfLink);
