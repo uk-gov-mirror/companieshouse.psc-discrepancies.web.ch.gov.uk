@@ -375,6 +375,11 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
     });
 });
 
+router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
+  logger.info(`GET request to serve check your answers page: ${req.path}`);
+  res.render(`${routeViews}/check-your-answers.njk`, { title: 'Check your answers before submitting your report' });
+});
+
 router.get('/report-a-discrepancy/confirmation', (req, res) => {
   logger.info(`GET request to serve confirmation page: ${req.path}`);
   const viewData = {
