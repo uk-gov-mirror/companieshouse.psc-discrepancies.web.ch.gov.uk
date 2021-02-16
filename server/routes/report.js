@@ -329,24 +329,68 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+      res.redirect(302, '/report-a-discrepancy/psc-discrepancy-types');
     }).catch(err => {
       routeUtils.processException(err, viewData, res);
     });
 });
 
+router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
+  logger.info(`GET request to serve discrepancy details page: ${req.path}`);
+  const o = res.locals.session;
+  const viewData = {
+    this_data: {
+      psc: o.appData.selectedPscDetails,
+      discrepancies: []
+    },
+    title: 'Discrepancy Types'
+  };
+  if (viewData.this_data.psc.kind ===
+      'individual-person-with-significant-control') {
+    viewData.this_data.discrepancies = ['name', 'Date of birth', 'Nationality',
+      'Place of residence', 'Correspondence address', 'Notified date',
+      'Nature of control', 'Other reason'];
+  }
+  if (viewData.this_data.psc.kind ===
+      'legal-person-person-with-significant-control') {
+    viewData.this_data.discrepancies = ['name', 'Governing law', 'Legal form',
+      'Correspondence address', 'Notified date', 'Nature of control',
+      'Other reason'];
+  }
+  if (viewData.this_data.psc.kind ===
+      'corporate-entity-person-with-significant-control') {
+    viewData.this_data.discrepancies = ['Company Name', 'Company Number',
+      'Place of Registration', 'Incorporation law', 'Governing law',
+      'Legal form', 'Correspondence address', 'Notified date',
+      'Nature of control', 'Other reason'];
+  }
+  res.render(`${routeViews}/psc_discrepancy_type.njk`, viewData);
+});
+
+router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
+  const o = res.locals.session;
+  const pscDetails = o.appData.selectedPscDetails;
+  pscDetails.pscDiscrepancyTypes = req.body.pscperson;
+  res.locals.session = o;
+  session.write(o);
+  res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+});
+
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
   logger.info(`GET request to serve discrepancy details page: ${req.path}`);
-  res.render(`${routeViews}/discrepancy_details.njk`, { title: 'What information is incorrect for the PSC?' });
+  res.render(`${routeViews}/discrepancy_details.njk`,
+    { title: 'What information is incorrect for the PSC?' });
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
-  logger.info('POST request to save discrepancy details, with payload: ', req.body);
+  logger.info('POST request to save discrepancy details, with payload: ',
+    req.body);
   let data = {}; // eslint-disable-line prefer-const
   validator.isTextareaNotEmpty(req.body.details)
     .then(r => {
       const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
       data.psc_name = selectedPscDetails.name;
+      data.psc_discrepancy_types = selectedPscDetails.pscDiscrepancyTypes;
       data.psc_date_of_birth = selectedPscDetails.dob;
       data.details = req.body.details;
       data.selfLink = selfLink;

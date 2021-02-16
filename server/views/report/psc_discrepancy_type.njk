@@ -1,0 +1,41 @@
+{% extends "_layouts/default.njk" %}
+
+{% block main_content %}
+
+    {% from "govuk/components/details/macro.njk" import govukDetails %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            <form action="/report-a-discrepancy/psc-discrepancy-types" method="post">
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="pscperson-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                What type of discrepancy are you reporting
+                                for {{ this_data.psc.name }} ?
+                            </h1>
+                        </legend>
+                        <div id="pscperson-hint" class="govuk-hint">
+                            Select all that apply.
+                        </div>
+                        <div class="govuk-checkboxes">
+                            {% for psc_discrep in this_data.discrepancies %}
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input"
+                                           id="pscperson-{{ psc_discrep }}" name="pscperson[]"
+                                           type="checkbox" value="{{ psc_discrep }}">
+                                    <label class="govuk-label govuk-checkboxes__label"
+                                           for="pscperson-{{ psc_discrep }}">
+                                        {{ psc_discrep }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
