@@ -370,26 +370,6 @@ router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
 
 router.post('/report-a-discrepancy/check-your-answers', (req, res) => {
   logger.info(`POST request to serve check your answers page: ${req.path}`);
-
-  /*
-    const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
-      selectedPscDetails.details = req.body.details;
-      data.psc_name = selectedPscDetails.name;
-      data.psc_date_of_birth = selectedPscDetails.dob;
-      data.details = req.body.details;
-      data.selfLink = selfLink;
-      return pscDiscrepancyService.saveDiscrepancyDetails(data);
-   .then(_ => {
-    return pscDiscrepancyService.getReport(selfLink);
-  }).then(report => {
-    data.obliged_entity_type = report.data.obliged_entity_type;
-    data.obliged_entity_organisation_name = report.data.obliged_entity_organisation_name;
-    data.obliged_entity_contact_name = report.data.obliged_entity_contact_name;
-    data.obliged_entity_email = report.data.obliged_entity_email;
-    data.obliged_entity_telephone_number = report.data.obliged_entity_telephone_number;
-    data.company_number = report.data.company_number;
-    data.etag = report.data.etag;
-    return pscDiscrepancyService.saveStatus(data); */
   res.redirect(302, '/report-a-discrepancy/confirmation');
 });
 
