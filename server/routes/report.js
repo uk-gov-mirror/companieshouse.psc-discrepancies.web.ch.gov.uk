@@ -341,14 +341,13 @@ router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
-  logger.info('POST request to save discrepancy details, with payload: ', req.body);
+  logger.info('POST request to save discrepancy details to session, with payload: ', req.body);
   validator.isTextareaNotEmpty(req.body.details)
     .then(_ => {
       const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
       selectedPscDetails.details = req.body.details;
+      res.locals.session.appData.selectedPscDetails = selectedPscDetails;
       const o = res.locals.session;
-      o.appData.selectedPscDetails = selectedPscDetails;
-      res.locals.session = o;
       return session.write(o);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/check-your-answers');
