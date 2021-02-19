@@ -341,29 +341,16 @@ router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
-  logger.info('POST request to save discrepancy details, with payload: ', req.body);
-  let data = {}; // eslint-disable-line prefer-const
+  logger.info('POST request to save discrepancy details to session, with payload: ', req.body);
   validator.isTextareaNotEmpty(req.body.details)
-    .then(r => {
+    .then(_ => {
       const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
-      data.psc_name = selectedPscDetails.name;
-      data.psc_date_of_birth = selectedPscDetails.dob;
-      data.details = req.body.details;
-      data.selfLink = selfLink;
-      return pscDiscrepancyService.saveDiscrepancyDetails(data);
+      selectedPscDetails.details = req.body.details;
+      res.locals.session.appData.selectedPscDetails = selectedPscDetails;
+      const o = res.locals.session;
+      return session.write(o);
     }).then(_ => {
-      return pscDiscrepancyService.getReport(selfLink);
-    }).then(report => {
-      data.obliged_entity_type = report.data.obliged_entity_type;
-      data.obliged_entity_organisation_name = report.data.obliged_entity_organisation_name;
-      data.obliged_entity_contact_name = report.data.obliged_entity_contact_name;
-      data.obliged_entity_email = report.data.obliged_entity_email;
-      data.obliged_entity_telephone_number = report.data.obliged_entity_telephone_number;
-      data.company_number = report.data.company_number;
-      data.etag = report.data.etag;
-      return pscDiscrepancyService.saveStatus(data);
-    }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/confirmation');
+      res.redirect(302, '/report-a-discrepancy/check-your-answers');
     }).catch(err => {
       const viewData = {
         this_data: req.body,
@@ -373,6 +360,16 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
       };
       routeUtils.processException(err, viewData, res);
     });
+});
+
+router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
+  logger.info(`GET request to serve check your answers page: ${req.path}`);
+  res.render(`${routeViews}/check-your-answers.njk`, { title: 'Check your answers before submitting your report' });
+});
+
+router.post('/report-a-discrepancy/check-your-answers', (req, res) => {
+  logger.info(`POST request to serve check your answers page: ${req.path}`);
+  res.redirect(302, '/report-a-discrepancy/confirmation');
 });
 
 router.get('/report-a-discrepancy/confirmation', (req, res) => {

@@ -522,20 +522,10 @@ describe('routes/report', () => {
       });
   });
 
-  it('should process the discrepancy details page payload and redirect to the confirmation page', () => {
+  it('should process the discrepancy details page payload and redirect to the check your answers', () => {
     const slug = '/report-a-discrepancy/discrepancy-details';
     const stubValidator = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').returns(Promise.resolve(true));
-    const stubPscServiceSaveDetails = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
-    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
-    const stubPscServiceSaveStatus = sinon.stub(PscDiscrepancyService.prototype, 'saveStatus').returns(Promise.resolve(serviceData.reportStatusPost));
     const clientPayload = { details: 'Some details' };
-    const servicePayload = {
-      details: clientPayload.details,
-      selfLink: sessionData.appData.initialServiceResponse.links.self,
-      obliged_entity_email: serviceData.reportDetailsGet.obliged_entity_email,
-      company_number: serviceData.reportDetailsGet.company_number,
-      etag: serviceData.reportDetailsGet.etag
-    };
     const cookie = loggedInMocks();
 
     return request(app)
@@ -546,13 +536,7 @@ describe('routes/report', () => {
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubValidator).to.have.been.calledWith(clientPayload.details);
         expect(validator.isTextareaNotEmpty(clientPayload.details)).to.eventually.equal(true);
-        expect(stubPscServiceSaveDetails).to.have.been.calledOnce;
-        expect(stubPscServiceGetReport).to.have.been.calledTwice;
-        expect(stubPscServiceSaveStatus).to.have.been.calledOnce;
-        expect(pscDiscrepancyService.saveDiscrepancyDetails(servicePayload)).to.eventually.eql(serviceData.discrepancyDetailsPost);
-        expect(pscDiscrepancyService.getReport(servicePayload.selfLink)).to.eventually.eql(serviceData.reportDetailsGet);
-        expect(pscDiscrepancyService.saveStatus(servicePayload)).to.eventually.eql(serviceData.reportStatusPost);
-        expect(response).to.redirectTo(/\/report-a-discrepancy\/confirmation/g);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/check-your-answers/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
       });
