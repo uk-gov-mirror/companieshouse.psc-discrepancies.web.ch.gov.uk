@@ -20,7 +20,6 @@ const sdkData = require(`${testRoot}/server/_fakes/data/services/ch_sdk_node`);
 const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
 const { validationException } = require(`${testRoot}/server/_fakes/mocks`);
 
-// const cookieStr = 'PSC_SID=abc123';
 const { sessionSignedIn, sessionSignedOut, SIGNED_IN_COOKIE, SIGNED_OUT_COOKIE } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
 
 const signedInCookie = [`${process.env.COOKIE_NAME}=${SIGNED_IN_COOKIE}`];
