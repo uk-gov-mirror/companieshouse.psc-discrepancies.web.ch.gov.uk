@@ -4,6 +4,7 @@ const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
 const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
+const Redis = require('ioredis');
 
 let stubLogger;
 
@@ -19,9 +20,22 @@ const sdkData = require(`${testRoot}/server/_fakes/data/services/ch_sdk_node`);
 const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
 const { validationException } = require(`${testRoot}/server/_fakes/mocks`);
 
-const cookieStr = 'PSC_SID=abc123';
+// const cookieStr = 'PSC_SID=abc123';
+const { sessionSignedIn, sessionSignedOut, SIGNED_IN_COOKIE, SIGNED_OUT_COOKIE } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
+
+const signedInCookie = [`${process.env.COOKIE_NAME}=${SIGNED_IN_COOKIE}`];
+const signedOutCookie = [`${process.env.COOKIE_NAME}=${SIGNED_OUT_COOKIE}`];
 
 const app = require(`${serverRoot}/app`);
+
+function loggedOutMocks () {
+  sinon.stub(Redis.prototype, 'get').returns(Promise.resolve(sessionSignedOut));
+  return signedOutCookie;
+}
+function loggedInMocks () {
+  sinon.stub(Redis.prototype, 'get').returns(Promise.resolve(sessionSignedIn));
+  return signedInCookie;
+}
 
 describe('routes/report', () => {
   beforeEach(done => {
@@ -32,6 +46,7 @@ describe('routes/report', () => {
     sinon.stub(Session.prototype, 'read').returns(Promise.resolve(sessionData));
     sinon.stub(Session.prototype, 'write').returns(Promise.resolve(true));
     stubLogger = sinon.stub(logger, 'info').returns(true);
+    sinon.stub(Redis.prototype, 'connect').returns(Promise.resolve());
     done();
   });
 
@@ -42,10 +57,12 @@ describe('routes/report', () => {
   });
 
   it('should serve up the index page with no mount path', () => {
+    const cookie = loggedOutMocks();
+
     const slug = '/';
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -54,9 +71,11 @@ describe('routes/report', () => {
 
   it('should serve up the index page on the "/report-a-discrepancy" mount path', () => {
     const slug = '/report-a-discrepancy';
+    const cookie = loggedOutMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -65,19 +84,37 @@ describe('routes/report', () => {
 
   it('should fail to serve up a page on an unhandled mount path', () => {
     const slug = '/not-a-report-a-discrepancy-url';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(404);
         expect(stubLogger).to.not.have.been.called;
       });
   });
 
-  it('should serve up the obliged entity obliged entity type page', () => {
-    const slug = '/report-a-discrepancy/obliged-entity/type';
+  it('should redirect to serve up a login page on a unprotected path if not logged in', () => {
+    const slug = '/not-a-report-a-discrepancy-url';
+    const cookie = loggedOutMocks();
+
     return request(app)
       .get(slug)
+      .set('Cookie', cookie)
+      .then(response => {
+        expect(response).to.have.status(302);
+        expect(stubLogger).to.not.have.been.called;
+      });
+  });
+
+  it('should serve up the obliged entity obliged entity type page', () => {
+    const slug = '/report-a-discrepancy/obliged-entity/type';
+    const cookie = loggedInMocks();
+
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -89,9 +126,11 @@ describe('routes/report', () => {
     const stubValidator = sinon.stub(Validator.prototype, 'isValidObligedEntityType').returns(Promise.resolve(true));
     const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveObligedEntityType').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
     const data = { obligedEntityType: '2' };
+    const cookie = loggedInMocks();
+
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
@@ -113,10 +152,11 @@ describe('routes/report', () => {
       obligedEntityType: errorManifest.obligedEntityType.blank
     };
     const stubValidator = sinon.stub(Validator.prototype, 'isValidObligedEntityType').rejects(validationException);
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stubLogger).to.have.been.calledOnce;
@@ -130,8 +170,11 @@ describe('routes/report', () => {
 
   it('should serve up the obliged entity obliged entity type page', () => {
     const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -150,9 +193,11 @@ describe('routes/report', () => {
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
     };
+    const cookie = loggedInMocks();
+
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
@@ -175,10 +220,11 @@ describe('routes/report', () => {
     };
     const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
     const stub = sinon.stub(Validator.prototype, 'isValidOrganisationName').rejects(validationException);
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -197,10 +243,11 @@ describe('routes/report', () => {
     };
     const slug = '/report-a-discrepancy/obliged-entity/organisation-name';
     const stub = sinon.stub(Validator.prototype, 'isValidOrganisationName').rejects(validationException);
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -214,8 +261,11 @@ describe('routes/report', () => {
 
   it('should serve up the obliged entity contact name page', () => {
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -234,9 +284,11 @@ describe('routes/report', () => {
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
     };
+    const cookie = loggedInMocks();
+
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
@@ -260,10 +312,11 @@ describe('routes/report', () => {
     };
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     const stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationException);
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -283,10 +336,11 @@ describe('routes/report', () => {
     const slug = '/report-a-discrepancy/obliged-entity/contact-name';
     const stub = sinon.stub(Validator.prototype, 'isValidContactName').rejects(validationException);
     // const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveContactName').returns(Promise.resolve(serviceData.obligedEntityContactNamePost));
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -300,9 +354,11 @@ describe('routes/report', () => {
 
   it('should serve up the obliged entity e-mail page with oe-email path', () => {
     const slug = '/report-a-discrepancy/obliged-entity/email';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -321,9 +377,11 @@ describe('routes/report', () => {
       etag: sessionData.appData.initialServiceResponse.etag,
       selfLink: sessionData.appData.initialServiceResponse.links.self
     };
+    const cookie = loggedInMocks();
+
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(clientPayload)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
@@ -346,10 +404,11 @@ describe('routes/report', () => {
     };
     const slug = '/report-a-discrepancy/obliged-entity/email';
     const stub = sinon.stub(Validator.prototype, 'isValidEmail').rejects(validationException);
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -363,9 +422,11 @@ describe('routes/report', () => {
 
   it('should serve up the company number page with company number path', () => {
     const slug = '/report-a-discrepancy/company-number';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -375,9 +436,11 @@ describe('routes/report', () => {
   it('should serve up the company confirmation page with company confirmation path', () => {
     const slug = '/report-a-discrepancy/confirm-company';
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -387,9 +450,11 @@ describe('routes/report', () => {
 
   it('should process the company confirmation page after company has been confirmed', () => {
     const slug = '/report-a-discrepancy/confirm-company';
+    const cookie = loggedInMocks();
+
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.redirectTo(/\/report-a-discrepancy\/psc-name/g);
         expect(response).to.have.status(200);
@@ -412,9 +477,11 @@ describe('routes/report', () => {
       }
     });
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -428,9 +495,11 @@ describe('routes/report', () => {
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
     const clientPayload = { pscName: 'PSC missing' };
+    const cookie = loggedInMocks();
+
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(clientPayload)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
@@ -443,9 +512,11 @@ describe('routes/report', () => {
 
   it('should serve up the discrepancy details page with discrepancy-details path', () => {
     const slug = '/report-a-discrepancy/discrepancy-details';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -466,9 +537,11 @@ describe('routes/report', () => {
       company_number: serviceData.reportDetailsGet.company_number,
       etag: serviceData.reportDetailsGet.etag
     };
+    const cookie = loggedInMocks();
+
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(clientPayload)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
@@ -493,10 +566,11 @@ describe('routes/report', () => {
     };
     const slug = '/report-a-discrepancy/discrepancy-details';
     const stub = sinon.stub(Validator.prototype, 'isTextareaNotEmpty').rejects(validationException);
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(data)
       .then(response => {
         expect(stub).to.have.been.calledOnce;
@@ -511,9 +585,11 @@ describe('routes/report', () => {
   it('should serve up the confirmation page with confirmation path', () => {
     const slug = '/report-a-discrepancy/confirmation';
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -523,9 +599,11 @@ describe('routes/report', () => {
 
   it('should serve up the accessibility page with accessibility path', () => {
     const slug = '/report-a-discrepancy/accessibility';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -534,9 +612,11 @@ describe('routes/report', () => {
 
   it('should serve up the error page with incorrect paths not mapped elsewhere', () => {
     const slug = '/report-a-discrepancy/error';
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;

@@ -3,6 +3,7 @@ const nunjucks = require('nunjucks');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
+const Redis = require('ioredis');
 
 const app = express();
 const morgan = require('morgan');
@@ -10,6 +11,8 @@ global.serverRoot = __dirname;
 
 const Session = require(`${serverRoot}/lib/Session`);
 const Utility = require(`${serverRoot}/lib/Utility`);
+const { SessionStore, SessionMiddleware } = require('ch-node-session-handler');
+const authentication = require(`${serverRoot}/routes/utils/authentication`);
 
 // log requests
 app.use(morgan('combined'));
@@ -41,6 +44,17 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+const sessionStore = new SessionStore(new Redis(`redis://${process.env.CACHE_SERVER}`));
+const middleware = SessionMiddleware({
+  cookieName: process.env.COOKIE_NAME,
+  cookieDomain: process.env.COOKIE_DOMAIN,
+  cookieSecureFlag: process.env.COOKIE_SECURE_ONLY,
+  cookieTimeToLiveInSeconds: parseInt(process.env.DEFAULT_SESSION_EXPIRATION, 10),
+  cookieSecret: process.env.COOKIE_SECRET
+}, sessionStore);
+
+app.use(middleware);
+
 // unhandled errors
 app.use((err, req, res, next) => {
   Utility.logException(err);
@@ -49,7 +63,7 @@ app.use((err, req, res, next) => {
 njk.addGlobal('cdnUrlCss', process.env.CDN_URL_CSS);
 njk.addGlobal('cdnUrlJs', process.env.CDN_URL_JS);
 njk.addGlobal('cdnHost', process.env.CDN_HOST);
-njk.addGlobal('piwikUrl', process.env.PIWIK_URL);
+njk.addGlobal('Url', process.env.PIWIK_URL);
 njk.addGlobal('piwikSiteId', process.env.PIWIK_SITE_ID);
 njk.addGlobal('discrepancyGoalId', process.env.DISCREPANCIES_PIWIK_START_GOAL_ID);
 
@@ -65,6 +79,8 @@ app.use((req, res, next) => {
       next();
     });
 });
+
+app.use(authentication);
 
 // channel all requests through the router
 require('./router')(app);
