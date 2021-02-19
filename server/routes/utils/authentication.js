@@ -2,8 +2,7 @@ const Utility = require(`${serverRoot}/lib/Utility`);
 
 const nonProtectedPages = [
   '/',
-  '/report-a-discrepancy',
-  '/piwik.js'
+  '/report-a-discrepancy'
 ];
 
 const authentication = (req, res, next) => {
