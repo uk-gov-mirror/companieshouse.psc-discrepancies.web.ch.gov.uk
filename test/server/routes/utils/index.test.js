@@ -47,4 +47,28 @@ describe('routes/utils/defaultRouteUtil', () => {
       expect(stubExceptionLogger).to.have.been.calledWith(exceptionWithNoStatus);
     });
   });
+  it('setDiscrepancyTypes should return the Person specific array when individual-person-with-significant-control is passed in', () => {
+    const mockKind = 'individual-person-with-significant-control';
+    const expectedList = ['name', 'Date of birth', 'Nationality',
+      'Place of residence', 'Correspondence address', 'Notified date',
+      'Nature of control', 'Other reason'];
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+  });
+
+  it('setDiscrepancyTypes should return the ORP specific array when legal-person-person-with-significant-control is passed in', () => {
+    const mockKind = 'legal-person-person-with-significant-control';
+    const expectedList = ['name', 'Governing law', 'Legal form',
+      'Correspondence address', 'Notified date', 'Nature of control',
+      'Other reason'];
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+  });
+
+  it('setDiscrepancyTypes should return the RLE specific array when corporate-entity-person-with-significant-control is passed in', () => {
+    const mockKind = 'corporate-entity-person-with-significant-control';
+    const expectedList = ['Company Name', 'Company Number',
+      'Place of Registration', 'Incorporation law', 'Governing law',
+      'Legal form', 'Correspondence address', 'Notified date',
+      'Nature of control', 'Other reason'];
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+  });
 });

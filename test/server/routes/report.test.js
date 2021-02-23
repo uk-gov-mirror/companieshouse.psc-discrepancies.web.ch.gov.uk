@@ -452,6 +452,22 @@ describe('routes/report', () => {
       });
   });
 
+  it('should process the PSC discrepancy types page payload and redirect to the psc-details page', () => {
+    const slug = '/report-a-discrepancy/psc-discrepancy-types';
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidCheckbox').returns(Promise.resolve(true));
+    const clientPayload = { pscName: 'PSC missing' };
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(clientPayload)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
+      });
+  });
+
   it('should serve up the discrepancy details page with discrepancy-details path', () => {
     const slug = '/report-a-discrepancy/discrepancy-details';
     return request(app)
