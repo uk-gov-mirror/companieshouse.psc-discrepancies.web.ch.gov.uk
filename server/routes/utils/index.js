@@ -14,7 +14,28 @@ const routeUtils = {
     } else {
       res.render('_partials/error.njk');
     }
+  },
+  setDiscrepancyTypes: (kind) => {
+    if (kind ===
+        'individual-person-with-significant-control') {
+      return ['name', 'Date of birth', 'Nationality',
+        'Place of residence', 'Correspondence address', 'Notified date',
+        'Nature of control', 'Other reason'];
+    }
+    if (kind ===
+        'legal-person-person-with-significant-control') {
+      return ['name', 'Governing law', 'Legal form',
+        'Correspondence address', 'Notified date', 'Nature of control',
+        'Other reason'];
+    }
+    if (kind ===
+        'corporate-entity-person-with-significant-control') {
+      return ['Company Name', 'Company Number',
+        'Place of Registration', 'Incorporation law', 'Governing law',
+        'Legal form', 'Correspondence address', 'Notified date',
+        'Nature of control', 'Other reason'];
+    }
   }
-}
+};
 
 module.exports = routeUtils;
