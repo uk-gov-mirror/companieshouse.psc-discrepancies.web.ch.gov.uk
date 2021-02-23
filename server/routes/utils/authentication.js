@@ -1,10 +1,5 @@
 const Utility = require(`${serverRoot}/lib/Utility`);
 
-const nonProtectedPages = [
-  '/',
-  '/report-a-discrepancy'
-];
-
 const authentication = (req, res, next) => {
   try {
     let authCheck = false;
@@ -20,7 +15,7 @@ const authentication = (req, res, next) => {
       }
     }
 
-    if (nonProtectedPages.includes(req.url)) {
+    if (process.env.PUBLIC_PAGES.includes(req.url)) {
       next();
     } else if (authCheck) {
       next();
