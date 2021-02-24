@@ -3,11 +3,15 @@
 {% block main_content %}
 
     {% from "govuk/components/details/macro.njk" import govukDetails %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds-from-desktop">
-            <form action="/report-a-discrepancy/psc-discrepancy-types" method="post">
-                <div class="govuk-form-group">
-                    <fieldset class="govuk-fieldset" aria-describedby="discrepancy-hint">
+
+<div class="govuk-width-container ">
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+        <div class="govuk-grid-row">
+                   <div class="govuk-grid-column-two-thirds-from-desktop">
+                     <form action="/report-a-discrepancy/psc-discrepancy-types" method="post">
+                         {% include "_partials/error_summary.njk" %}
+                         <div class="govuk-form-group {{ 'govuk-form-group--error' if this_errors.discrepancy is not undefined }}">
+                           <fieldset class="govuk-fieldset" aria-describedby="discrepancy-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                             <h1 class="govuk-fieldset__heading">
                                 What type of discrepancy are you reporting
@@ -17,12 +21,6 @@
                         <div id="discrepancy-hint" class="govuk-hint">
                             Select all that apply.
                         </div>
-                        {% if this_errors.discrepancy is not undefined %}
-                            <span id="err-elm-discrepancy" class="govuk-error-message">
-                                 <span class="govuk-visually-hidden">Error:</span>
-                                     {{ this_errors.discrepancy.inline }}
-                                </span>
-                        {% endif %}
                         <div class="govuk-checkboxes">
                             {% for discrepancy in this_data.discrepancies %}
                                 <div class="govuk-checkboxes__item">
@@ -42,6 +40,8 @@
                     Continue
                 </button>
             </form>
-        </div>
     </div>
+            </div>
+    </main>
+</div>
 {% endblock %}

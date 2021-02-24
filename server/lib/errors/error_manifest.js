@@ -71,8 +71,8 @@ const ErrorManifest = {
     },
     discrepancy: {
       empty: {
-        summary: 'PLACEHOLDER',
-        inline: 'PLACEHOLDER'
+        summary: 'Select the type of discrepancy you are reporting',
+        inline: 'Select the type of discrepancy you are reporting'
       }
     }
   }
