@@ -1,19 +1,12 @@
 const Utility = require(`${serverRoot}/lib/Utility`);
+const { SessionKey } = require('ch-node-session-handler/lib/session/keys/SessionKey');
+const { SignInInfoKeys } = require('ch-node-session-handler/lib/session/keys/SignInInfoKeys');
 
 const authentication = (req, res, next) => {
   try {
-    let authCheck = false;
-    if (typeof req.session !== 'undefined') {
-      if (typeof req.session.__value !== 'undefined') {
-        if (typeof req.session.__value.data !== 'undefined') {
-          if (typeof req.session.__value.data.signin_info !== 'undefined') {
-            if (req.session.__value.data.signin_info.signed_in === 1) {
-              authCheck = true;
-            }
-          }
-        }
-      }
-    }
+    const authCheck = (req.session && req.session.__value && req.session.__value.data && req.session.__value.data[SessionKey.SignInInfo])
+      ? req.session.__value.data[SessionKey.SignInInfo][SignInInfoKeys.SignedIn] === 1
+      : false;
 
     if (process.env.PUBLIC_PAGES.includes(req.url)) {
       next();
