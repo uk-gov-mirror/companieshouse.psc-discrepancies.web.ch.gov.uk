@@ -381,7 +381,6 @@ router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
     }).then(profile => {
       viewData.this_data.companyName = profile.resource.companyName;
       viewData.this_data.companyNumber = profile.resource.companyNumber;
-    }).then(_ => {
       const session = res.locals.session;
       viewData.this_data.pscName = session.appData.selectedPscDetails.name;
       // Discrepancy details still to be done
