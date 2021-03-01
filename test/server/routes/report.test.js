@@ -514,9 +514,10 @@ describe('routes/report', () => {
 
   it('should serve up the discrepancy types page with /psc-discrepancy-types path', () => {
     const slug = '/report-a-discrepancy/psc-discrepancy-types';
+    const cookie = loggedInMocks();
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -526,10 +527,14 @@ describe('routes/report', () => {
   it('should process the PSC discrepancy types page payload and redirect to the psc-details page', () => {
     const slug = '/report-a-discrepancy/psc-discrepancy-types';
     const stubValidator = sinon.stub(Validator.prototype, 'isValidCheckbox').returns(Promise.resolve(true));
-    const clientPayload = { pscName: 'PSC missing' };
+    const clientPayload = {
+      pscName: sessionData.appData.selectedPscDetails.name,
+      pscDiscrepancyTypes: sessionData.appData.selectedPscDetails.pscDiscrepancyTypes
+    };
+    const cookie = loggedInMocks();
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(clientPayload)
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;

@@ -49,7 +49,7 @@ describe('routes/utils/defaultRouteUtil', () => {
   });
   it('setDiscrepancyTypes should return the Person specific array when individual-person-with-significant-control is passed in', () => {
     const mockKind = 'individual-person-with-significant-control';
-    const expectedList = ['name', 'Date of birth', 'Nationality',
+    const expectedList = ['Name', 'Date of birth', 'Nationality',
       'Place of residence', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
     expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
@@ -57,7 +57,7 @@ describe('routes/utils/defaultRouteUtil', () => {
 
   it('setDiscrepancyTypes should return the ORP specific array when legal-person-person-with-significant-control is passed in', () => {
     const mockKind = 'legal-person-person-with-significant-control';
-    const expectedList = ['name', 'Governing law', 'Legal form',
+    const expectedList = ['Name', 'Governing law', 'Legal form',
       'Correspondence address', 'Notified date', 'Nature of control',
       'Other reason'];
     expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);

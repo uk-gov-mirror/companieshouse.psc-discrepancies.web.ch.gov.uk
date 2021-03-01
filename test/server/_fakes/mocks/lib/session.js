@@ -89,7 +89,8 @@ module.exports.sessionData = {
     selectedPscDetails: {
       name: 'PSC missing',
       dob: '',
-      details: 'hello'
+      details: 'hello',
+      pscDiscrepancyTypes: ['PSC missing']
     }
   },
   accountData: {}
