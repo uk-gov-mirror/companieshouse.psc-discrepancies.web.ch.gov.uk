@@ -417,7 +417,7 @@ router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
       viewData.this_data.companyNumber = profile.resource.companyNumber;
       const session = res.locals.session;
       viewData.this_data.pscName = session.appData.selectedPscDetails.name;
-      // Discrepancy details still to be done
+      viewData.this_data.pscDiscrepancyTypes = session.appData.selectedPscDetails.pscDiscrepancyTypes;
       viewData.this_data.additionalDetails = session.appData.selectedPscDetails.details;
     }).then(_ => {
       res.render(viewData.path, viewData);
@@ -434,6 +434,7 @@ router.post('/report-a-discrepancy/check-your-answers', (req, res) => {
   data.psc_name = selectedPscDetails.name;
   data.psc_date_of_birth = selectedPscDetails.dob;
   data.details = selectedPscDetails.details;
+  data.psc_discrepancy_types = selectedPscDetails.pscDiscrepancyTypes;
   data.selfLink = selfLink;
 
   pscDiscrepancyService.saveDiscrepancyDetails(data)

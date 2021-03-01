@@ -18,13 +18,13 @@ const routeUtils = {
   setDiscrepancyTypes: (kind) => {
     if (kind ===
         'individual-person-with-significant-control') {
-      return ['name', 'Date of birth', 'Nationality',
+      return ['Name', 'Date of birth', 'Nationality',
         'Place of residence', 'Correspondence address', 'Notified date',
         'Nature of control', 'Other reason'];
     }
     if (kind ===
         'legal-person-person-with-significant-control') {
-      return ['name', 'Governing law', 'Legal form',
+      return ['Name', 'Governing law', 'Legal form',
         'Correspondence address', 'Notified date', 'Nature of control',
         'Other reason'];
     }
