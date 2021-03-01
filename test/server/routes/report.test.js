@@ -396,7 +396,10 @@ describe('routes/report', () => {
   });
 
   it('should return the obliged entity email page with error message if email is incorrectly formatted', () => {
-    const data = { email: 'incorrect-email-format', phoneNumber: '07777777777' };
+    const data = {
+      email: 'incorrect-email-format',
+      phoneNumber: '07777777777'
+    };
     validationException.stack = errorManifest.email.incorrect;
     validationException.stack = {
       email: errorManifest.email.incorrect
@@ -538,7 +541,7 @@ describe('routes/report', () => {
         expect(validator.isTextareaNotEmpty(clientPayload.details)).to.eventually.equal(true);
         expect(response).to.redirectTo(/\/report-a-discrepancy\/check-your-answers/g);
         expect(response).to.have.status(200);
-        expect(stubLogger).to.have.been.calledTwice;
+        expect(stubLogger).to.have.been.calledThrice;
       });
   });
 
@@ -562,6 +565,61 @@ describe('routes/report', () => {
         expect(response.text).include(data.details);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
+  it('should serve up the check your answers page with check-your-answers path', () => {
+    const slug = '/report-a-discrepancy/check-your-answers';
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubSdk = sinon.stub(apiSdk, 'createApiClient').returns({
+      companyProfile: {
+        getCompanyProfile: companyNumber => {
+          return sdkData.getCompanyProfile;
+        }
+      }
+    });
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookieStr)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+        expect(stubSdk).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+      });
+  });
+
+  it('should process the check your answers page payload and redirect to the confirmation page', () => {
+    const slug = '/report-a-discrepancy/check-your-answers';
+    const stubPscService = sinon.stub(PscDiscrepancyService.prototype, 'saveDiscrepancyDetails').returns(Promise.resolve(serviceData.discrepancyDetailsPost));
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubPscServiceSaveStatus = sinon.stub(PscDiscrepancyService.prototype, 'saveStatus').returns(Promise.resolve(serviceData.reportStatusPost));
+    const clientPayload = {
+      psc_name: 'PSC missing',
+      details: 'hello',
+      psc_date_of_birth: ''
+    };
+    const servicePayload = {
+      selfLink: sessionData.appData.initialServiceResponse.links.self,
+      psc_name: clientPayload.psc_name,
+      psc_date_of_birth: clientPayload.psc_date_of_birth,
+      details: clientPayload.details
+    };
+
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookieStr)
+      .send(clientPayload)
+      .then(response => {
+        expect(stubPscService).to.have.been.calledOnce;
+        expect(stubPscServiceSaveStatus).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledTwice;
+        expect(pscDiscrepancyService.saveDiscrepancyDetails(servicePayload)).to.eventually.eql(serviceData.discrepancyDetailsPost);
+        expect(pscDiscrepancyService.getReport(servicePayload.selfLink)).to.eventually.eql(serviceData.reportDetailsGet);
+        expect(pscDiscrepancyService.saveStatus(servicePayload)).to.eventually.eql(serviceData.reportStatusPost);
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/confirmation/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
       });
   });
 

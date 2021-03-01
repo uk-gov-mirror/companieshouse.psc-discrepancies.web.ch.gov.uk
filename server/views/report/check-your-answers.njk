@@ -8,27 +8,27 @@
     <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-              <h1 class="govuk-heading-l">Check your answers before submitting your report</h1>
+              <h1 class="govuk-heading-l">{{ title }}</h1>
               <h2 class="govuk-heading-m">Personal details</h2>
               <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">Name</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.contactName }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">Email address</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.contactEmail }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">Organisation name</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.organisationName }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">Organisation type</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.organisationType }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
               </dl>
@@ -36,12 +36,12 @@
               <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">Company number</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.companyNumber }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">Company name</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.companyName }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
               </dl>
@@ -49,7 +49,7 @@
               <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">PSC</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.pscName }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -63,7 +63,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">Additional information</dt>
-                  <dd class="govuk-summary-list__value"></dd>
+                  <dd class="govuk-summary-list__value">{{ this_data.additionalDetails }}</dd>
                   <dd class="govuk-summary-list__actions"></dd>
                 </div>
               </dl>
@@ -71,14 +71,12 @@
         </div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-              <h2 class="govuk-heading-m">Now submit your report</h2>
-              <p class="govuk-body">By submitting this report you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
-              <!-- <form action="/check-your-answers" method="post" novalidate="novalidate">
-                  <input type="hidden" name="answers-checked" value="true"> Commented out for dummy page, re-insert when dealing with real data-->
-                <a href="/report-a-discrepancy/confirmation" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-                Submit report
-                </a>
-              <!-- </form> -->
+                <form action="/report-a-discrepancy/check-your-answers" method="post" enctype="application/json">
+                    <h2 class="govuk-heading-m">Now submit your report</h2>
+                    <p class="govuk-body">By submitting this report you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
+                        <input type="hidden" name="answers-checked" value="true">
+                        <button class="govuk-button" data-module="govuk-button">Submit report</button>
+                </form>
             </div>
         </div>
     </main>

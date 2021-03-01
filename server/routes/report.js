@@ -340,7 +340,7 @@ router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
   res.render(`${routeViews}/discrepancy_details.njk`, { title: 'What information is incorrect for the PSC?' });
 });
 
-router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
+router.post('/report-a-discrepancy/discrepancy-details', (req, res) => {
   logger.info('POST request to save discrepancy details to session, with payload: ', req.body);
   validator.isTextareaNotEmpty(req.body.details)
     .then(_ => {
@@ -364,12 +364,66 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res, next) => {
 
 router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
   logger.info(`GET request to serve check your answers page: ${req.path}`);
-  res.render(`${routeViews}/check-your-answers.njk`, { title: 'Check your answers before submitting your report' });
+  const viewData = {
+    title: 'Check your answers before submitting your report',
+    this_data: {},
+    path: `${routeViews}/check-your-answers.njk`
+  };
+  const api = apiSdk.createApiClient(process.env.CHS_API_KEY, undefined, process.env.API_URL);
+  pscDiscrepancyService.getReport(selfLink)
+    .then(report => {
+      viewData.this_data.contactName = report.data.obliged_entity_contact_name;
+      viewData.this_data.contactEmail = report.data.obliged_entity_email;
+      viewData.this_data.organisationName = report.data.obliged_entity_organisation_name;
+      viewData.this_data.organisationType = report.data.obliged_entity_type;
+      viewData.this_data.companyNumber = report.data.company_number.toUpperCase();
+      return api.companyProfile.getCompanyProfile(report.data.company_number.toUpperCase());
+    }).then(profile => {
+      viewData.this_data.companyName = profile.resource.companyName;
+      viewData.this_data.companyNumber = profile.resource.companyNumber;
+      const session = res.locals.session;
+      viewData.this_data.pscName = session.appData.selectedPscDetails.name;
+      // Discrepancy details still to be done
+      viewData.this_data.additionalDetails = session.appData.selectedPscDetails.details;
+    }).then(_ => {
+      res.render(viewData.path, viewData);
+    }).catch(err => {
+      routeUtils.processException(err, viewData, res);
+    });
 });
 
 router.post('/report-a-discrepancy/check-your-answers', (req, res) => {
-  logger.info(`POST request to serve check your answers page: ${req.path}`);
-  res.redirect(302, '/report-a-discrepancy/confirmation');
+  logger.info('POST request to save details from check your answers page, with payload: ', req.body);
+
+  const data = {};
+  const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
+  data.psc_name = selectedPscDetails.name;
+  data.psc_date_of_birth = selectedPscDetails.dob;
+  data.details = selectedPscDetails.details;
+  data.selfLink = selfLink;
+
+  pscDiscrepancyService.saveDiscrepancyDetails(data)
+    .then(_ => {
+      return pscDiscrepancyService.getReport(selfLink);
+    }).then(report => {
+      data.obliged_entity_type = report.data.obliged_entity_type;
+      data.obliged_entity_organisation_name = report.data.obliged_entity_organisation_name;
+      data.obliged_entity_contact_name = report.data.obliged_entity_contact_name;
+      data.obliged_entity_email = report.data.obliged_entity_email;
+      data.company_number = report.data.company_number;
+      data.etag = report.data.etag;
+      return pscDiscrepancyService.saveStatus(data);
+    }).then(_ => {
+      res.redirect(302, '/report-a-discrepancy/confirmation');
+    }).catch(err => {
+      const viewData = {
+        this_data: req.body,
+        this_errors: null,
+        path: `${routeViews}/check-your-answers.njk`,
+        title: 'Check your answers before submitting your report'
+      };
+      routeUtils.processException(err, viewData, res);
+    });
 });
 
 router.get('/report-a-discrepancy/confirmation', (req, res) => {

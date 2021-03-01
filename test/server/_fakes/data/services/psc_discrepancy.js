@@ -109,7 +109,9 @@ const serviceData = {
       },
       etag: '29c241cf9cc104ff8d9c2d1c734d4d66969f65d2',
       kind: 'psc_discrepancy#psc_discrepancy_report',
-      details: 'something here'
+      details: 'something here',
+      psc_name: 'PSC missing',
+      psc_date_of_birth: ''
     }
   }
 };
