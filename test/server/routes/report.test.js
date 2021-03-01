@@ -578,9 +578,11 @@ describe('routes/report', () => {
         }
       }
     });
+    const cookie = loggedInMocks();
+
     return request(app)
       .get(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledOnce;
@@ -605,10 +607,11 @@ describe('routes/report', () => {
       psc_date_of_birth: clientPayload.psc_date_of_birth,
       details: clientPayload.details
     };
+    const cookie = loggedInMocks();
 
     return request(app)
       .post(slug)
-      .set('Cookie', cookieStr)
+      .set('Cookie', cookie)
       .send(clientPayload)
       .then(response => {
         expect(stubPscService).to.have.been.calledOnce;
