@@ -16,20 +16,17 @@ const routeUtils = {
     }
   },
   setDiscrepancyTypes: (kind) => {
-    if (kind ===
-        'individual-person-with-significant-control') {
+    if (kind === 'individual-person-with-significant-control') {
       return ['Name', 'Date of birth', 'Nationality',
         'Place of residence', 'Correspondence address', 'Notified date',
         'Nature of control', 'Other reason'];
     }
-    if (kind ===
-        'legal-person-person-with-significant-control') {
+    if (kind === 'legal-person-person-with-significant-control') {
       return ['Name', 'Governing law', 'Legal form',
         'Correspondence address', 'Notified date', 'Nature of control',
         'Other reason'];
     }
-    if (kind ===
-        'corporate-entity-person-with-significant-control') {
+    if (kind === 'corporate-entity-person-with-significant-control') {
       return ['Company Name', 'Company Number',
         'Place of Registration', 'Incorporation law', 'Governing law',
         'Legal form', 'Correspondence address', 'Notified date',
