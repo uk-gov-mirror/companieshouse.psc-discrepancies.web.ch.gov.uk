@@ -134,7 +134,7 @@ class Validator {
     });
   }
 
-  isValidCheckbox (discrepancies) {
+  isValidDiscrepancyTypeSelection (discrepancies) {
     const errors = this._getErrorSignature();
     return new Promise((resolve, reject) => {
       try {

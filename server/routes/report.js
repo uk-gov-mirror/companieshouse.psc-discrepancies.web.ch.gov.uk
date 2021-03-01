@@ -349,7 +349,7 @@ router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
   logger.info(`POST request to save discrepancies to the session: ${req.path}`);
-  validator.isValidCheckbox(req.body).then(_ => {
+  validator.isValidDiscrepancyTypeSelection(req.body).then(_ => {
     const pscDetails = res.locals.session.appData.selectedPscDetails;
     pscDetails.pscDiscrepancyTypes = req.body.discrepancy;
     const o = res.locals.session;

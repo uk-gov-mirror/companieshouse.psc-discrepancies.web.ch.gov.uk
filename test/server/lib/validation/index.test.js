@@ -187,13 +187,13 @@ describe('server/lib/validation/index', () => {
     const errors = {};
     errors.pscName = errorManifest.discrepancy.empty;
     const data = '';
-    expect(validator.isValidCheckbox(data)).to.be.rejectedWith(errors);
+    expect(validator.isValidDiscrepancyTypeSelection(data)).to.be.rejectedWith(errors);
   });
 
   it('should validate that at least one checkboxes has been ticked, no distingishing past one is needed', () => {
     const data = {
       discrepancy: 'name'
     };
-    expect(validator.isValidCheckbox(data)).to.eventually.equal(true);
+    expect(validator.isValidDiscrepancyTypeSelection(data)).to.eventually.equal(true);
   });
 });

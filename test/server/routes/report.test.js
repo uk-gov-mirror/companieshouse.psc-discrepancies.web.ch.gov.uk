@@ -526,7 +526,7 @@ describe('routes/report', () => {
 
   it('should process the PSC discrepancy types page payload and redirect to the psc-details page', () => {
     const slug = '/report-a-discrepancy/psc-discrepancy-types';
-    const stubValidator = sinon.stub(Validator.prototype, 'isValidCheckbox').returns(Promise.resolve(true));
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidDiscrepancyTypeSelection').returns(Promise.resolve(true));
     const clientPayload = {
       pscName: sessionData.appData.selectedPscDetails.name,
       pscDiscrepancyTypes: sessionData.appData.selectedPscDetails.pscDiscrepancyTypes
