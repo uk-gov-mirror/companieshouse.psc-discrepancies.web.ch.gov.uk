@@ -1,0 +1,47 @@
+{% extends "_layouts/default.njk" %}
+
+{% block main_content %}
+
+    {% from "govuk/components/details/macro.njk" import govukDetails %}
+
+<div class="govuk-width-container ">
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+        <div class="govuk-grid-row">
+                   <div class="govuk-grid-column-two-thirds-from-desktop">
+                     <form action="/report-a-discrepancy/psc-discrepancy-types" method="post">
+                         {% include "_partials/error_summary.njk" %}
+                         <div class="govuk-form-group {{ 'govuk-form-group--error' if this_errors.discrepancy is not undefined }}">
+                           <fieldset class="govuk-fieldset" aria-describedby="discrepancy-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-fieldset__heading">
+                                What type of discrepancy are you reporting
+                                for {{ this_data.psc.name }} ?
+                            </h1>
+                        </legend>
+                        <div id="discrepancy-hint" class="govuk-hint">
+                            Select all that apply.
+                        </div>
+                        <div class="govuk-checkboxes">
+                            {% for discrepancy in this_data.discrepancies %}
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input"
+                                           id="discrepancy-{{ discrepancy }}" name="discrepancy[]"
+                                           type="checkbox" value="{{ discrepancy }}">
+                                    <label class="govuk-label govuk-checkboxes__label"
+                                           for="discrepancy-{{ discrepancy }}">
+                                        {{ discrepancy }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button" data-module="govuk-button">
+                    Continue
+                </button>
+            </form>
+    </div>
+            </div>
+    </main>
+</div>
+{% endblock %}

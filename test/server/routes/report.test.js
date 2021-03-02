@@ -492,7 +492,7 @@ describe('routes/report', () => {
       });
   });
 
-  it('should process the PSC name page payload and redirect to the details page', () => {
+  it('should process the PSC name page payload and redirect to the psc-discrepancy-types', () => {
     const slug = '/report-a-discrepancy/psc-name';
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
@@ -506,6 +506,38 @@ describe('routes/report', () => {
       .then(response => {
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/psc-discrepancy-types/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
+      });
+  });
+
+  it('should serve up the discrepancy types page with /psc-discrepancy-types path', () => {
+    const slug = '/report-a-discrepancy/psc-discrepancy-types';
+    const cookie = loggedInMocks();
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookie)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+
+  it('should process the PSC discrepancy types page payload and redirect to the psc-details page', () => {
+    const slug = '/report-a-discrepancy/psc-discrepancy-types';
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidDiscrepancyTypeSelection').returns(Promise.resolve(true));
+    const clientPayload = {
+      pscName: sessionData.appData.selectedPscDetails.name,
+      pscDiscrepancyTypes: sessionData.appData.selectedPscDetails.pscDiscrepancyTypes
+    };
+    const cookie = loggedInMocks();
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookie)
+      .send(clientPayload)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
         expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;

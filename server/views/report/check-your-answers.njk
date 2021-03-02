@@ -56,7 +56,9 @@
                   <dt class="govuk-summary-list__key">Discrepancy</dt>
                   <dd class="govuk-summary-list__value">
                     <ul class="govuk-list govuk-list--bullet">
-                        <li>No discrepancy reason selected</li>
+                        {% for discrepancy in this_data.pscDiscrepancyTypes %}
+                        <li>{{ discrepancy }}</li>
+                        {% endfor %}
                     </ul>
                   </dd>
                   <dd class="govuk-summary-list__actions"></dd>

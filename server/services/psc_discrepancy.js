@@ -141,7 +141,8 @@ class PscDiscrepancy {
       data: {
         details: data.details,
         psc_name: data.psc_name,
-        psc_date_of_birth: data.psc_date_of_birth
+        psc_date_of_birth: data.psc_date_of_birth,
+        psc_discrepancy_types: data.psc_discrepancy_types
       }
     });
     logger.info('Service request to save discrepancy details, with payload: ', options);

@@ -329,10 +329,44 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+      res.redirect(302, '/report-a-discrepancy/psc-discrepancy-types');
     }).catch(err => {
       routeUtils.processException(err, viewData, res);
     });
+});
+
+router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
+  logger.info(`GET request to serve discrepancy types page: ${req.path}`);
+  const viewData = {
+    this_data: {
+      psc: res.locals.session.appData.selectedPscDetails,
+      discrepancies: routeUtils.setDiscrepancyTypes(res.locals.session.appData.selectedPscDetails.kind)
+    },
+    title: 'Discrepancy Types'
+  };
+  res.render(`${routeViews}/psc_discrepancy_types.njk`, viewData);
+});
+
+router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
+  logger.info(`POST request to save discrepancies to the session: ${req.path}`);
+  validator.isValidDiscrepancyTypeSelection(req.body).then(_ => {
+    const pscDetails = res.locals.session.appData.selectedPscDetails;
+    pscDetails.pscDiscrepancyTypes = req.body.discrepancy;
+    const o = res.locals.session;
+    session.write(o);
+  }).then(_ => {
+    res.redirect(302, '/report-a-discrepancy/discrepancy-details');
+  }).catch(err => {
+    const viewData = {
+      this_data: {
+        psc: res.locals.session.appData.selectedPscDetails,
+        discrepancies: routeUtils.setDiscrepancyTypes(res.locals.session.appData.selectedPscDetails.kind)
+      },
+      path: `${routeViews}/psc_discrepancy_types.njk`,
+      title: 'Discrepancy Types'
+    };
+    routeUtils.processException(err, viewData, res);
+  });
 });
 
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
@@ -383,7 +417,7 @@ router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
       viewData.this_data.companyNumber = profile.resource.companyNumber;
       const session = res.locals.session;
       viewData.this_data.pscName = session.appData.selectedPscDetails.name;
-      // Discrepancy details still to be done
+      viewData.this_data.pscDiscrepancyTypes = session.appData.selectedPscDetails.pscDiscrepancyTypes;
       viewData.this_data.additionalDetails = session.appData.selectedPscDetails.details;
     }).then(_ => {
       res.render(viewData.path, viewData);
@@ -400,6 +434,7 @@ router.post('/report-a-discrepancy/check-your-answers', (req, res) => {
   data.psc_name = selectedPscDetails.name;
   data.psc_date_of_birth = selectedPscDetails.dob;
   data.details = selectedPscDetails.details;
+  data.psc_discrepancy_types = selectedPscDetails.pscDiscrepancyTypes;
   data.selfLink = selfLink;
 
   pscDiscrepancyService.saveDiscrepancyDetails(data)

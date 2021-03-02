@@ -182,4 +182,18 @@ describe('server/lib/validation/index', () => {
     expect(validator.isValidPscName(data, pscs)).to.be.rejected;
     expect(stubLogger).to.have.been.calledOnce;
   });
+
+  it('should validate that no checkboxes has been ticked', () => {
+    const errors = {};
+    errors.pscName = errorManifest.discrepancy.empty;
+    const data = '';
+    expect(validator.isValidDiscrepancyTypeSelection(data)).to.be.rejectedWith(errors);
+  });
+
+  it('should validate that at least one checkboxes has been ticked, no distingishing past one is needed', () => {
+    const data = {
+      discrepancy: 'name'
+    };
+    expect(validator.isValidDiscrepancyTypeSelection(data)).to.eventually.equal(true);
+  });
 });
