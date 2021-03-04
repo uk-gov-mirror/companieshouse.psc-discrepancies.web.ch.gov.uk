@@ -87,10 +87,11 @@ module.exports.sessionData = {
       }
     },
     selectedPscDetails: {
-      name: 'PSC missing',
+      name: 'name that is not real',
       dob: '',
-      details: 'hello',
-      pscDiscrepancyTypes: ['PSC missing']
+      details: 'The name of the psc is not real',
+      pscDiscrepancyTypes: ['Name'],
+      kind: 'individual-person-with-significant-control'
     }
   },
   accountData: {}

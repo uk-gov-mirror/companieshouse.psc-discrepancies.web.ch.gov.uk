@@ -1,5 +1,7 @@
 describe('routes/utils/defaultRouteUtil', () => {
   const Utility = require(`${serverRoot}/lib/Utility`);
+  const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
+  const Session = require(`${serverRoot}/lib/Session`);
 
   const { validationException, serviceException, genericServerException, exceptionWithNoStatus, responseMock, viewDataMock } = require(`${testRoot}/server/_fakes/mocks`);
 
@@ -7,6 +9,9 @@ describe('routes/utils/defaultRouteUtil', () => {
 
   beforeEach(() => {
     sinon.reset();
+    sinon.stub(Session.prototype, '_setUp').returns(undefined);
+    sinon.stub(Session.prototype, 'read').returns(Promise.resolve(sessionData));
+    sinon.stub(Session.prototype, 'write').returns(Promise.resolve(true));
     sinon.restore();
   });
 
@@ -48,27 +53,57 @@ describe('routes/utils/defaultRouteUtil', () => {
     });
   });
   it('setDiscrepancyTypes should return the Person specific array when individual-person-with-significant-control is passed in', () => {
-    const mockKind = 'individual-person-with-significant-control';
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'individual-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
     const expectedList = ['Name', 'Date of birth', 'Nationality',
       'Place of residence', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return the ORP specific array when legal-person-person-with-significant-control is passed in', () => {
-    const mockKind = 'legal-person-person-with-significant-control';
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'legal-person-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
     const expectedList = ['Name', 'Governing law', 'Legal form',
       'Correspondence address', 'Notified date', 'Nature of control',
       'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return the RLE specific array when corporate-entity-person-with-significant-control is passed in', () => {
-    const mockKind = 'corporate-entity-person-with-significant-control';
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'corporate-entity-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
     const expectedList = ['Company Name', 'Company Number',
       'Place of Registration', 'Incorporation law', 'Governing law',
       'Legal form', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
   });
 });

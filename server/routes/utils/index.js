@@ -3,6 +3,7 @@
  */
 
 const Utility = require(`${serverRoot}/lib/Utility`);
+const logger = require(`${serverRoot}/config/winston`);
 
 const routeUtils = {
   processException: (err, viewData, res) => {
@@ -15,7 +16,9 @@ const routeUtils = {
       res.render('_partials/error.njk');
     }
   },
-  setDiscrepancyTypes: (kind) => {
+  setDiscrepancyTypes: (res) => {
+    const kind = res.locals.session.appData.selectedPscDetails.kind;
+    logger.info('Setting Discrepancy Types for kind: ', kind);
     if (kind === 'individual-person-with-significant-control') {
       return ['Name', 'Date of birth', 'Nationality',
         'Place of residence', 'Correspondence address', 'Notified date',

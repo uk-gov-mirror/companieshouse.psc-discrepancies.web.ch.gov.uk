@@ -320,16 +320,18 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
       let pscDetails = {};
       if (pscName !== 'PSC missing') {
         pscDetails = pscs[pscName];
+        viewData.successPath = '/report-a-discrepancy/psc-discrepancy-types';
       } else {
         pscDetails.name = pscName;
         pscDetails.dob = '';
+        viewData.successPath = '/report-a-discrepancy/discrepancy-details';
       }
       const o = res.locals.session;
       o.appData.selectedPscDetails = pscDetails;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/psc-discrepancy-types');
+      res.redirect(302, viewData.successPath);
     }).catch(err => {
       routeUtils.processException(err, viewData, res);
     });
@@ -340,7 +342,7 @@ router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
   const viewData = {
     this_data: {
       psc: res.locals.session.appData.selectedPscDetails,
-      discrepancies: routeUtils.setDiscrepancyTypes(res.locals.session.appData.selectedPscDetails.kind)
+      discrepancies: routeUtils.setDiscrepancyTypes(res)
     },
     title: 'Discrepancy Types'
   };
@@ -360,7 +362,7 @@ router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
     const viewData = {
       this_data: {
         psc: res.locals.session.appData.selectedPscDetails,
-        discrepancies: routeUtils.setDiscrepancyTypes(res.locals.session.appData.selectedPscDetails.kind)
+        discrepancies: routeUtils.setDiscrepancyTypes(res)
       },
       path: `${routeViews}/psc_discrepancy_types.njk`,
       title: 'Discrepancy Types'
