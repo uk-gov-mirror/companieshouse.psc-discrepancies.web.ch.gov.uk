@@ -409,7 +409,7 @@ router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
       viewData.this_data.contactName = report.data.obliged_entity_contact_name;
       viewData.this_data.contactEmail = report.data.obliged_entity_email;
       viewData.this_data.organisationName = report.data.obliged_entity_organisation_name;
-      viewData.this_data.organisationType = report.data.obliged_entity_type;
+      viewData.this_data.organisationType = obligedEntityTypes[report.data.obliged_entity_type];
       viewData.this_data.companyNumber = report.data.company_number.toUpperCase();
       return api.companyProfile.getCompanyProfile(report.data.company_number.toUpperCase());
     }).then(profile => {
