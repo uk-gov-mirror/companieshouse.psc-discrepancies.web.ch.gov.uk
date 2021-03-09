@@ -318,20 +318,26 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
     }).then(_ => {
       const pscName = req.body.pscName;
       let pscDetails = {};
+      const kinds = ['individual-person-with-significant-control', 'corporate-entity-person-with-significant-control', 'legal-person-person-with-significant-control'];
       if (pscName !== 'PSC missing') {
         pscDetails = pscs[pscName];
-        viewData.successPath = '/report-a-discrepancy/psc-discrepancy-types';
-      } else {
+        if (!kinds.includes(pscDetails.kind)) {
+          pscDetails.pscDiscrepancyTypes = ['Other reason'];
+          viewData.path = '/report-a-discrepancy/discrepancy-details';
+        } else {
+          viewData.path = '/report-a-discrepancy/psc-discrepancy-types';
+        }
+      } else if (pscName === 'PSC missing') {
         pscDetails.name = pscName;
         pscDetails.dob = '';
-        viewData.successPath = '/report-a-discrepancy/discrepancy-details';
+        viewData.path = '/report-a-discrepancy/discrepancy-details';
       }
       const o = res.locals.session;
       o.appData.selectedPscDetails = pscDetails;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
-      res.redirect(302, viewData.successPath);
+      res.redirect(302, viewData.path);
     }).catch(err => {
       routeUtils.processException(err, viewData, res);
     });

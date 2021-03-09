@@ -78,12 +78,20 @@ module.exports.sessionData = {
       psc_0werf: {
         name: 'Matte Le-Matt',
         dob: '11/1956',
-        dobView: 'Born November 1956'
+        dobView: 'Born November 1956',
+        kind: 'individual-person-with-significant-control'
       },
       psc_1wGGrf: {
         name: 'Matte Le-Matt',
         dob: '09/1990',
-        dobView: 'Born November 1956'
+        dobView: 'Born November 1956',
+        kind: 'individual-person-with-significant-control'
+      },
+      psc_invalid_kind: {
+        name: 'Matte Le-Matt',
+        dob: '09/1990',
+        dobView: 'Born November 1956',
+        kind: 'invalid kind'
       }
     },
     selectedPscDetails: {

@@ -498,8 +498,9 @@ describe('routes/report', () => {
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
     sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(Promise.resolve(['Name']));
+    sinon.stub();
     const clientPayload = {
-      pscName: 'test name'
+      pscName: 'psc_0werf'
     };
     const cookie = loggedInMocks();
 
@@ -511,6 +512,29 @@ describe('routes/report', () => {
         expect(stubValidator).to.have.been.calledOnce;
         expect(stubPscServiceGetReport).to.have.been.calledOnce;
         expect(response).to.redirectTo(/\/report-a-discrepancy\/psc-discrepancy-types/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
+      });
+  });
+  it('should process the PSC name page payload and redirect to the psc-discrepancy-details in the event of a psc with an invalid kind', () => {
+    const slug = '/report-a-discrepancy/psc-name';
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
+    sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(Promise.resolve(['Name']));
+    sinon.stub();
+    const clientPayload = {
+      pscName: 'psc_invalid_kind'
+    };
+    const cookie = loggedInMocks();
+
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookie)
+      .send(clientPayload)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
         expect(response).to.have.status(200);
         expect(stubLogger).to.have.been.calledTwice;
       });

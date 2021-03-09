@@ -1,7 +1,5 @@
 describe('routes/utils/defaultRouteUtil', () => {
   const Utility = require(`${serverRoot}/lib/Utility`);
-  const { sessionData } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
-  const Session = require(`${serverRoot}/lib/Session`);
 
   const { validationException, serviceException, genericServerException, exceptionWithNoStatus, responseMock, viewDataMock } = require(`${testRoot}/server/_fakes/mocks`);
 
@@ -9,9 +7,6 @@ describe('routes/utils/defaultRouteUtil', () => {
 
   beforeEach(() => {
     sinon.reset();
-    sinon.stub(Session.prototype, '_setUp').returns(undefined);
-    sinon.stub(Session.prototype, 'read').returns(Promise.resolve(sessionData));
-    sinon.stub(Session.prototype, 'write').returns(Promise.resolve(true));
     sinon.restore();
   });
 
@@ -104,6 +99,22 @@ describe('routes/utils/defaultRouteUtil', () => {
       'Place of Registration', 'Incorporation law', 'Governing law',
       'Legal form', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
+  });
+
+  it('setDiscrepancyTypes should return the Other reason value should an invalid kind is in slectedPscdetails', () => {
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'not-real-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
+    const expectedList = ['Other reason'];
     expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
   });
 });
