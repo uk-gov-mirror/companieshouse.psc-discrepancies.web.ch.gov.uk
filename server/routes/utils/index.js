@@ -37,7 +37,7 @@ const routeUtils = {
         return ['Other reason'];
       }
     } catch (err) {
-      return new Error(err);
+      return null;
     }
   }
 };

@@ -117,4 +117,10 @@ describe('routes/utils/defaultRouteUtil', () => {
     const expectedList = ['Other reason'];
     expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
   });
+
+  it('setDiscrepancyTypes should return null when a the kind cannot be retrieved from the session so that the null can be handled by the route', () => {
+    const errorRes = {};
+    const expectedList = null;
+    expect(ModuleUnderTest.setDiscrepancyTypes(errorRes)).to.eql(expectedList);
+  });
 });
