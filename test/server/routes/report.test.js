@@ -573,7 +573,7 @@ describe('routes/report', () => {
         expect(stubLogger).to.have.been.calledOnce;
       });
   });
-  it('should serv types page with /psc-discrepancy-types path', () => {
+  it('should serve up types page with the error page as the discrepancy is null', () => {
     const slug = '/report-a-discrepancy/psc-discrepancy-types';
     const cookie = loggedInMocks();
     sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(null);
