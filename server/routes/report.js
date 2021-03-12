@@ -352,7 +352,11 @@ router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
     },
     title: 'Discrepancy Types'
   };
-  res.render(`${routeViews}/psc_discrepancy_types.njk`, viewData);
+  if (viewData.this_data.discrepancies !== null) {
+    res.render(`${routeViews}/psc_discrepancy_types.njk`, viewData);
+  } else {
+    res.render('_partials/error.njk');
+  }
 });
 
 router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {

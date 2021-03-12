@@ -521,7 +521,6 @@ describe('routes/report', () => {
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
     sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(Promise.resolve(['Name']));
-    sinon.stub();
     const clientPayload = {
       pscName: 'psc_invalid_kind'
     };
@@ -539,7 +538,6 @@ describe('routes/report', () => {
         expect(stubLogger).to.have.been.calledTwice;
       });
   });
-
   it('should process the PSC name page payload and redirect to the psc-discrepancy-details page when psc missing is selected', () => {
     const slug = '/report-a-discrepancy/psc-name';
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
@@ -566,12 +564,25 @@ describe('routes/report', () => {
   it('should serve up the discrepancy types page with /psc-discrepancy-types path', () => {
     const slug = '/report-a-discrepancy/psc-discrepancy-types';
     const cookie = loggedInMocks();
+    sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(Promise.resolve(['Name']));
     return request(app)
       .get(slug)
       .set('Cookie', cookie)
       .then(response => {
         expect(response).to.have.status(200);
-        expect(stubLogger).to.have.been.calledTwice;
+        expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+  it('should serv types page with /psc-discrepancy-types path', () => {
+    const slug = '/report-a-discrepancy/psc-discrepancy-types';
+    const cookie = loggedInMocks();
+    sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(null);
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookie)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
       });
   });
 
