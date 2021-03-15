@@ -48,27 +48,79 @@ describe('routes/utils/defaultRouteUtil', () => {
     });
   });
   it('setDiscrepancyTypes should return the Person specific array when individual-person-with-significant-control is passed in', () => {
-    const mockKind = 'individual-person-with-significant-control';
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'individual-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
     const expectedList = ['Name', 'Date of birth', 'Nationality',
       'Place of residence', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return the ORP specific array when legal-person-person-with-significant-control is passed in', () => {
-    const mockKind = 'legal-person-person-with-significant-control';
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'legal-person-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
     const expectedList = ['Name', 'Governing law', 'Legal form',
       'Correspondence address', 'Notified date', 'Nature of control',
       'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return the RLE specific array when corporate-entity-person-with-significant-control is passed in', () => {
-    const mockKind = 'corporate-entity-person-with-significant-control';
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'corporate-entity-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
     const expectedList = ['Company Name', 'Company Number',
       'Place of Registration', 'Incorporation law', 'Governing law',
       'Legal form', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockKind)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
+  });
+
+  it('setDiscrepancyTypes should return the Other reason value should an invalid kind is in slectedPscdetails', () => {
+    const mockRes = {
+      locals: {
+        session: {
+          appData: {
+            selectedPscDetails: {
+              kind: 'not-real-person-with-significant-control'
+            }
+          }
+        }
+      }
+    };
+    const expectedList = ['Other reason'];
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
+  });
+
+  it('setDiscrepancyTypes should return null when a the kind cannot be retrieved from the session so that the null can be handled by the route', () => {
+    const errorRes = {};
+    const expectedList = null;
+    expect(ModuleUnderTest.setDiscrepancyTypes(errorRes)).to.eql(expectedList);
   });
 });

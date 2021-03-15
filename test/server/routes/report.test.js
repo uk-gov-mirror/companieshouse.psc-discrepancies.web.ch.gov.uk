@@ -4,6 +4,7 @@ const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 const Session = require(`${serverRoot}/lib/Session`);
 const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
+const routeUtils = require(`${serverRoot}/routes/utils`);
 const Redis = require('ioredis');
 
 let stubLogger;
@@ -496,7 +497,11 @@ describe('routes/report', () => {
     const slug = '/report-a-discrepancy/psc-name';
     const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
     const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
-    const clientPayload = { pscName: 'PSC missing' };
+    sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(Promise.resolve(['Name']));
+    sinon.stub();
+    const clientPayload = {
+      pscName: 'psc_0werf'
+    };
     const cookie = loggedInMocks();
 
     return request(app)
@@ -511,10 +516,67 @@ describe('routes/report', () => {
         expect(stubLogger).to.have.been.calledTwice;
       });
   });
+  it('should process the PSC name page payload and redirect to the psc-discrepancy-details in the event of a psc with an invalid kind', () => {
+    const slug = '/report-a-discrepancy/psc-name';
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
+    sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(Promise.resolve(['Name']));
+    const clientPayload = {
+      pscName: 'psc_invalid_kind'
+    };
+    const cookie = loggedInMocks();
+
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookie)
+      .send(clientPayload)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
+      });
+  });
+  it('should process the PSC name page payload and redirect to the psc-discrepancy-details page when psc missing is selected', () => {
+    const slug = '/report-a-discrepancy/psc-name';
+    const stubPscServiceGetReport = sinon.stub(PscDiscrepancyService.prototype, 'getReport').returns(Promise.resolve(serviceData.reportDetailsGet));
+    const stubValidator = sinon.stub(Validator.prototype, 'isValidPscName').returns(Promise.resolve(true));
+    const clientPayload = {
+      pscName: 'PSC missing',
+      pscDiscrepancyTypes: 'PSC missing'
+    };
+    const cookie = loggedInMocks();
+
+    return request(app)
+      .post(slug)
+      .set('Cookie', cookie)
+      .send(clientPayload)
+      .then(response => {
+        expect(stubValidator).to.have.been.calledOnce;
+        expect(stubPscServiceGetReport).to.have.been.calledOnce;
+        expect(response).to.redirectTo(/\/report-a-discrepancy\/discrepancy-details/g);
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledTwice;
+      });
+  });
 
   it('should serve up the discrepancy types page with /psc-discrepancy-types path', () => {
     const slug = '/report-a-discrepancy/psc-discrepancy-types';
     const cookie = loggedInMocks();
+    sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(Promise.resolve(['Name']));
+    return request(app)
+      .get(slug)
+      .set('Cookie', cookie)
+      .then(response => {
+        expect(response).to.have.status(200);
+        expect(stubLogger).to.have.been.calledOnce;
+      });
+  });
+  it('should serve up types page with the error page as the discrepancy is null', () => {
+    const slug = '/report-a-discrepancy/psc-discrepancy-types';
+    const cookie = loggedInMocks();
+    sinon.stub(routeUtils, 'setDiscrepancyTypes').returns(null);
     return request(app)
       .get(slug)
       .set('Cookie', cookie)

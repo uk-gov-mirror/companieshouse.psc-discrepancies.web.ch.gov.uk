@@ -318,18 +318,26 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
     }).then(_ => {
       const pscName = req.body.pscName;
       let pscDetails = {};
+      const kinds = ['individual-person-with-significant-control', 'corporate-entity-person-with-significant-control', 'legal-person-person-with-significant-control'];
       if (pscName !== 'PSC missing') {
         pscDetails = pscs[pscName];
-      } else {
+        if (!kinds.includes(pscDetails.kind)) {
+          pscDetails.pscDiscrepancyTypes = ['Other reason'];
+          viewData.path = '/report-a-discrepancy/discrepancy-details';
+        } else {
+          viewData.path = '/report-a-discrepancy/psc-discrepancy-types';
+        }
+      } else if (pscName === 'PSC missing') {
         pscDetails.name = pscName;
         pscDetails.dob = '';
+        viewData.path = '/report-a-discrepancy/discrepancy-details';
       }
       const o = res.locals.session;
       o.appData.selectedPscDetails = pscDetails;
       res.locals.session = o;
       return session.write(o);
     }).then(_ => {
-      res.redirect(302, '/report-a-discrepancy/psc-discrepancy-types');
+      res.redirect(302, viewData.path);
     }).catch(err => {
       routeUtils.processException(err, viewData, res);
     });
@@ -340,11 +348,15 @@ router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
   const viewData = {
     this_data: {
       psc: res.locals.session.appData.selectedPscDetails,
-      discrepancies: routeUtils.setDiscrepancyTypes(res.locals.session.appData.selectedPscDetails.kind)
+      discrepancies: routeUtils.setDiscrepancyTypes(res)
     },
     title: 'Discrepancy Types'
   };
-  res.render(`${routeViews}/psc_discrepancy_types.njk`, viewData);
+  if (viewData.this_data.discrepancies !== null) {
+    res.render(`${routeViews}/psc_discrepancy_types.njk`, viewData);
+  } else {
+    res.render('_partials/error.njk');
+  }
 });
 
 router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
@@ -360,7 +372,7 @@ router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
     const viewData = {
       this_data: {
         psc: res.locals.session.appData.selectedPscDetails,
-        discrepancies: routeUtils.setDiscrepancyTypes(res.locals.session.appData.selectedPscDetails.kind)
+        discrepancies: routeUtils.setDiscrepancyTypes(res)
       },
       path: `${routeViews}/psc_discrepancy_types.njk`,
       title: 'Discrepancy Types'
