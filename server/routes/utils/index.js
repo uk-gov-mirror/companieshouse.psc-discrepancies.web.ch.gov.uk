@@ -41,7 +41,7 @@ const routeUtils = {
     }
   },
   setPageTitle: (pageName) => {
-    return pageName + ' - ' + 'PSC discrepancies - GOV.UK';
+    return pageName + ' - PSC discrepancies - GOV.UK';
   }
 };
 
