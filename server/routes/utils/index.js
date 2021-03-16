@@ -39,6 +39,9 @@ const routeUtils = {
     } catch (err) {
       return null;
     }
+  },
+  setPageTitle: (pageName) => {
+    return pageName + ' - ' + 'PSC discrepancies - GOV.UK';
   }
 };
 
