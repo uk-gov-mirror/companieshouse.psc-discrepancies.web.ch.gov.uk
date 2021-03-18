@@ -41,7 +41,7 @@ const routeUtils = {
     }
   },
   setPageTitle: (pageName) => {
-    return pageName + ' - PSC discrepancies - GOV.UK';
+    return pageName + ' - Report a discrepancy about a beneficial owner on the PSC register - GOV.UK';
   }
 };
 

@@ -125,7 +125,7 @@ describe('routes/utils/defaultRouteUtil', () => {
   });
 
   it('setPageTitle should return the given page name concatenated with the service name and GOV.UK ', () => {
-    const expectedTitle = 'Report a discrepancy - PSC discrepancies - GOV.UK';
+    const expectedTitle = 'Report a discrepancy - Report a discrepancy about a beneficial owner on the PSC register - GOV.UK';
     expect(ModuleUnderTest.setPageTitle('Report a discrepancy')).to.eql(expectedTitle);
   });
 });
