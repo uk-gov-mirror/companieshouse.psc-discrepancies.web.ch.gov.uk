@@ -383,7 +383,7 @@ router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
 
 router.get('/report-a-discrepancy/discrepancy-details', (req, res) => {
   logger.info(`GET request to serve discrepancy details page: ${req.path}`);
-  res.render(`${routeViews}/discrepancy_details.njk`, { title: routeUtils.setPageTitle('What information is incorrect for the PSC?') });
+  res.render(`${routeViews}/discrepancy_details.njk`, { title: routeUtils.setPageTitle('Give us more information about the discrepancy') });
 });
 
 router.post('/report-a-discrepancy/discrepancy-details', (req, res) => {
@@ -402,7 +402,7 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res) => {
         this_data: req.body,
         this_errors: null,
         path: `${routeViews}/discrepancy_details.njk`,
-        title: routeUtils.setPageTitle('What information is incorrect for the PSC?')
+        title: routeUtils.setPageTitle('Give us more information about the discrepancy')
       };
       routeUtils.processException(err, viewData, res);
     });
