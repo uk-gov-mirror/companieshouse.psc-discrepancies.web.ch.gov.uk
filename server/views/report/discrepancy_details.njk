@@ -13,19 +13,15 @@
               {% include "_partials/error_summary.njk" %}
 
               <form action="/report-a-discrepancy/discrepancy-details" method="post" enctype="application/json">
-                <h1 class="govuk-heading-xl">What information is incorrect for the PSC?</h1>
-                <p class="govuk-body">This should include:</p>
+                <h1 class="govuk-heading-xl">Give us more information about the discrepancy</h1>
+                <p class="govuk-body">You should tell us:</p>
                 <ul class="govuk-list govuk-list--bullet">
-                  <li>details of the discrepancy, for example an incorrect address or an invalid PSC statement
-                  </li>
-                  <li>
-                    the date when the discrepancy was first noticed
-                  </li>
+                  <li>what information on the PSC register is incorrect</li>
+                  <li>the correct information as you believe it should be shown on the register</li>
+                  <li>any other relevant information about the discrepancy that supports the report</li>
                 </ul>
                 <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors is not undefined }}">
-                  <label class="govuk-label" for="details">
-                    Incorrect PSC information
-                  </label>
+                  <label class="govuk-label" for="details">Discrepancy information</label>
                   <span id="err-elm-details" class="govuk-error-message">
                       <span class="govuk-visually-hidden">Error:</span>
                       {{ this_errors.details.inline }}
