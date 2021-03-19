@@ -12,6 +12,9 @@ const validator = new Validator();
 const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
 
+const CacheService = require(`${serverRoot}/services/cache_service`);
+const cacheService = new CacheService();
+
 const Session = require(`${serverRoot}/lib/Session`);
 let session; // eslint-disable-line no-unused-vars
 
@@ -23,10 +26,11 @@ let selfLink; // eslint-disable-line no-unused-vars
 router.use((req, res, next) => {
   try {
     session = new Session(req, res);
-    if (typeof res.locals.session.appData.initialServiceResponse === 'undefined') {
+    console.log('@@@ CACHEDDATA   ', JSON.stringify(cacheService.getCachedDataFromSession(req.session)));
+    if (typeof cacheService.getCachedDataFromSession(req.session).appData.initialServiceResponse === 'undefined') {
       selfLink = '';
     } else {
-      selfLink = res.locals.session.appData.initialServiceResponse.links.self;
+      selfLink = cacheService.getCachedDataFromSession(req.session).appData.initialServiceResponse.links.self;
     }
     next();
   } catch (err) {
@@ -54,10 +58,11 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
     .then(r => {
       return pscDiscrepancyService.saveObligedEntityType(req.body.obligedEntityType);
     }).then(r => {
-      const o = res.locals.session;
-      o.appData.initialServiceResponse = r.data;
-      res.locals.session = o;
-      return session.write(o);
+      const pscCache = cacheService.getCachedDataFromSession(req.session);
+      pscCache.appData.initialServiceResponse = r.data;
+      // console.log('@@@@@@@ ', JSON.stringify(r.data));
+      cacheService.setPscCache(req.session, pscCache);
+      console.log('@@@@@@@ AFTER SET', cacheService.getCachedDataFromSession(req.session));
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/organisation-name');
     }).catch(err => {
@@ -73,6 +78,7 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
 
 router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
+  console.log('@@@@@ SESSION AT OE NAME' , JSON.stringify(cacheService.getCachedDataFromSession(req.session)));
   res.render(`${routeViews}/organisation_name.njk`, { title: routeUtils.setPageTitle('What is the name of your organisation?') });
 });
 
