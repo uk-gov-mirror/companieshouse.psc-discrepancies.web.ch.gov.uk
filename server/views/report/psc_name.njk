@@ -14,8 +14,8 @@
         <form action="/report-a-discrepancy/psc-name" method="post" enctype="application/json">
           <div class="govuk-form-group{{ ' govuk-form-group--error' if this_errors.pscName is not undefined }}">
             <fieldset class="govuk-fieldset">
-              <legend class="govuk-fieldset__legend govuk-label--xl">
-                <h1 class="govuk-fieldset__heading">Which PSC is incorrect for <span style="text-transform:uppercase">{{ this_data.organisationName | title }}</span>?</h1>
+              <legend class="govuk-fieldset__legend govuk-label--l">
+                <h1 class="govuk-fieldset__heading">Which PSC has a discrepancy for <span style="text-transform:uppercase">{{ this_data.organisationName | title }}</span>?</h1>
               </legend>
               {% if this_errors.pscName is not undefined %}
                 <span id="err-elm-obligedEntityType" class="govuk-error-message">

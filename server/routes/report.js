@@ -269,7 +269,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
     })
     .then(profile => {
       viewData.this_data.organisationName = profile.resource.companyName;
-      viewData.title = routeUtils.setPageTitle('Which PSC is incorrect for ' + profile.resource.companyName + '?');
+      viewData.title = routeUtils.setPageTitle('Which PSC has a discrepancy for ' + profile.resource.companyName + '?');
       return api.companyPsc.getCompanyPsc(profile.resource.companyNumber.toUpperCase());
     })
     .then(result => {
@@ -291,6 +291,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
       }
       viewData.this_data.pscs = pscs;
       const o = res.locals.session;
+      o.appData.companyName = viewData.this_data.organisationName;
       o.appData.pscs = pscs;
       res.locals.session = o;
       return session.write(o);
@@ -309,11 +310,10 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
       pscs: pscs
     },
     path: `${routeViews}/psc_name.njk`,
-    title: routeUtils.setPageTitle('PSC information')
+    title: routeUtils.setPageTitle('Which PSC has a discrepancy for')
   };
   pscDiscrepancyService.getReport(selfLink)
     .then(report => {
-      viewData.this_data.organisationName = report.data.obliged_entity_organisation_name;
       return validator.isValidPscName(req.body, pscs);
     }).then(_ => {
       const pscName = req.body.pscName;
@@ -339,6 +339,8 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
     }).then(_ => {
       res.redirect(302, viewData.path);
     }).catch(err => {
+      viewData.this_data.organisationName = res.locals.session.appData.companyName;
+      viewData.title = routeUtils.setPageTitle('Which PSC has a discrepancy for ' + res.locals.session.appData.companyName + '?');
       routeUtils.processException(err, viewData, res);
     });
 });
