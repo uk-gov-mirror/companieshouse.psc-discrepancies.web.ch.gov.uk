@@ -65,8 +65,8 @@ const ErrorManifest = {
     },
     pscName: {
       empty: {
-        summary: 'Select the PSC with the incorrect information',
-        inline: 'Select the PSC with the incorrect information'
+        summary: 'Select the PSC with the discrepancy, or if a PSC is missing',
+        inline: 'Select the PSC with the discrepancy, or if a PSC is missing'
       }
     },
     discrepancy: {
