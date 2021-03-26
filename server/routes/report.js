@@ -15,7 +15,6 @@ const pscDiscrepancyService = new PscDiscrepancyService();
 const CacheService = require(`${serverRoot}/services/cache_service`);
 const cacheService = new CacheService();
 
-const Session = require(`${serverRoot}/lib/Session`);
 let session; // eslint-disable-line no-unused-vars
 
 const routeUtils = require(`${serverRoot}/routes/utils`);
@@ -25,12 +24,13 @@ let selfLink; // eslint-disable-line no-unused-vars
 
 router.use((req, res, next) => {
   try {
-    session = new Session(req, res);
-    console.log('@@@ CACHEDDATA   ', JSON.stringify(cacheService.getCachedDataFromSession(req.session)));
+    // session = new Session(req, res);
+    console.log('@@@@@@ CHECKING SESSION ', JSON.stringify(req.session));
     if (typeof cacheService.getCachedDataFromSession(req.session).appData.initialServiceResponse === 'undefined') {
       selfLink = '';
     } else {
-      selfLink = cacheService.getCachedDataFromSession(req.session).appData.initialServiceResponse.links.self;
+      const cacheData = cacheService.getCachedDataFromSession(req.session);
+      selfLink = cacheData.appData.initialServiceResponse.links.self;
     }
     next();
   } catch (err) {
@@ -55,14 +55,12 @@ router.get('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
 router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
   logger.info('POST request to save obliged entity contact type, with payload: ', req.body);
   validator.isValidObligedEntityType(req.body, Object.keys(obligedEntityTypes))
-    .then(r => {
+    .then(_ => {
       return pscDiscrepancyService.saveObligedEntityType(req.body.obligedEntityType);
     }).then(r => {
       const pscCache = cacheService.getCachedDataFromSession(req.session);
       pscCache.appData.initialServiceResponse = r.data;
-      // console.log('@@@@@@@ ', JSON.stringify(r.data));
       cacheService.setPscCache(req.session, pscCache);
-      console.log('@@@@@@@ AFTER SET', cacheService.getCachedDataFromSession(req.session));
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/obliged-entity/organisation-name');
     }).catch(err => {
@@ -78,7 +76,7 @@ router.post('/report-a-discrepancy/obliged-entity/type', (req, res, next) => {
 
 router.get('/report-a-discrepancy/obliged-entity/organisation-name', (req, res, next) => {
   logger.info(`GET request to render obliged entity organisation name page: ${req.path}`);
-  console.log('@@@@@ SESSION AT OE NAME' , JSON.stringify(cacheService.getCachedDataFromSession(req.session)));
+  console.log('@@@@@ SESSION AT OE NAME', JSON.stringify(req.session));
   res.render(`${routeViews}/organisation_name.njk`, { title: routeUtils.setPageTitle('What is the name of your organisation?') });
 });
 
@@ -296,10 +294,9 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
         }
       }
       viewData.this_data.pscs = pscs;
-      const o = res.locals.session;
-      o.appData.pscs = pscs;
-      res.locals.session = o;
-      return session.write(o);
+      const pscCache = cacheService.getCachedDataFromSession(req.session);
+      pscCache.appData.pscs = pscs;
+      cacheService.setPscCache(req.session, pscCache);
     }).then(_ => {
       res.render(viewData.path, viewData);
     }).catch(err => {
@@ -309,7 +306,7 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-name', (req, res) => {
   logger.info('POST request to save PSC name, with payload: ', req.body);
-  const pscs = res.locals.session.appData.pscs;
+  const pscs = cacheService.getCachedDataFromSession(req.session).appData.pscs;
   const viewData = {
     this_data: {
       pscs: pscs
@@ -338,10 +335,10 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
         pscDetails.dob = '';
         viewData.path = '/report-a-discrepancy/discrepancy-details';
       }
-      const o = res.locals.session;
-      o.appData.selectedPscDetails = pscDetails;
-      res.locals.session = o;
-      return session.write(o);
+      const pscCache = cacheService.getCachedDataFromSession(req.session);
+      console.log('@@@@@ pscDetails ', JSON.stringify(pscDetails));
+      pscCache.appData.selectedPscDetails = pscDetails;
+      cacheService.setPscCache(req.session, pscCache);
     }).then(_ => {
       res.redirect(302, viewData.path);
     }).catch(err => {
@@ -353,8 +350,8 @@ router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
   logger.info(`GET request to serve discrepancy types page: ${req.path}`);
   const viewData = {
     this_data: {
-      psc: res.locals.session.appData.selectedPscDetails,
-      discrepancies: routeUtils.setDiscrepancyTypes(res)
+      psc: cacheService.getCachedDataFromSession(req.session).appData.selectedPscDetails,
+      discrepancies: routeUtils.setDiscrepancyTypes(req)
     },
     title: routeUtils.setPageTitle('What type of discrepancy are you reporting?')
   };
@@ -368,16 +365,15 @@ router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
 router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
   logger.info(`POST request to save discrepancies to the session: ${req.path}`);
   validator.isValidDiscrepancyTypeSelection(req.body).then(_ => {
-    const pscDetails = res.locals.session.appData.selectedPscDetails;
-    pscDetails.pscDiscrepancyTypes = req.body.discrepancy;
-    const o = res.locals.session;
-    session.write(o);
+    const pscCache = cacheService.getCachedDataFromSession(req.session);
+    pscCache.appData.selectedPscDetails.pscDiscrepancyTypes = req.body.discrepancy;
+    cacheService.setPscCache(req.session, pscCache);
   }).then(_ => {
     res.redirect(302, '/report-a-discrepancy/discrepancy-details');
   }).catch(err => {
     const viewData = {
       this_data: {
-        psc: res.locals.session.appData.selectedPscDetails,
+        psc: cacheService.getCachedDataFromSession(req.session).appData.selectedPscDetails,
         discrepancies: routeUtils.setDiscrepancyTypes(res)
       },
       path: `${routeViews}/psc_discrepancy_types.njk`,
@@ -396,11 +392,10 @@ router.post('/report-a-discrepancy/discrepancy-details', (req, res) => {
   logger.info('POST request to save discrepancy details to session, with payload: ', req.body);
   validator.isTextareaNotEmpty(req.body.details)
     .then(_ => {
-      const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
-      selectedPscDetails.details = req.body.details;
-      res.locals.session.appData.selectedPscDetails = selectedPscDetails;
-      const o = res.locals.session;
-      return session.write(o);
+      const pscCache = cacheService.getCachedDataFromSession(req.session);
+      pscCache.appData.selectedPscDetails.details = req.body.details;
+      console.log('@@@@@@@@', JSON.stringify(pscCache));
+      cacheService.setPscCache(req.session, pscCache);
     }).then(_ => {
       res.redirect(302, '/report-a-discrepancy/check-your-answers');
     }).catch(err => {
@@ -433,10 +428,10 @@ router.get('/report-a-discrepancy/check-your-answers', (req, res) => {
     }).then(profile => {
       viewData.this_data.companyName = profile.resource.companyName;
       viewData.this_data.companyNumber = profile.resource.companyNumber;
-      const session = res.locals.session;
-      viewData.this_data.pscName = session.appData.selectedPscDetails.name;
-      viewData.this_data.pscDiscrepancyTypes = session.appData.selectedPscDetails.pscDiscrepancyTypes;
-      viewData.this_data.additionalDetails = session.appData.selectedPscDetails.details;
+      const cachedData = cacheService.getCachedDataFromSession(req.session);
+      viewData.this_data.pscName = cachedData.appData.selectedPscDetails.name;
+      viewData.this_data.pscDiscrepancyTypes = cachedData.appData.selectedPscDetails.pscDiscrepancyTypes;
+      viewData.this_data.additionalDetails = cachedData.appData.selectedPscDetails.details;
     }).then(_ => {
       res.render(viewData.path, viewData);
     }).catch(err => {
@@ -448,7 +443,8 @@ router.post('/report-a-discrepancy/check-your-answers', (req, res) => {
   logger.info('POST request to save details from check your answers page, with payload: ', req.body);
 
   const data = {};
-  const selectedPscDetails = res.locals.session.appData.selectedPscDetails;
+  const selectedPscDetails = cacheService.getCachedDataFromSession(req.session).appData.selectedPscDetails;
+  console.log(JSON.stringify(selectedPscDetails));
   data.psc_name = selectedPscDetails.name;
   data.psc_date_of_birth = selectedPscDetails.dob;
   data.details = selectedPscDetails.details;
@@ -491,10 +487,9 @@ router.get('/report-a-discrepancy/confirmation', (req, res) => {
       viewData.this_data.submissionReference = report.data.submission_reference;
     })
     .then(_ => {
-      const o = res.locals.session;
-      o.appData = {};
-      res.locals.session = o;
-      return session.write(o);
+      const pscCache = cacheService.getCachedDataFromSession(req.session);
+      pscCache.appData = {};
+      cacheService.setPscCache(req.session, pscCache);
     })
     .then(_ => {
       res.render(viewData.path, viewData);

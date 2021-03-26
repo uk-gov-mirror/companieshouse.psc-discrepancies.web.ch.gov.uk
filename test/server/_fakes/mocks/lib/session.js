@@ -1,4 +1,4 @@
-const { Encoding } = require('ch-node-session-handler/lib/encoding/Encoding');
+const { Encoding } = require('@companieshouse/node-session-handler/lib/encoding/Encoding');
 
 module.exports.responseMock = {
   cookie: () => {

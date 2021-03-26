@@ -2,7 +2,7 @@ describe('routes/utils/defaultRouteUtil', () => {
   const Utility = require(`${serverRoot}/lib/Utility`);
 
   const { validationException, serviceException, genericServerException, exceptionWithNoStatus, responseMock, viewDataMock } = require(`${testRoot}/server/_fakes/mocks`);
-
+  const CacheService = require(`${serverRoot}/services/cache_service`);
   const ModuleUnderTest = require(`${serverRoot}/routes/utils`);
 
   beforeEach(() => {
@@ -48,74 +48,62 @@ describe('routes/utils/defaultRouteUtil', () => {
     });
   });
   it('setDiscrepancyTypes should return the Person specific array when individual-person-with-significant-control is passed in', () => {
-    const mockRes = {
-      locals: {
-        session: {
-          appData: {
-            selectedPscDetails: {
-              kind: 'individual-person-with-significant-control'
-            }
-          }
+    const mockReqSession = {
+      appData: {
+        selectedPscDetails: {
+          kind: 'individual-person-with-significant-control'
         }
       }
     };
+    sinon.stub(CacheService.prototype, 'getCachedDataFromSession').returns(mockReqSession);
     const expectedList = ['Name', 'Date of birth', 'Nationality',
       'Place of residence', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockReqSession)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return the ORP specific array when legal-person-person-with-significant-control is passed in', () => {
-    const mockRes = {
-      locals: {
-        session: {
-          appData: {
-            selectedPscDetails: {
-              kind: 'legal-person-person-with-significant-control'
-            }
-          }
+    const mockReqSession = {
+      appData: {
+        selectedPscDetails: {
+          kind: 'legal-person-person-with-significant-control'
         }
       }
     };
+    sinon.stub(CacheService.prototype, 'getCachedDataFromSession').returns(mockReqSession);
     const expectedList = ['Name', 'Governing law', 'Legal form',
       'Correspondence address', 'Notified date', 'Nature of control',
       'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockReqSession)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return the RLE specific array when corporate-entity-person-with-significant-control is passed in', () => {
-    const mockRes = {
-      locals: {
-        session: {
-          appData: {
-            selectedPscDetails: {
-              kind: 'corporate-entity-person-with-significant-control'
-            }
-          }
+    const mockReqSession = {
+      appData: {
+        selectedPscDetails: {
+          kind: 'corporate-entity-person-with-significant-control'
         }
       }
     };
+    sinon.stub(CacheService.prototype, 'getCachedDataFromSession').returns(mockReqSession);
     const expectedList = ['Company Name', 'Company Number',
       'Place of Registration', 'Incorporation law', 'Governing law',
       'Legal form', 'Correspondence address', 'Notified date',
       'Nature of control', 'Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockReqSession)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return the Other reason value should an invalid kind is in slectedPscdetails', () => {
-    const mockRes = {
-      locals: {
-        session: {
-          appData: {
-            selectedPscDetails: {
-              kind: 'not-real-person-with-significant-control'
-            }
-          }
+    const mockReqSession = {
+      appData: {
+        selectedPscDetails: {
+          kind: 'not-real-person-with-significant-control'
         }
       }
     };
+    sinon.stub(CacheService.prototype, 'getCachedDataFromSession').returns(mockReqSession);
     const expectedList = ['Other reason'];
-    expect(ModuleUnderTest.setDiscrepancyTypes(mockRes)).to.eql(expectedList);
+    expect(ModuleUnderTest.setDiscrepancyTypes(mockReqSession)).to.eql(expectedList);
   });
 
   it('setDiscrepancyTypes should return null when a the kind cannot be retrieved from the session so that the null can be handled by the route', () => {

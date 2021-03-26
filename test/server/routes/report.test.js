@@ -2,7 +2,7 @@ const apiSdk = require('@companieshouse/api-sdk-node');
 const { expect } = require('chai');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
-const Session = require(`${serverRoot}/lib/Session`);
+
 const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
 const routeUtils = require(`${serverRoot}/routes/utils`);
 const Redis = require('ioredis');
@@ -15,6 +15,8 @@ const validator = new Validator();
 
 const PscDiscrepancyService = require(`${serverRoot}/services/psc_discrepancy`);
 const pscDiscrepancyService = new PscDiscrepancyService();
+
+const CacheService = require(`${serverRoot}/services/cache_service`);
 
 const serviceData = require(`${testRoot}/server/_fakes/data/services/psc_discrepancy`);
 const sdkData = require(`${testRoot}/server/_fakes/data/services/ch_sdk_node`);
@@ -42,9 +44,8 @@ describe('routes/report', () => {
     sinon.reset();
     sinon.restore();
     sinon.stub(Utility, 'logException').returns(undefined);
-    sinon.stub(Session.prototype, '_setUp').returns(undefined);
-    sinon.stub(Session.prototype, 'read').returns(Promise.resolve(sessionData));
-    sinon.stub(Session.prototype, 'write').returns(Promise.resolve(true));
+    sinon.stub(CacheService.prototype, 'getCachedDataFromSession').returns(sessionData);
+    sinon.stub(CacheService.prototype, 'setPscCache').returns(Promise.resolve(true));
     stubLogger = sinon.stub(logger, 'info').returns(true);
     sinon.stub(Redis.prototype, 'connect').returns(Promise.resolve());
     done();

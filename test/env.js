@@ -19,6 +19,7 @@ const envVars = {
     process.env.CHS_API_KEY = 'abc';
     process.env.API_URL = 'http://api.localhost:3010';
     process.env.PUBLIC_PAGES = '/,/report-a-discrepancy';
+    process.env.COOKIE_DOMAIN = 'chs-dev.internal';
   }
 };
 

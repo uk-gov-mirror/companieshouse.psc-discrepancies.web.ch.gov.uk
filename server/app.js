@@ -9,9 +9,9 @@ const app = express();
 const morgan = require('morgan');
 global.serverRoot = __dirname;
 
-const Session = require(`${serverRoot}/lib/Session`);
+// const Session = require(`${serverRoot}/lib/Session`);
 const Utility = require(`${serverRoot}/lib/Utility`);
-const { SessionStore, SessionMiddleware } = require('ch-node-session-handler');
+const { SessionStore, SessionMiddleware } = require('@companieshouse/node-session-handler');
 const authentication = require(`${serverRoot}/routes/utils/authentication`);
 
 // log requests
@@ -49,7 +49,7 @@ const middleware = SessionMiddleware({
   cookieName: process.env.COOKIE_NAME,
   cookieDomain: process.env.COOKIE_DOMAIN,
   cookieSecureFlag: process.env.COOKIE_SECURE_ONLY,
-  cookieTimeToLiveInSeconds: parseInt(process.env.DEFAULT_SESSION_EXPIRATION, 10),
+  cookieTimeToLiveInSeconds: process.env.DEFAULT_SESSION_EXPIRATION,
   cookieSecret: process.env.COOKIE_SECRET
 }, sessionStore);
 
@@ -67,18 +67,18 @@ njk.addGlobal('piwikUrl', process.env.PIWIK_URL);
 njk.addGlobal('piwikSiteId', process.env.PIWIK_SITE_ID);
 njk.addGlobal('discrepancyGoalId', process.env.DISCREPANCIES_PIWIK_START_GOAL_ID);
 
-// load the session data into res.locals
-app.use((req, res, next) => {
-  const session = new Session(req, res);
-  session.read()
-    .then(data => {
-      res.locals.session = data;
-      next();
-    }).catch(err => {
-      Utility.logException(err);
-      next();
-    });
-});
+// // load the session data into res.locals
+// app.use((req, res, next) => {
+//   const session = new Session(req, res);
+//   session.read()
+//     .then(data => {
+//       res.locals.session = data;
+//       next();
+//     }).catch(err => {
+//       Utility.logException(err);
+//       next();
+//     });
+// });
 
 app.use(authentication);
 

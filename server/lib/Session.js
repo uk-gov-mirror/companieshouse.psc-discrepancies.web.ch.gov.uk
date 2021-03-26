@@ -2,7 +2,7 @@
  * Session wrapper around the CH Session Handler
  */
 const Redis = require('ioredis');
-const { Session, SessionStore } = require('ch-node-session-handler');
+const { Session, SessionStore } = require('@companieshouse/node-session-handler');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
 
