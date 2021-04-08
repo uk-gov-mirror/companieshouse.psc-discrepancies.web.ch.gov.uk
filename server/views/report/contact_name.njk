@@ -26,7 +26,7 @@
                     <input class="govuk-input govuk-!-width-two-thirds{{ ' govuk-input--error' if this_errors is not undefined }}" value="{{ this_data.fullName }}" id="full-name" name="fullName" type="text" autocomplete="name" spellcheck="false" />
                   </div>
 
-                  <button class="govuk-button" data-module="govuk-button">
+                  <button class="govuk-button" data-module="govuk-button" onclick="_paq.push(['trackEvent','5mld', 'What is your name?', 'Contact Name: ' + document.getElementById('full-name').value]);">
                     Continue
                   </button>
                 </form>
