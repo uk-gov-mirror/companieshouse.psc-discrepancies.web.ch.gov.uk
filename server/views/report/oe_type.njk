@@ -30,7 +30,7 @@
               <div class="govuk-radios">
                 {% for key, value in this_data %}
                   <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" id="obliged-entity-type-{{ key }}" name="obligedEntityType" type="radio" value="{{ key }}" data-event-id="What type of obliged entity are you? Obliged Entity Type: {{ value }}" />
+                    <input class="govuk-radios__input" id="obliged-entity-type-{{ key }}" name="obligedEntityType" type="radio" value="{{ key }}"  />
                     <label class="govuk-label govuk-radios__label" for="obliged-entity-type-{{ key }}">
                       {{ value }}
                     </label>
@@ -44,7 +44,7 @@
               If you’re not an obliged entity, do not use this service to report a PSC discrepancy. If you want to update your PSC details, you can
               <a class="govuk-link" href='https://www.gov.uk/file-changes-to-a-company-with-companies-house'>tell Companies House about changes to your limited company.</a>
             </div>
-            <button class="govuk-button" data-module="govuk-button">
+            <button class="govuk-button" data-module="govuk-button" onclick="_paq.push(['trackEvent','5mld', 'What type of obliged entity are you?', 'Obliged Entity Type: ' + document.querySelector('input[name=obligedEntityType]:checked').nextElementSibling.innerHTML])">
               Continue
             </button>
           </form>
