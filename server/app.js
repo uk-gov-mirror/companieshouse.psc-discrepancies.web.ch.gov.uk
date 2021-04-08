@@ -9,9 +9,8 @@ const app = express();
 const morgan = require('morgan');
 global.serverRoot = __dirname;
 
-const Session = require(`${serverRoot}/lib/Session`);
 const Utility = require(`${serverRoot}/lib/Utility`);
-const { SessionStore, SessionMiddleware } = require('ch-node-session-handler');
+const { SessionStore, SessionMiddleware } = require('@companieshouse/node-session-handler');
 const authentication = require(`${serverRoot}/routes/utils/authentication`);
 
 // log requests
@@ -66,19 +65,6 @@ njk.addGlobal('cdnHost', process.env.CDN_HOST);
 njk.addGlobal('piwikUrl', process.env.PIWIK_URL);
 njk.addGlobal('piwikSiteId', process.env.PIWIK_SITE_ID);
 njk.addGlobal('discrepancyGoalId', process.env.DISCREPANCIES_PIWIK_START_GOAL_ID);
-
-// load the session data into res.locals
-app.use((req, res, next) => {
-  const session = new Session(req, res);
-  session.read()
-    .then(data => {
-      res.locals.session = data;
-      next();
-    }).catch(err => {
-      Utility.logException(err);
-      next();
-    });
-});
 
 app.use(authentication);
 

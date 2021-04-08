@@ -2,7 +2,6 @@ const apiSdk = require('@companieshouse/api-sdk-node');
 const { expect } = require('chai');
 const logger = require(`${serverRoot}/config/winston`);
 const Utility = require(`${serverRoot}/lib/Utility`);
-const Session = require(`${serverRoot}/lib/Session`);
 const obligedEntityTypes = require(`${serverRoot}/services/data/oe_types`);
 const routeUtils = require(`${serverRoot}/routes/utils`);
 const Redis = require('ioredis');
@@ -23,6 +22,8 @@ const { validationException } = require(`${testRoot}/server/_fakes/mocks`);
 
 const { sessionSignedIn, sessionSignedOut, SIGNED_IN_COOKIE, SIGNED_OUT_COOKIE } = require(`${testRoot}/server/_fakes/mocks/lib/session`);
 
+const CacheService = require(`${serverRoot}/services/cache_service`);
+
 const signedInCookie = [`${process.env.COOKIE_NAME}=${SIGNED_IN_COOKIE}`];
 const signedOutCookie = [`${process.env.COOKIE_NAME}=${SIGNED_OUT_COOKIE}`];
 
@@ -42,9 +43,8 @@ describe('routes/report', () => {
     sinon.reset();
     sinon.restore();
     sinon.stub(Utility, 'logException').returns(undefined);
-    sinon.stub(Session.prototype, '_setUp').returns(undefined);
-    sinon.stub(Session.prototype, 'read').returns(Promise.resolve(sessionData));
-    sinon.stub(Session.prototype, 'write').returns(Promise.resolve(true));
+    sinon.stub(CacheService.prototype, 'getCachedDataFromSession').returns(sessionData);
+    sinon.stub(CacheService.prototype, 'setPscCache').returns(Promise.resolve(true));
     stubLogger = sinon.stub(logger, 'info').returns(true);
     sinon.stub(Redis.prototype, 'connect').returns(Promise.resolve());
     done();
