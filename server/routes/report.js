@@ -25,8 +25,7 @@ router.use((req, res, next) => {
     if (typeof cacheService.getCachedDataFromSession(req.session).appData.initialServiceResponse === 'undefined') {
       selfLink = '';
     } else {
-      const cacheData = cacheService.getCachedDataFromSession(req.session);
-      selfLink = cacheData.appData.initialServiceResponse.links.self;
+      selfLink = cacheService.getCachedDataFromSession(req.session).appData.initialServiceResponse.links.self;
     }
     next();
   } catch (err) {
@@ -268,6 +267,9 @@ router.get('/report-a-discrepancy/psc-name', (req, res) => {
     })
     .then(profile => {
       viewData.this_data.organisationName = profile.resource.companyName;
+      const pscCacheCompanyName = cacheService.getCachedDataFromSession(req.session);
+      pscCacheCompanyName.appData.companyName = profile.resource.companyName;
+      cacheService.setPscCache(req.session, pscCacheCompanyName);
       viewData.title = routeUtils.setPageTitle('Which PSC has a discrepancy for ' + profile.resource.companyName + '?');
       return api.companyPsc.getCompanyPsc(profile.resource.companyNumber.toUpperCase());
     })
@@ -335,8 +337,9 @@ router.post('/report-a-discrepancy/psc-name', (req, res) => {
     }).then(_ => {
       res.redirect(302, viewData.path);
     }).catch(err => {
+      const companyName = cacheService.getCachedDataFromSession(req.session).appData.companyName;
       viewData.this_data.organisationName = cacheService.getCachedDataFromSession(req.session).appData.companyName;
-      viewData.title = routeUtils.setPageTitle('Which PSC has a discrepancy for ' + cacheService.getCachedDataFromSession(req.session).appData.companyName + '?');
+      viewData.title = routeUtils.setPageTitle('Which PSC has a discrepancy for ' + companyName + '?');
       routeUtils.processException(err, viewData, res);
     });
 });
