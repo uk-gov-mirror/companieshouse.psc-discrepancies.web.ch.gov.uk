@@ -147,7 +147,7 @@ We are also in the process of plugging in Structured Logging which is the depart
 
 ### 3. Session handling
 
-We use the department-wide [Session Handler](https://github.com/companieshouse/node-session-handler) for managing session data. In order to make it's integration into the app more transparent and linear, there's a wrapper around it and can be found at `server/lib/Session.js`
+We use the department-wide [Session Handler](https://github.com/companieshouse/node-session-handler) for managing session data. When integrating it into the application a service was created to save the session data and to get the data stored in the ExtraData. This can be found in cache_service.js
 
 Presently, this service is not yet behind sign in but eventually will be . When this happens, the session wrapper implementation might need a few tweaks to account for this change.
 

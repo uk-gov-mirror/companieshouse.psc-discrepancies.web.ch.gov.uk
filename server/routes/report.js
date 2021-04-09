@@ -359,7 +359,6 @@ router.get('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
 
 router.post('/report-a-discrepancy/psc-discrepancy-types', (req, res) => {
   logger.info(`POST request to save discrepancies to the session: ${req.path}`);
-  console.log('@@@@@@@@@REQ BODY', req.body);
   validator.isValidDiscrepancyTypeSelection(req.body).then(_ => {
     const pscCache = cacheService.getCachedDataFromSession(req.session);
     pscCache.appData.selectedPscDetails.pscDiscrepancyTypes = req.body.discrepancy;
