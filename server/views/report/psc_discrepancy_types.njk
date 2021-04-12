@@ -36,7 +36,8 @@
                         </div>
                     </fieldset>
                 </div>
-                <button class="govuk-button" data-module="govuk-button" onclick="_paq.push(['trackEvent','5mld', 'What types of discrepancies are there?', 'Discrepancy Types: ' + Array.from(document.querySelectorAll('input[type=checkbox]:checked'),node => node.nextElementSibling.innerHTML.trim()).join(', ')])">
+                
+                <button class="govuk-button" data-module="govuk-button" onclick="Array.from(document.querySelectorAll('input[type=checkbox]:checked'),node => node.nextElementSibling.innerHTML.trim()).forEach(disc => _paq.push(['trackEvent','5mld', 'What types of discrepancies are there?', 'Discrepancy Type: ' + disc]))">
                     Continue
                 </button>
             </form>
