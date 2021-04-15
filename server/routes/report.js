@@ -22,7 +22,6 @@ let selfLink; // eslint-disable-line no-unused-vars
 
 router.use((req, res, next) => {
   try {
-    if (!req.session) { next(); }
     if (typeof cacheService.getCachedDataFromSession(req.session).appData.initialServiceResponse === 'undefined') {
       selfLink = '';
     } else {
