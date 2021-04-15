@@ -50,7 +50,7 @@ const middleware = SessionMiddleware({
   cookieSecureFlag: process.env.COOKIE_SECURE_ONLY,
   cookieTimeToLiveInSeconds: parseInt(process.env.DEFAULT_SESSION_EXPIRATION, 10),
   cookieSecret: process.env.COOKIE_SECRET
-}, sessionStore);
+}, sessionStore, true);
 
 app.use(middleware);
 
