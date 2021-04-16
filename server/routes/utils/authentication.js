@@ -4,7 +4,7 @@ const { SignInInfoKeys } = require('@companieshouse/node-session-handler/lib/ses
 
 const authentication = (req, res, next) => {
   try {
-    const authCheck = (req.session && req.session && req.session.data && req.session.data[SessionKey.SignInInfo])
+    const authCheck = (req.session && req.session.data && req.session.data[SessionKey.SignInInfo])
       ? req.session.data[SessionKey.SignInInfo][SignInInfoKeys.SignedIn] === 1
       : false;
 

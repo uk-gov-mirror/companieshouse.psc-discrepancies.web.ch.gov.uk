@@ -1,6 +1,6 @@
 class CacheService {
   getCachedDataFromSession (session) {
-    const cachedData = session.getExtraData('pscCache');
+    const cachedData = (session) ? session.getExtraData('pscCache') : undefined;
     return typeof cachedData !== 'undefined' ? cachedData : { appData: {}, accountData: {} };
   }
 
