@@ -62,6 +62,7 @@ app.use((err, req, res, next) => {
 njk.addGlobal('cdnUrlCss', process.env.CDN_URL_CSS);
 njk.addGlobal('cdnUrlJs', process.env.CDN_URL_JS);
 njk.addGlobal('cdnHost', process.env.CDN_HOST);
+njk.addGlobal('chsUrl', process.env.CHS_URL);
 njk.addGlobal('piwikUrl', process.env.PIWIK_URL);
 njk.addGlobal('piwikSiteId', process.env.PIWIK_SITE_ID);
 njk.addGlobal('discrepancyGoalId', process.env.DISCREPANCIES_PIWIK_START_GOAL_ID);
